@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace GPIGCommon
 {
-    public struct ActionRequest
+    public struct ActionRequest : MessageRequest
     {
         public string action;
         [JsonConverter(typeof(StringEnumConverter))]
