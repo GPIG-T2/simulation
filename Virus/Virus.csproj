@@ -15,4 +15,11 @@
       </CustomCommands>
     </CustomCommands>
   </PropertyGroup>
+  
+  <ItemGroup>
+    <Reference Include="GPIGCommon">
+      <HintPath>..\Common\bin\Debug\netstandard2.0\GPIGCommon.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  
 </Project>

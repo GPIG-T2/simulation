@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30204.135
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GPIGCommon", "GPIGCommon.csproj", "{C32F6C22-056C-4EF4-9559-BD6394059DB7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C32F6C22-056C-4EF4-9559-BD6394059DB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C32F6C22-056C-4EF4-9559-BD6394059DB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C32F6C22-056C-4EF4-9559-BD6394059DB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C32F6C22-056C-4EF4-9559-BD6394059DB7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A069524B-6205-4952-9D06-7B1A3D0A2EAF}
+	EndGlobalSection
+EndGlobal
