@@ -1,4 +1,4 @@
-﻿using WHO.Main;
+﻿using System.Threading.Tasks;
 
 namespace WHO
 {
@@ -7,10 +7,10 @@ namespace WHO
 
         private const string uri = "ws://127.0.0.1";
 
-        static void Main(string[] args)
+        async static ValueTask Main(string[] args)
         {
-            HealthOrganisation org = new HealthOrganisation(uri);
-            org.Start();
+            await using HealthOrganisation org = new(uri);
+            // TODO: process WHO
         }
     }
 }
