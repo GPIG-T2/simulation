@@ -1,25 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <CustomCommands>
-      <CustomCommands>
-        <Command>
-          <type>AfterBuild</type>
-          <command>cp -r ${TargetPath} ../Visualisation/Assets/Libraries/</command>
-          <workingdir>${SolutionDir}</workingdir>
-        </Command>
-      </CustomCommands>
-    </CustomCommands>
-  </PropertyGroup>
-  
-  <ItemGroup>
-    <Reference Include="GPIGCommon">
-      <HintPath>..\Common\bin\Debug\netstandard2.0\GPIGCommon.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+	<PropertyGroup>
+		<CustomCommands>
+			<CustomCommands>
+				<Command>
+					<type>AfterBuild</type>
+					<command>cp -r ${TargetPath} ../Visualisation/Assets/Libraries/</command>
+					<workingdir>${SolutionDir}</workingdir>
+				</Command>
+			</CustomCommands>
+		</CustomCommands>
+	</PropertyGroup>
 </Project>
