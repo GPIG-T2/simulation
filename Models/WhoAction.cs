@@ -1,7 +1,6 @@
 using System;
 using System.Text;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 using Models.Parameters;
 
 namespace Models
@@ -9,7 +8,6 @@ namespace Models
     /// <summary>
     /// The request object for creating an action.  The &#x60;action&#x60; parameter has to match the corresonding &#x60;parameters&#x60; object, not doing so is an error.
     /// </summary>
-    [DataContract]
     public class WhoAction
     {
         public static readonly ISet<string> ActionNames = new HashSet<string> {
