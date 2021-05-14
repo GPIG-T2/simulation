@@ -7,18 +7,18 @@ using Websocket.Client;
 
 namespace WHO.Interface
 {
-    public class Client : IAsyncDisposable
+    public class WebSocket : IClient, IAsyncDisposable
     {
         private readonly IWebsocketClient _client;
 
-        public Client(string uri)
+        public WebSocket(string uri)
         {
             _client = new WebsocketClient(new Uri(uri));
             _client.MessageReceived.Subscribe(msg => this.HandleMessage(msg));
             _client.Start();
         }
 
-        public Task<Models.InfectionTotals> GetIntoTotals(Models.SearchRequest request)
+        public Task<Models.InfectionTotals> GetInfoTotals(Models.SearchRequest request)
         {
             throw new NotImplementedException();
         }
