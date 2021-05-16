@@ -1,17 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Models;
 
 namespace WHO.Interface
 {
     public interface IClient
     {
-        Task<Models.InfectionTotals> GetInfoTotals(Models.SearchRequest request);
-        Task<Models.ActorSearchResult> GetInfoActors(Models.SearchRequest request);
-        Task<Models.ActorSearchResult> GetInfoHomes(Models.SearchRequest request);
-        Task<Models.Actor> GetInfoActor(List<int> ids);
-        Task<Models.SimulationStatus> GetStatus();
-        Task<Models.SimulationSettings> GetSettings();
-        Task<List<Models.ActionResult>> ApplyActions(List<Models.WhoAction> actions);
+        Task<List<InfectionTotals>> GetInfoTotals(SearchRequest request);
+        Task<List<ActorSearchResult>> GetInfoActors(SearchRequest request);
+        Task<List<ActorSearchResult>> GetInfoHomes(SearchRequest request);
+        Task<List<Actor>> GetInfoActor(List<int> ids);
+        Task<List<TestResults>> GetInfoTestResults(SearchRequest request);
+        Task<SimulationStatus> GetStatus();
+        Task<SimulationSettings> GetSettings();
+        Task<List<ActionResult>> ApplyActions(List<WhoAction> actions);
     }
 }

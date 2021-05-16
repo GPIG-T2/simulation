@@ -6,13 +6,14 @@ namespace Models.WebSocket
     {
         public int Id { get; set; }
         public string Endpoint { get; set; }
-        public string Message { get; set; }
+        public HttpMethod Method { get; set; }
+        public string? Message { get; set; }
 
-        public Request(int id, string endpoint, string message)
+        public Request(int id, string endpoint, HttpMethod method)
         {
             this.Id = id;
             this.Endpoint = endpoint;
-            this.Message = message;
+            this.Method = method;
         }
     }
 }

@@ -10,8 +10,9 @@ namespace Models
     public class SimulationSettings
     {
         /// <summary>
-        /// Gets or Sets TurnLength
+        /// An object stating how much in-simulation time will pass for each full turn.
         /// </summary>
+        /// <value>An object stating how much in-simulation time will pass for each full turn.</value>
         public SimulationTurnLength TurnLength { get; set; }
 
         /// <summary>
@@ -20,10 +21,20 @@ namespace Models
         /// <value>An array of all top-level locations that are available on the map.</value>
         public List<LocationDefinition> Locations { get; set; }
 
-        public SimulationSettings(SimulationTurnLength turnLength, List<LocationDefinition> locations)
+        /// <summary>
+        /// Provides the effectivenessess of various tools the WHO can use.
+        /// </summary>
+        /// <value>Provides the effectivenessess of various tools the WHO can use.</value>
+        public SimulationEffectivenesses Effectivenesses { get; set; }
+
+        public SimulationSettings(
+            SimulationTurnLength turnLength,
+            List<LocationDefinition> locations,
+            SimulationEffectivenesses effectivenesses)
         {
             this.TurnLength = turnLength;
             this.Locations = locations;
+            this.Effectivenesses = effectivenesses;
         }
 
         /// <summary>
@@ -73,6 +84,52 @@ namespace Models
                 sb.Append("class SimulationSettingsTurnLength {\n");
                 sb.Append("  Unit: ").Append(this.Unit).Append("\n");
                 sb.Append("  Count: ").Append(this.Count).Append("\n");
+                sb.Append("}\n");
+                return sb.ToString();
+            }
+        }
+
+        /// <summary>
+        /// An object stating how much in-simulation time will pass for each full turn.
+        /// </summary>
+        public class SimulationEffectivenesses
+        {
+            /// <summary>
+            /// Provides the effectiveness of the low- and high-quality items of a given tool.
+            /// </summary>
+            /// <value>Provides the effectiveness of the low- and high-quality items of a given tool.</value>
+            public EffectivenessQuality Masks { get; set; }
+
+            /// <summary>
+            /// An array of effectiveness values, one for each vaccine.
+            /// </summary>
+            /// <value>An array of effectiveness values, one for each vaccine.</value>
+            public List<float> Vaccines { get; set; }
+
+            /// <summary>
+            /// Provides the effectiveness of the low- and high-quality items of a given tool.
+            /// </summary>
+            /// <value>Provides the effectiveness of the low- and high-quality items of a given tool.</value>
+            public EffectivenessQuality Tests { get; set; }
+
+            public SimulationEffectivenesses(EffectivenessQuality masks, List<float> vaccines, EffectivenessQuality tests)
+            {
+                this.Masks = masks;
+                this.Vaccines = vaccines;
+                this.Tests = tests;
+            }
+
+            /// <summary>
+            /// Get the string presentation of the object
+            /// </summary>
+            /// <returns>String presentation of the object</returns>
+            public override string ToString()
+            {
+                var sb = new StringBuilder();
+                sb.Append("class SimulationSettingsTurnLength {\n");
+                sb.Append("  Masks: ").Append(this.Masks).Append("\n");
+                sb.Append("  Vaccines: ").Append(this.Vaccines).Append("\n");
+                sb.Append("  Tests: ").Append(this.Tests).Append("\n");
                 sb.Append("}\n");
                 return sb.ToString();
             }
