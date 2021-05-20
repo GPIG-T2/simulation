@@ -7,16 +7,38 @@
 	</PropertyGroup>
 	<PropertyGroup>
 		<CustomCommands>
-			<CustomCommands>
-				<Command>
-					<type>AfterBuild</type>
-					<command>cp -r ${TargetPath} ../Visualisation/Assets/Libraries/</command>
-					<workingdir>${SolutionDir}</workingdir>
-				</Command>
-			</CustomCommands>
+		  <CustomCommands>
+		    <Command>
+		      <type>AfterBuild</type>
+		      <command>cp -r ${TargetPath} ../Visualisation/Assets/Libraries/</command>
+		      <workingdir>${SolutionDir}</workingdir>
+		    </Command>
+		  </CustomCommands>
 		</CustomCommands>
 	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	  <CustomCommands>
+	    <CustomCommands>
+	      <Command>
+	        <type>AfterBuild</type>
+	        <command>cp -r ${TargetPath} ../Visualisation/Assets/Libraries/</command>
+	        <workingdir>${SolutionDir}</workingdir>
+	      </Command>
+	    </CustomCommands>
+	  </CustomCommands>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	  <CustomCommands>
+	    <CustomCommands>
+	      <Command>
+	        <type>AfterBuild</type>
+	        <command>cp -r ${TargetPath} ../Visualisation/Assets/Libraries/</command>
+	        <workingdir>${SolutionDir}</workingdir>
+	      </Command>
+	    </CustomCommands>
+	  </CustomCommands>
+	</PropertyGroup>
 	<ItemGroup>
-	  <Compile Remove="Virus.cs" />
+	  <ProjectReference Include="..\Models\Models.csproj" />
 	</ItemGroup>
 </Project>
