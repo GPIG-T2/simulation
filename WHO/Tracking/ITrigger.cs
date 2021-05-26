@@ -16,7 +16,7 @@ namespace WHO.Tracking
         public int Timespan { get; }
 
         /// <summary>Action that will be called when the conditions are met</summary>
-        public Action ResultingAction { get; }
+        public Action<List<string>> ResultingAction { get; }
 
         /// <summary>The range of location depths that the function will be on. (-1, -1) will be used to represent all depths. First value inclusive second value is exclusive.</summary> 
         public (int, int) DepthRange { get; }
