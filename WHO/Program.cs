@@ -15,7 +15,7 @@ namespace WHO
 
         private const string _uri = "ws://127.0.0.1";
 
-        async static ValueTask Main(string[] args)
+        async static Task Main(string[] args)
         {
             await using HealthOrganisation org = new(_uri);
             await org.Run();

@@ -1,6 +1,7 @@
 ﻿using Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -16,6 +17,20 @@ namespace WHO.Tracking
         public int Count { get { return this._totals.Count; } }
 
         public InfectionTotals? Latest => this.Count > 0 ? this._totals[this.Count - 1] : null;
+
+        private readonly string _location;
+
+        [AllowNull]
+        private readonly LocationStatus _status;
+
+        public string Location => this._location;
+        public LocationStatus Status => this._status;
+
+        public LocationTracker(string location, LocationStatus? status)
+        {
+            this._location = location;
+            this._status = status;
+        }
 
         public void Track(InfectionTotals total)
         {
@@ -88,7 +103,7 @@ namespace WHO.Tracking
                 throw new ArgumentOutOfRangeException(nameof(secondStep), secondStep, $"{nameof(secondStep)} must be between 0 and {this.Count}");
             }
 
-            var first = this._totals[firstStep];
+            var first = this.Get(firstStep);
 
             var sum = new InfectionTotals(
                 location: first.Location,
@@ -102,7 +117,7 @@ namespace WHO.Tracking
 
             for (int i = firstStep + 1; i <= secondStep; i++)
             {
-                var next = this._totals[firstStep];
+                var next = this.Get(i);
                 sum.AsymptomaticInfectedInfectious += next.AsymptomaticInfectedInfectious;
                 sum.AsymptomaticInfectedNotInfectious += next.AsymptomaticInfectedNotInfectious;
                 sum.Dead += next.Dead;
