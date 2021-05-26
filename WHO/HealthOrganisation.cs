@@ -16,6 +16,9 @@ namespace WHO
 {
     class HealthOrganisation : IAsyncDisposable
     {
+
+        public static HealthOrganisation Instance { get; private set; }
+
         /// <summary>
         /// Constant for referring to the global tracker
         /// </summary>
@@ -34,6 +37,12 @@ namespace WHO
         private Dictionary<string, LocationTracker> _locationTrackers = new();
 
         /// <summary>
+        /// Keeps track of which actions have been applied to the locations as well as the location list\<string\> form
+        /// </summary>
+        private Dictionary<string, LocationStatus> _locationStatuses = new();
+        public Dictionary<string, LocationStatus> LocationStatuses => this._locationStatuses;
+
+        /// <summary>
         /// The budget for the current turn
         /// </summary>
         private int _budget = 0;
@@ -43,7 +52,10 @@ namespace WHO
         /// </summary>
         private bool _running = false;
 
-        private readonly List<Task> _tasksToExecute = new();
+        /// <summary>
+        /// List of tasks to execute
+        /// </summary>
+        private readonly List<WhoAction> _tasksToExecute = new();
 
         /// <summary>
         /// Local triggers on ran on each location and sub location in a depth first pattern
@@ -55,8 +67,18 @@ namespace WHO
         /// </summary>
         private readonly List<ITrigger> _triggersForGlobal = new();
 
+        /// <summary>
+        /// Keeps track of the current action id 
+        /// </summary>
+        private int _currentActionId = 0;
+
         public HealthOrganisation(string uri)
         {
+            if (Instance != null)
+            {
+                throw new InvalidOperationException("Cannot instantiate two copies of the health organisation");
+            }
+            Instance = this;
             this.CreateTriggers();
             this._client = new WebSocket(uri);
         }
@@ -64,11 +86,11 @@ namespace WHO
         public void CreateTriggers()
         {
             // Example triggers
-            ITrigger deployVaccines = new CustomTrigger(TrackingValue.SeriousInfection, p => p.CurrentParameterCount > 100, () => this.StartTestAndIsolation(0, 0, 0, null, false), 7);
+            ITrigger deployVaccines = new CustomTrigger(TrackingValue.SeriousInfection, p => p.CurrentParameterCount > 100, (loc) => this.StartTestAndIsolation(0, 0, 0, loc, false), 7);
             this._triggersForGlobal.Add(deployVaccines);
 
-            ITrigger basicIncreaseOfInfections = new BasicTrigger(TrackingValue.SeriousInfection, TrackingFunction.GREATER_THAN, 1.2f, () => Console.WriteLine("Increase"), 7);
-            ITrigger complexIncreaseOfInfections = new CustomTrigger(TrackingValue.SeriousInfection, p => p.CurrentParameterCount > 1000 && p.Change > 1.2f, () => Console.WriteLine("Custom Increase"), 7);
+            ITrigger basicIncreaseOfInfections = new BasicTrigger(TrackingValue.SeriousInfection, TrackingFunction.GREATER_THAN, 1.2f, (_) => Console.WriteLine("Increase"), 7);
+            ITrigger complexIncreaseOfInfections = new CustomTrigger(TrackingValue.SeriousInfection, p => p.CurrentParameterCount > 1000 && p.Change > 1.2f, (_) => Console.WriteLine("Custom Increase"), 7);
             this._triggersForLocalLocations.Add(basicIncreaseOfInfections);
             this._triggersForLocalLocations.Add(complexIncreaseOfInfections);
         }
@@ -113,7 +135,7 @@ namespace WHO
                 // Executes all tasks that were queued
                 if (this._tasksToExecute.Count > 0)
                 {
-                    Task.WaitAll(this._tasksToExecute.ToArray());
+                    await this.ExecuteTasks();
                     this._tasksToExecute.Clear();
                 }
             }
@@ -180,16 +202,40 @@ namespace WHO
             }
         }
 
-        private void InitialiseLocationInformation(List<LocationDefinition> locations)
+        private async Task ExecuteTasks()
+        {
+            Dictionary<int, WhoAction> dict = this._tasksToExecute.ToDictionary(action => action.Id, action => action);
+            var results = await this._client.ApplyActions(this._tasksToExecute);
+            foreach (var result in results)
+            {
+                if (result.Code != 200)
+                {
+                    Log.Error($"Failed to execute action {result.Id} of type {dict[result.Id].Action}. Error: {result.Code} - {result.Message}");
+                }
+                else
+                {
+                    var action = dict[result.Id];
+                    if (action.Parameters?.Location != null)
+                    {
+                        this._locationStatuses[string.Join("", action.Parameters.Location)].AddAction(dict[result.Id]);
+                    }
+                }
+            }
+        }
+
+        private void InitialiseLocationInformation(List<LocationDefinition> locations, string locationKey="")
         {
             // Creates the global tracker and then creates a tracker for each location
-            this._locationTrackers[ALL_LOCATION_ID] = new LocationTracker();
+            this._locationTrackers[ALL_LOCATION_ID] = new LocationTracker(ALL_LOCATION_ID, null);
             foreach (var location in locations)
             {
-                this._locationTrackers.Add(location.Coord, new LocationTracker());
+                string localLocationKey = locationKey + location.Coord;
+                LocationStatus status;
+                this._locationStatuses.Add(localLocationKey, status = new LocationStatus(localLocationKey));
+                this._locationTrackers.Add(localLocationKey, new LocationTracker(localLocationKey, status));
                 if (location.SubLocations != null)
                 {
-                    this.InitialiseLocationInformation(location.SubLocations);
+                    this.InitialiseLocationInformation(location.SubLocations, localLocationKey);
                 }
             }
         }
@@ -197,29 +243,29 @@ namespace WHO
         private async Task GetTrackingInformation()
         {
             // Apparently this blocks even though Visual Studio claims it doesn't
-            Task.WaitAll(this._simulationSettings.Locations.Select(this.GetLocationTrackingInformation).ToArray());
+            Task.WaitAll(this._simulationSettings.Locations.Select(loc => this.GetLocationTrackingInformation(loc)).ToArray());
             this._locationTrackers[ALL_LOCATION_ID].Track(this.GetTotalsForAll());
         }
 
-        private async Task GetLocationTrackingInformation(LocationDefinition location)
+        private async Task GetLocationTrackingInformation(LocationDefinition location, string localLocationKey="")
         {
             // Create the tracker and populate it with the inital information
-            LocationTracker tracker = this._locationTrackers[location.Coord];
-
-            var trackingInformation = await this._client.GetInfoTotals(new SearchRequest(new List<List<string>> { new List<string> { location.Coord } }));
+            localLocationKey += location.Coord;
+            LocationTracker tracker = this._locationTrackers[localLocationKey];
+            var trackingInformation = await this._client.GetInfoTotals(new SearchRequest(new() { this._locationStatuses[localLocationKey].Location }));
             tracker.Track(trackingInformation[0]);
 
             // Recursively populate sub locations
             if (location.SubLocations != null)
             {
-                Task.WaitAll(location.SubLocations.Select(this.GetLocationTrackingInformation).ToArray());
+                Task.WaitAll(location.SubLocations.Select(loc => this.GetLocationTrackingInformation(loc, localLocationKey)).ToArray());
             }
         }
 
         private InfectionTotals GetTotalsForAll()
         {
             // Sum over all the top level locations
-            InfectionTotals totals = new(location: null, 0, 0, 0, 0, 0, 0, 0);
+            InfectionTotals totals = new(new() {}, 0, 0, 0, 0, 0, 0, 0);
             foreach (var location in this._simulationSettings.Locations)
             {
                 InfectionTotals? latest = this._locationTrackers[location.Coord].Latest;
@@ -236,8 +282,8 @@ namespace WHO
         {
             // Example for how we can create an action and send it. It gets added to the list of tasks which are executed at the end of the turn.
             TestAndIsolation testAndIsolation = new(testQuality, quarantinePeriod, quantity, location, symptomaticOnly);
-            WhoAction testAction = new(0, testAndIsolation);
-            this._tasksToExecute.Add(this._client.ApplyActions(new() { testAction }));
+            WhoAction testAction = new(this._currentActionId++, testAndIsolation);
+            this._tasksToExecute.Add(testAction);
         }
 
     }
