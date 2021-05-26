@@ -19,7 +19,7 @@ namespace WHO.Tracking
 
         private readonly TrackingValue _parameter;
         private readonly int _timespan;
-        private readonly Action _resultingAction;
+        private readonly Action<List<string>> _resultingAction;
         private readonly (int, int) _depthRange;
         private readonly TrackingFunction _comparisonFunction;
         private readonly float _threshold;
@@ -28,7 +28,7 @@ namespace WHO.Tracking
 
         public int Timespan => this._timespan;
 
-        public Action ResultingAction => this._resultingAction;
+        public Action<List<string>> ResultingAction => this._resultingAction;
 
         public (int, int) DepthRange => this._depthRange;
 
@@ -36,7 +36,7 @@ namespace WHO.Tracking
 
         public float Threshold => this._threshold;
 
-        public BasicTrigger(TrackingValue parameter, TrackingFunction comparisonFunction, float threshold, Action resultingAction, int timespan, (int, int)? depthRange = null)
+        public BasicTrigger(TrackingValue parameter, TrackingFunction comparisonFunction, float threshold, Action<List<string>> resultingAction, int timespan, (int, int)? depthRange = null)
         {
             this._parameter = parameter;
             this._comparisonFunction = comparisonFunction;
@@ -90,7 +90,7 @@ namespace WHO.Tracking
 
             if (evaluation)
             {
-                this.ResultingAction.Invoke();
+                this.ResultingAction.Invoke(tracker.Status.Location);
             }
 
         }

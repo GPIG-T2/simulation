@@ -25,8 +25,9 @@ namespace WHO.Extensions
         public static int GetParameterTotals(this InfectionTotals totals, TrackingValue value)
         {
             Type myType = typeof(InfectionTotals);
-            PropertyInfo myPropInfo = myType.GetProperty(value.ToString());
-            return (int)myPropInfo.GetValue(totals, null);
+            PropertyInfo myPropInfo = myType.GetProperty(value.ToString()) ?? throw new InvalidOperationException("Attempting to retrieve property which doesn't exist");
+            var propertyValue = myPropInfo.GetValue(totals, null) ?? throw new InvalidOperationException("Retrieved value is null");
+            return (int)propertyValue;
         }
 
         public static InfectionTotals Clone(this InfectionTotals self)
@@ -43,6 +44,18 @@ namespace WHO.Extensions
             self.SeriousInfection += other.SeriousInfection;
             self.Dead += other.Dead;
             self.RecoveredImmune += self.RecoveredImmune;
+        }
+
+        public static bool IsEqualTo(this InfectionTotals self, InfectionTotals other)
+        {
+            return Enumerable.SequenceEqual(self.Location, other.Location) &&
+            self.SeriousInfection == other.SeriousInfection &&
+            self.Symptomatic == other.Symptomatic &&
+            self.Uninfected == other.Uninfected &&
+            self.Dead == other.Dead &&
+            self.AsymptomaticInfectedNotInfectious == other.AsymptomaticInfectedNotInfectious &&
+            self.AsymptomaticInfectedInfectious == other.AsymptomaticInfectedInfectious;
+
         }
 
     }
