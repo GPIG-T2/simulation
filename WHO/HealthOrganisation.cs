@@ -86,6 +86,9 @@ namespace WHO
         public void CreateTriggers()
         {
             // Example triggers
+            ITrigger bestAction = new CustomTrigger(TrackingValue.SeriousInfection, p => p.CurrentParameterCount > 100, (loc) => this.calculateBestAction(0, loc), 7);
+            this._triggersForLocalLocations.Add(bestAction);
+
             ITrigger deployVaccines = new CustomTrigger(TrackingValue.SeriousInfection, p => p.CurrentParameterCount > 100, (loc) => this.StartTestAndIsolation(0, 0, 0, loc, false), 7);
             this._triggersForGlobal.Add(deployVaccines);
 
@@ -285,6 +288,42 @@ namespace WHO
             WhoAction testAction = new(this._currentActionId++, testAndIsolation);
             this._tasksToExecute.Add(testAction);
         }
+
+        //ToDo Ask about budget endpoints
+        private void calculateBestAction(int budgetAvailable, List<string> loc, float threshold = 1.2f) 
+        {
+            string location = string.Join("", loc);
+
+            // Calculate amount of people infected
+            var asymptomaticInfectedInfectious = this._locationTrackers[location].Latest.Value.GetParameterTotals(TrackingValue.AsymptomaticInfectedInfectious);#
+            var symptomaticInfected = this._locationTrackers[location].Latest.Value.GetParameterTotals(TrackingValue.Symptomatic);
+
+            int locationPopulation = this._locationTrackers[location].Latest.Value.GetTotalPeople();
+
+            // Calcualte infection rate
+            float infectionRate = (asymptomaticInfectedInfectious + symptomaticInfected)/locationPopulation;
+
+            if (infectionRate > threshold) {
+                // Need to get list of actions
+                List<WhoAction> actions = new List<WhoAction>();
+
+                List<WhoAction> actionsAvailable = new List<WhoAction>();
+
+                foreach (WhoAction action in actions)
+                {
+                    // Need to figure out how to get cost of each action
+                    if (action.cost < budgetAvailable) {
+                        actionsAvailable.Add(action);
+                    }
+                }
+
+                // Randomly select an action based on actions available
+                var random = new Random();
+                int index = random.Next(actionsAvailable.Count);
+                this._tasksToExecute.Add(actionsAvailable[index]);
+
+            }
+        } 
 
     }
 }
