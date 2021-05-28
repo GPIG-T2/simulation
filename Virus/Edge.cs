@@ -8,7 +8,7 @@ namespace Virus
     /// </summary>
     public class Edge
     {
-        //Effect constants - dictate how big effect certain actions should have - should probably be in config file
+        // Effect constants - dictate how big effect certain actions should have - should probably be in config file
         public const double PopulationFloor = 0.1;
 
         public Node Left { get; }
@@ -17,11 +17,11 @@ namespace Virus
         private readonly Random _random = new();
         private readonly double _baseInteractivity;
 
-        private int _basePopulation;
+        private readonly int _basePopulation;
         private int _totalPopulation;
         private double _currentInteractivity;
 
-        public int Distance { get;} //the physical distance the edge traverses
+        public int Distance { get; } = 50; // the physical distance the edge traverses
 
         public Edge(Node left, Node right, int population, double interactivity)
         {
@@ -31,7 +31,6 @@ namespace Virus
             this._totalPopulation = population;
             this._baseInteractivity = interactivity;
             this._currentInteractivity = interactivity;
-            this.Distance = 50;
         }
 
         /// <summary>
@@ -102,7 +101,7 @@ namespace Virus
         /// </summary>
         public void CloseEdge()
         {
-            this._totalPopulation = this._basePopulation * PopulationFloor;
+            this._totalPopulation = (int)Math.Round(this._basePopulation * PopulationFloor);
         }
 
         ///<summary>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Virus
 {
@@ -15,7 +16,7 @@ namespace Virus
     /// </remarks>
     public class World
     {
-        //Effect constants - dictate how big effect certain actions should have - should probably be in config file
+        // Effect constants - dictate how big effect certain actions should have - should probably be in config file
         public const double PressReleaseCost = 0.01;
         public const double GoodTestCost = 150;
         public const double BadTestCost = 15;
@@ -28,16 +29,18 @@ namespace Virus
 
         // TODO: nodes and edges should be dictionaries to improve compatability
         // with the interface
+        public double Budget { get; set; } = 1_000_000;
+
         private readonly Node[] _nodes;
         private readonly Edge[] _edges;
         private readonly Virus _virus;
-        private int _day;
-        public double Budget;
-        private double _budgetIncrease;
-        private double _vaccineProgress;
-        private double _loanMoney;
-        private double _totalLoanMoney;
-        private List<int>[] _nodeMap; //array of lists containing index of each node connected to a node
+        private readonly List<int>[] _nodeMap; //array of lists containing index of each node connected to a node
+
+        private int _day = 0;
+        private double _budgetIncrease = 500_000;
+        private double _vaccineProgress = 0;
+        private double _loanMoney = 0;
+        private double _totalLoanMoney = 0;
 
         /// <summary>
         /// Takes in a list of nodes, edges must than be constructed utilizing these nodes.
@@ -52,22 +55,17 @@ namespace Virus
             this._nodes = nodes;
             this._edges = edges;
             this._virus = virus;
-            this._day = 0;
-            this.Budget = 1000000;
-            this._budgetIncrease = 500000;
-            this._vaccineProgress = 0;
-            this._loanMoney = 0;
+
             this._nodeMap = new List<int>[nodes.Length];
             foreach (Node n in nodes)
             {
                 this._nodeMap[n.Index] = new List<int>();
             }
-            int i = 0;
-            foreach (Edge e in edges)
+
+            foreach ((Edge e, int i) in edges.Select((e, i) => (e, i)))
             {
                 this._nodeMap[e.Left.Index].Add(i);
                 this._nodeMap[e.Right.Index].Add(i);
-                i++;
             }
         }
 
@@ -97,393 +95,261 @@ namespace Virus
             }
 
             this._day++;
-            this._budget += this._budgetIncrease - this._loanMoney; //increases Budget + undoes affect of loaned money on daily Budget
+            this.Budget += this._budgetIncrease - this._loanMoney; //increases Budget + undoes affect of loaned money on daily Budget
 
             //if loaned money, set _loanMoney to 0
             if (this._loanMoney > 0)
             {
                 this._loanMoney = 0;
             }
+        }
 
-        }
-        
-        ///<summary>
-        /// Takes in string location and converts it to an integer index
-        /// </summary>
-        /// <param name="location></param>
-        public int LocationToLocationIndex(string location)
-        {
-            return Int32.Parse(location.Substring(1));
-        }
-        
         /* Actions from WHO
          * ALL ACTIONS RETURN THEIR COST IN THE Budget
          */
 
-        ///<summary>
+        /// <summary>
         /// Applies test and isolate to a specific area
         /// </summary>
-        public double TestAndIsolation(Models.WhoAction.Parameters parameters)
+        public double TestAndIsolation(Models.Parameters.TestAndIsolation p)
         {
-            if (parameters.ActionName != "testAndIsolation")
-            {
-                throw //TODO THROW
-            }
-            int locationIndex = LocationToLocationIndex(parameters.Location[0]);
-            bool goodTest = true;
-            if (parameters.TestQuality == 0)
-            {
-                bool goodTest = false;
-            }
-            int quarantinePeriod = parameters.QuarantinePeriod;
-            int testQuantity = parameters.Quantity;
+            this._nodes.Get(p.Location).TestAndIsolate(p.TestQuality == 1, p.QuarantinePeriod, p.Quantity);
 
-            this._nodes[locationIndex].TestAndIsolate(goodTest, quarantinePeriod, testQuantity);
-            int cost = 0;
-            if (goodTest)
-            {
-                cost = GoodTestCost * testQuantity;
-            } else
-            {
-                cost = BadTestCost * testQuantity;
-            }
-            return cost;
+            // TODO: rework cost calculations elsewhere
+            return (p.TestQuality == 1 ? GoodTestCost : BadTestCost) * p.Quantity;
         }
 
-        ///<summary>
+        /// <summary>
         /// Cancels test and isolate in a specific area - no cost
         /// </summary>
-        public double CancelTestAndIsolate(Models.WhoAction.Parameters parameters)
+        public void CancelTestAndIsolate(Models.Parameters.TestAndIsolation p)
         {
-            if (parameters.ActionName != "testAndIsolation")
-            {
-                throw //TODO THROW
-            }
-            int locationIndex = LocationToLocationIndex(parameters.Location[0]);
-            bool goodTest = true;
-            if (parameters.TestQuality == 0)
-            {
-                bool goodTest = false;
-            }
-            int quarantinePeriod = parameters.QuarantinePeriod;
-            int testQuantity = parameters.Quantity;
-
-            this._nodes[locationIndex].CancelTestAndIsolate(goodTest, quarantinePeriod, testQuantity);
-            return 0;
+            this._nodes.Get(p.Location).CancelTestAndIsolate(p.TestQuality == 1, p.QuarantinePeriod, p.Quantity);
         }
 
-        ///<summary>
+        /// <summary>
         /// Implements stay at home order on a specific node, cost at PressReleaseCost per person (press release)
         /// </summary>
-        public double StayAtHomeOrder(Models.WhoAction.Parameters parameters)
+        public double StayAtHomeOrder(Models.Parameters.StayAtHome p)
         {
-            if (parameters.ActionName != "stayAtHome")
-            {
-                throw //TODO THROW
-            }
-            int locationIndex = LocationToLocationIndex(parameters.Location[0]);
+            int i = p.Location.ToNodeIndex();
+            this._nodes[i].StayAtHomeOrder();
 
-            this._nodes[locationIndex].StayAtHomeOrder();
-            return PressReleaseCost * this._nodes[locationIndex].TotalPopulation;
+            // TODO: rework cost calculations elsewhere
+            return PressReleaseCost * this._nodes[i].TotalPopulation;
         }
 
-        ///<summary>
+        /// <summary>
         /// Cancels stay at home order on a specific node, cost at 0.01 per person (press release)
         /// </summary>
-        public double CancelStayAtHomeOrder(Models.WhoAction.Parameters parameters)
+        public void CancelStayAtHomeOrder(Models.Parameters.StayAtHome p)
         {
-            if (parameters.ActionName != "stayAtHome")
-            {
-                throw //TODO THROW
-            }
-            int locationIndex = LocationToLocationIndex(parameters.Location[0]); 
-
-            this._nodes[locationIndex].CancelStayAtHomeOrder();
-            return PressReleaseCost * this._nodes[locationIndex].TotalPopulation;
+            this._nodes.Get(p.Location).CancelStayAtHomeOrder();
         }
 
-        ///<summary>
-        /// Closes schools in a specific node - cost at 0.01 per person (press release) + learning from home recurrent costs removed from Budget increase
+        /// <summary>
+        /// Closes schools in a specific node - cost at 0.01 per person (press release)
+        /// + learning from home recurrent costs removed from Budget increase
         /// </summary>
-        public double CloseSchools(Models.WhoAction.Parameters parameters)
+        public double CloseSchools(Models.Parameters.CloseSchools p)
         {
-            if (parameters.ActionName != "closeSchools")
-            {
-                throw //TODO THROW
-            }
-            int locationIndex = LocationToLocationIndex(parameters.Location[0]); 
+            int i = p.Location.ToNodeIndex();
+            this._nodes[i].CloseSchools();
 
-            this._nodes[locationIndex].CloseSchools();
+            // TODO: rework cost calculations elsewhere
             //(weekly cost/7) * number of schoolaged children
-            this._budgetIncrease -= (0.165/7) * this._nodes[locationIndex].TotalPopulation * this._nodes[locationIndex].demographics[1];
-            return PressReleaseCost * this._nodes[locationIndex].TotalPopulation;
+            this._budgetIncrease -= (0.165 / 7) * this._nodes[i].TotalPopulation * this._nodes[i].Demographics[1];
+            return PressReleaseCost * this._nodes[i].TotalPopulation;
         }
 
-        ///<summary>
+        /// <summary>
         /// Cancels closes schools and readds the the cost from Budget increase - press release cost
         /// </summary>
-        public double CancelCloseSchools(Models.WhoAction.Parameters parameters)
+        public void CancelCloseSchools(Models.Parameters.CloseSchools p)
         {
-            if (parameters.ActionName != "closeSchools")
-            {
-                throw //TODO THROW
-            }
-            int locationIndex = LocationToLocationIndex(parameters.Location[0]); 
-
-            this._nodes[locationIndex].CancelCloseSchools();
-            this._budgetIncrease += (0.165/7) * this._nodes[locationIndex].TotalPopulation * this._nodes[locationIndex].demographics[1];
-            return PressReleaseCost * this._nodes[locationIndex].TotalPopulation;
+            this._nodes.Get(p.Location).CancelCloseSchools();
         }
 
-        ///<summary>
+        /// <summary>
         /// Closes recreational areas in a specific node - press release cost
         /// </summary>
-        public double CloseRecreationalLocations(Models.WhoAction.Parameters parameters)
+        public double CloseRecreationalLocations(Models.Parameters.CloseRecreationalLocations p)
         {
-            if (parameters.ActionName != "closeRecreationalLocations")
-            {
-                throw //TODO THROW
-            }
-            int locationIndex = LocationToLocationIndex(parameters.Location[0]); 
+            int i = p.Location.ToNodeIndex();
+            this._nodes[i].CancelCloseRecreationalAreas();
 
-            this._nodes[locationIndex].CancelCloseRecreationalAreas();
-            return PressReleaseCost * this._nodes[locationIndex].TotalPopulation;
+            // TODO: rework cost calculations elsewhere
+            return PressReleaseCost * this._nodes[i].TotalPopulation;
         }
 
-        ///<summary>
+        /// <summary>
         /// Cancels closed recreational areas in a specific node - press release cost
         /// </summary>
-        public double CancelCloseRecreationalLocations(Models.WhoAction.Parameters parameters)
+        public void CancelCloseRecreationalLocations(Models.Parameters.CloseRecreationalLocations p)
         {
-            if (parameters.ActionName != "closeRecreationalLocations")
-            {
-                throw //TODO THROW
-            }
-            int locationIndex = LocationToLocationIndex(parameters.Location[0]); 
-
-            this._nodes[locationIndex].CancelCloseRecreationalAreas();
-            return PressReleaseCost * this._nodes[locationIndex].TotalPopulation;
+            this._nodes.Get(p.Location).CancelCloseRecreationalAreas();
         }
 
-        ///<summary>
+        /// <summary>
         /// Implements shielding in a specific node - press release cost    
         /// </summary>
-        public double ShieldingProgram(Models.WhoAction.Parameters parameters)
+        public double ShieldingProgram(Models.Parameters.ShieldingProgram p)
         {
-            if (parameters.ActionName != "shieldingProgram")
-            {
-                throw //TODO THROW
-            }
-            int locationIndex = LocationToLocationIndex(parameters.Location[0]); 
+            int i = p.Location.ToNodeIndex();
+            this._nodes[i].ShieldingProgram();
 
-            this._nodes[locationIndex].ShieldingProgram();
-            return PressReleaseCost * this._nodes[locationIndex].TotalPopulation;
+            // TODO: rework cost calculations elsewhere
+            return PressReleaseCost * this._nodes[i].TotalPopulation;
         }
 
-        ///<summary>
+        /// <summary>
         /// Cancels shielding in a specific node - press release cost
         /// </summary>
-        public double CancelShieldingPorgram(Models.WhoAction.Parameters parameters)
+        public void CancelShieldingPorgram(Models.Parameters.ShieldingProgram p)
         {
-            if (parameters.ActionName != "shieldingProgram")
-            {
-                throw //TODO THROW
-            }
-            int locationIndex = LocationToLocationIndex(parameters.Location[0]); 
-
-            this._nodes[locationIndex].CancelShieldingProgram();
-            return PressReleaseCost * this._nodes[locationIndex].TotalPopulation;
+            this._nodes.Get(p.Location).CancelShieldingProgram();
         }
 
-        ///<summary>
+        /// <summary>
         /// Closes edges over a distance connected to a specific node - press release cost
         /// </summary>
-        public double MovementRestrictions(Models.WhoAction.Parameters parameters)
+        public double MovementRestrictions(Models.Parameters.MovementRestrictions p)
         {
-            if (parameters.ActionName != "movementRestrictions")
-            {
-                throw //TODO THROW
-            }
-            int locationIndex = LocationToLocationIndex(parameters.Location[0]); 
-            int distance = parameters.Distance;
+            int i = p.Location.ToNodeIndex();
+            this._nodes[i].MovementRestrictions();
 
-            this._nodes[locationIndex].MovementRestrictions();
-            foreach (int i in this._nodeMap[locationIndex])
+            foreach (int j in this._nodeMap[i])
             {
-                if (this._edges[i].distance > distance)
+                if (this._edges[j].Distance > p.Distance)
                 {
-                    this._edges[i].CloseEdge();
+                    this._edges[j].CloseEdge();
                 }
             }
-            return PressReleaseCost * this._nodes[locationIndex].TotalPopulation;
+
+            // TODO: rework cost calculations elsewhere
+            return PressReleaseCost * this._nodes[i].TotalPopulation;
         }
 
-        ///<summary>
+        /// <summary>
         /// Cancels closed edges over a distance connected to a specific node - press release cost
         /// </summary>
-        public double CancelMovementRestrictions(Models.WhoAction.Parameters parameters)
+        public void CancelMovementRestrictions(Models.Parameters.MovementRestrictions p)
         {
-            if (parameters.ActionName != "movementRestrictions")
-            {
-                throw //TODO THROW
-            }
-            int locationIndex = LocationToLocationIndex(parameters.Location[0]); 
-            int distance = parameters.Distance;
+            int i = p.Location.ToNodeIndex();
+            this._nodes[i].CancelMovementRestrictions();
 
-            this._nodes[locationIndex].CancelMovementRestrictions();
-            foreach (int i in this._nodeMap[locationIndex])
+            foreach (int j in this._nodeMap[i])
             {
-                this._edges[i].OpenEdge();
+                this._edges[j].OpenEdge();
             }
-            return PressReleaseCost * this._nodes[locationIndex].TotalPopulation;
         }
 
-        ///<summary>
+        /// <summary>
         /// Closes all edges connected to a specific node - press release cost
         /// </summary>
-        public double CloseBorders(Models.WhoAction.Parameters parameters)
+        public double CloseBorders(Models.Parameters.CloseBorders p)
         {
-            if (parameters.ActionName != "closeBorders")
-            {
-                throw //TODO THROW
-            }
-            int locationIndex = LocationToLocationIndex(parameters.Location[0]); 
+            int i = p.Location.ToNodeIndex();
+            this._nodes[i].CloseBorders();
 
-            this._nodes[locationIndex].CloseBorders();
-            foreach (int i in this._nodeMap[locationIndex])
+            foreach (int j in this._nodeMap[i])
             {
-                this._edges[i].CloseEdge();
+                this._edges[j].CloseEdge();
             }
-            return PressReleaseCost * this._nodes[locationIndex].TotalPopulation;
+
+            // TODO: rework cost calculations elsewhere
+            return PressReleaseCost * this._nodes[i].TotalPopulation;
         }
 
-        ///<summary>
+        /// <summary>
         /// Cancels the effect of Close borders in a specific node
         /// </summary>
-        public double CancelCloseBorders(Models.WhoAction.Parameters parameters)
+        public void CancelCloseBorders(Models.Parameters.CloseBorders p)
         {
-            if (parameters.ActionName != "closeBorders")
-            {
-                throw //TODO THROW
-            }
-            int locationIndex = LocationToLocationIndex(parameters.Location[0]); 
+            int i = p.Location.ToNodeIndex();
+            this._nodes[i].CancelCloseBorders();
 
-            this._nodes[locationIndex].CancelCloseBorders();
-            foreach (int i in this._nodeMap[locationIndex])
+            foreach (int j in this._nodeMap[i])
             {
-                this._edges[i].OpenEdge()
+                this._edges[j].OpenEdge();
             }
-            return PressReleaseCost * this._nodes[locationIndex].TotalPopulation;
         }
 
-        ///<summary>
+        /// <summary>
         /// Invests into vaccine progress
         /// </summary>
-        public double InvestInVaccine(Models.WhoAction.Parameters parameters)
+        public void InvestInVaccine(Models.Parameters.InvestInVaccine p)
         {
-            if (parameters.ActionName != "investInVaccine")
-            {
-                throw //TODO THROW
-            }
-            int investment = parameters.AmountInvested;
-            //uses 80 million cost from competition rules
-            this._vaccineProgress += (double) investment / VaccineCost;
-            return investment;
+            this._vaccineProgress += p.AmountInvested / VaccineCost;
         }
 
-        ///<summary>
+        /// <summary>
         /// Implement furlough schemes in a specific node - recurrent cost on the Budget increase + initial cost
         /// </summary>
-        public double FurloughScheme(Models.WhoAction.Parameters parameters)
+        public double FurloughScheme(Models.Parameters.Furlough p)
         {
-            if (parameters.ActionName != "furlough")
-            {
-                throw //TODO THROW
-            }
-            int locationIndex = LocationToLocationIndex(parameters.Location[0]); 
-            int investment = parameters.AmountInvested;
+            int i = p.Location.ToNodeIndex();
+            this._nodes[i].FurloughScheme(p.AmountInvested);
 
-            this._nodes[locationIndex].FurloughScheme(investment);
-            int cost = investment * this._nodes[locationIndex].TotalPopulation; //currently overestimates
+            // TODO: rework cost calculations elsewhere
+            int cost = p.AmountInvested * this._nodes[i].TotalPopulation; //currently overestimates
             this._budgetIncrease -= cost;
             return cost;
         }
 
-        ///<summary>
+        /// <summary>
         /// Cancels the furlough scheme - cost press release
         /// </summary>
-        public double CancelFurloughScheme(Models.WhoAction.Parameters parameters)
+        public void CancelFurloughScheme(Models.Parameters.Furlough p)
         {
-            if (parameters.ActionName != "furlough")
-            {
-                throw //TODO THROW
-            }
-            int locationIndex = LocationToLocationIndex(parameters.Location[0]); 
-            int investment = parameters.AmountInvested;
-
-            this._nodes[locationIndex].CancelFurloughScheme(investment);
-            int cost = investment * this._nodes[locationIndex].TotalPopulation; //currently overestimates
-            return PressReleaseCost * this._nodes[locationIndex].TotalPopulation
+            this._nodes.Get(p.Location).CancelFurloughScheme(p.AmountInvested);
         }
 
-        ///<summary>
+        /// <summary>
         /// Implements a single press release in a node - press release cost
         /// Amount currently does nothing
         /// </summary>
-        public double InformationPressRelease(Models.WhoAction.Parameters parameters)
+        public double InformationPressRelease(Models.Parameters.InformationPressRelease p)
         {
-            if (parameters.ActionName != "infoPressRelease")
-            {
-                throw //TODO THROW
-            }
-            int locationIndex = LocationToLocationIndex(parameters.Location[0]); 
+            int i = p.Location.ToNodeIndex();
+            this._nodes[i].InformationPressRelease();
 
-            this._nodes[locationIndex].InformationPressRelease();
-            return PressReleaseCost * this._nodes[locationIndex].TotalPopulation;
+            // TODO: rework cost calculations elsewhere
+            return PressReleaseCost * this._nodes[i].TotalPopulation;
         }
 
-        ///<summary>
+        /// <summary>
         /// Implements taking out a loan, which will be added to next turn as a lump sum and all loans tracked
         /// </summary>
-        public void TakeLoan(Models.WhoAction.Parameters parameters)
+        public void TakeLoan(Models.Parameters.Loan p)
         {
-            if (parameters.ActionName != "loan")
-            {
-                throw //TODO THROW
-            }
-            int amount = parameters.AmountLoaned;
-
-            this._totalLoanMoney += amount;
-            this.Budget += amount;
-            this._loanMoney += amount;
+            this._totalLoanMoney += p.AmountLoaned;
+            this.Budget += p.AmountLoaned;
+            this._loanMoney += p.AmountLoaned;
         }
 
-        ///<summary>
+        /// <summary>
         /// Implements mask mandate in a specific node - press release cost + cost per mask
         /// </summary>
-        public double MaskMandate(Models.WhoAction.Parameters parameters)
+        public double MaskMandate(Models.Parameters.MaskMandate p)
         {
-            if (parameters.ActionName != "maskMandate")
-            {
-                throw //TODO THROW
-            }
-            int locationIndex = LocationToLocationIndex(parameters.Location[0]); 
-            int masksProvided = parameters.MaskProvisionLevel;
+            int i = p.Location.ToNodeIndex();
 
+            // TODO: rework cost calculations elsewhere
             //values using competition rules
-            int cost = PressReleaseCost * this._nodes[locationIndex].TotalPopulation;
-            switch (masksProvided)
+            double cost = PressReleaseCost * this._nodes[i].TotalPopulation;
+            switch (p.MaskProvisionLevel)
             {
                 case 0:
-                    this._nodes[locationIndex].MaskMandate(false,HomeMadeMask);
+                    this._nodes[i].MaskMandate(false, HomeMadeMask);
                     break;
                 case 1:
-                    this._nodes[locationIndex].MaskMandate(true,LowLevelMask);
-                    cost += LowLevelMaskCost * this._nodes[locationIndex].TotalPopulation;
+                    this._nodes[i].MaskMandate(true, LowLevelMask);
+                    cost += LowLevelMaskCost * this._nodes[i].TotalPopulation;
                     break;
                 case 2:
-                    this._nodes[locationIndex].MaskMandate(true,HighLevelMask);
-                    cost += HighLevelMaskCost * this._nodes[locationIndex].TotalPopulation;
+                    this._nodes[i].MaskMandate(true, HighLevelMask);
+                    cost += HighLevelMaskCost * this._nodes[i].TotalPopulation;
                     break;
                 default:
                     Console.WriteLine("Invalid Mask Mandate option");
@@ -492,184 +358,133 @@ namespace Virus
             return cost;
         }
 
-        ///<summary>
+        /// <summary>
         /// Cancels the mask mandate - cost of press release
         /// </summary>
-        public double CancelMaskMandate(Models.WhoAction.Parameters parameters)
+        public void CancelMaskMandate(Models.Parameters.MaskMandate p)
         {
-            if (parameters.ActionName != "maskMandate")
-            {
-                throw //TODO THROW
-            }
-            int locationIndex = LocationToLocationIndex(parameters.Location[0]); 
-            int masksProvided = parameters.MaskProvisionLevel;
+            int i = p.Location.ToNodeIndex();
 
             //values using competition rules
-            int cost = PressReleaseCost * this._nodes[locationIndex].TotalPopulation;
-            switch (masksProvided)
+            switch (p.MaskProvisionLevel)
             {
                 case 0:
-                    this._nodes[locationIndex].CancelMaskMandate(false,HomeMadeMask);
+                    this._nodes[i].CancelMaskMandate(false, HomeMadeMask);
                     break;
                 case 1:
-                    this._nodes[locationIndex].CancelMaskMandate(true,LowLevelMask);
+                    this._nodes[i].CancelMaskMandate(true, LowLevelMask);
                     break;
                 case 2:
-                    this._nodes[locationIndex].CancelMaskMandate(true,HighLevelMask);
+                    this._nodes[i].CancelMaskMandate(true, HighLevelMask);
                     break;
                 default:
                     Console.WriteLine("Invalid Mask Mandate option");
                     break;
             }
-            return cost;
         }
 
-        ///<summary>
+        /// <summary>
         /// Implements health drive - cost of press release - needs a recurrent cost but unsure of what it is from competition rules
         /// </summary>
-        public double HealthDrive(Models.WhoAction.Parameters parameters)
+        public double HealthDrive(Models.Parameters.HealthDrive p)
         {
-            if (parameters.ActionName != "healthDrive")
-            {
-                throw //TODO THROW
-            }
-            int locationIndex = LocationToLocationIndex(parameters.Location[0]); 
+            int i = p.Location.ToNodeIndex();
+            this._nodes[i].HealthDrive();
 
-            this._nodes[locationIndex].HealthDrive();
-            return PressReleaseCost * this._nodes[locationIndex].TotalPopulation;
+            // TODO: rework cost calculations elsewhere
+            return PressReleaseCost * this._nodes[i].TotalPopulation;
         }
 
-        ///<summary>
+        /// <summary>
         /// Cancels health drive - cost of press release - currently no point to do this
         /// </summary>
-        public double CancelHealthDrive(Models.WhoAction.Parameters parameters)
+        public void CancelHealthDrive(Models.Parameters.HealthDrive p)
         {
-            if (parameters.ActionName != "healthDrive")
-            {
-                throw //TODO THROW
-            }
-            int locationIndex = LocationToLocationIndex(parameters.Location[0]); 
-
-            this._nodes[locationIndex].CancelHealthDrive();
-            return PressReleaseCost * this._nodes[locationIndex].TotalPopulation;
+            this._nodes.Get(p.Location).CancelHealthDrive();
         }
 
-        ///<summary>
-        /// invests in the health services of a node - decreases lethality proportional to the cost of investment - needs recurrent cost
+        /// <summary>
+        /// Invests in the health services of a node - decreases lethality proportional
+        /// to the cost of investment - needs recurrent cost
         /// </summary>
-        public double InvestInHealthServices(Models.WhoAction.Parameters parameters)
+        public void InvestInHealthServices(Models.Parameters.InvestInHealthServices p)
         {
-            if (parameters.ActionName != "healthDrive")
-            {
-                throw //TODO THROW
-            }
-            int investment = parameters.AmountInvested;
+            int investment = p.AmountInvested / this._nodes.Length;
 
             foreach (Node n in _nodes)
             {
                 n.InvestInHealthServices(investment);
             }
-
-            return investment;
         }
 
-        ///<summmary>
+        /// <summmary>
         /// cancels investment in health services - needs a recurrent cost to have a purpose
         /// </summary>
-        public double CancelInvestInHealthServices(Models.WhoAction.Parameters parameters)
+        public void CancelInvestInHealthServices(Models.Parameters.InvestInHealthServices p)
         {
-            if (parameters.ActionName != "healthDrive")
-            {
-                throw //TODO THROW
-            }
-            int investment = parameters.AmountInvested/_nodes.Length;
+            int investment = p.AmountInvested / this._nodes.Length;
 
             foreach (Node n in _nodes)
             {
                 n.CancelInvestInHealthServices(investment);
             }
-            return 0;
         }
 
-        ///<summary>
+        /// <summary>
         /// Implements social distancing of n meters in a specific node - cost of press release
         /// </summary>
-        public double SocialDistancing(Models.WhoAction.Parameters parameters)
+        public double SocialDistancing(Models.Parameters.SocialDistancingMandate p)
         {
-            if (parameters.ActionName != "socialDistancingMandate")
-            {
-                throw //TODO THROW
-            }
-            int locationIndex = LocationToLocationIndex(parameters.Location[0]); 
-            int n = parameters.Distance;
+            int i = p.Location.ToNodeIndex();
+            this._nodes[i].SocialDistancing(p.Distance);
 
-            this._nodes[locationIndex].SocialDistancing(n);
-            return PressReleaseCost * this._nodes[locationIndex].TotalPopulation;
+            // TODO: rework cost calculations elsewhere
+            return PressReleaseCost * this._nodes[i].TotalPopulation;
         }
 
-        ///<summary>
+        /// <summary>
         /// Cancels social distancing - cost of press release
         /// </summary>
-        public double CancelSocialDistancing(Models.WhoAction.Parameters parameters)
+        public void CancelSocialDistancing(Models.Parameters.SocialDistancingMandate p)
         {
-            if (parameters.ActionName != "socialDistancingMandate")
-            {
-                throw //TODO THROW
-            }
-            int locationIndex = LocationToLocationIndex(parameters.Location[0]); 
-            int n = parameters.Distance;
-
-            this._nodes[locationIndex].CancelSocialDistancing(n);
-            return PressReleaseCost * this._nodes[locationIndex].TotalPopulation;
+            this._nodes.Get(p.Location).CancelSocialDistancing(p.Distance);
         }
 
-        ///<summary>
+        /// <summary>
         /// Implements curfew in a specific node at the cost of a press release
         /// </summary>
-        public double Curfew(Models.WhoAction.Parameters parameters)
+        public double Curfew(Models.Parameters.Curfew p)
         {
-            if (parameters.ActionName != "curfew")
-            {
-                throw //TODO THROW
-            }
-            int locationIndex = LocationToLocationIndex(parameters.Location[0]); 
+            int i = p.Location.ToNodeIndex();
+            this._nodes[i].Curfew();
 
-            this._nodes[locationIndex].Curfew();
-            return PressReleaseCost * this._nodes[locationIndex].TotalPopulation;
+            // TODO: rework cost calculations elsewhere
+            return PressReleaseCost * this._nodes[i].TotalPopulation;
         }
 
-        ///<summary>
+        /// <summary>
         /// Cancels a curfew in a specific node at the cost of a press release
         /// </summary>
-        public double CancelCurfew(Models.WhoAction.Parameters parameters)
+        public void CancelCurfew(Models.Parameters.Curfew p)
         {
-            if (parameters.ActionName != "curfew")
-            {
-                throw //TODO THROW
-            }
-            int locationIndex = LocationToLocationIndex(parameters.Location[0]); 
-
-            this._nodes[locationIndex].CancelCurfew();
-            return PressReleaseCost * this._nodes[locationIndex].TotalPopulation;
+            this._nodes.Get(p.Location).CancelCurfew();
         }
 
         ///<summary> 
         /// Administers the vaccine to a target node and age range - age range is the index in the demographics array
         /// </summary>
-        public double AdministerVaccine(Models.WhoAction.Parameters parameters)
+        /* TODO: Implement after administration actions are added
+        public void AdministerVaccine(Models.Parameters.? parameters)
         {
-            if (parameters.ActionName != "administerVaccine")
-            {
-                throw //TODO THROW
-            }
-            int locationIndex = LocationToLocationIndex(parameters.Location[0]); 
+            int i = p.Location.ToNodeIndex();
             int ageRange = 5; //TODO replace age-range with actual interpretation
 
-            this._nodes[locationIndex].AdministerVaccine(ageRange);
-            //cost per dose set to arbitrary 15
-            int cost = 15 * this._nodes[locationIndex].TotalPopulation * this._nodes[locationIndex].demographics[ageRange]
-        }
-        
+            this._nodes[i].AdministerVaccine(ageRange);
 
+            // TODO: rework cost calculations elsewhere
+            //cost per dose set to arbitrary 15
+            int cost = 15 * this._nodes[i].TotalPopulation * this._nodes[i].Demographics[ageRange]
+        }
+        */
     }
 }

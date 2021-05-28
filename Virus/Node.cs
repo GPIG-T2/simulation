@@ -8,31 +8,31 @@ namespace Virus
     /// </summary>
     public class Node
     {
-        //Effect constants - dictate how big effect certain actions should have - should probably be in config file
+        // Effect constants - dictate how big effect certain actions should have - should probably be in config file
         public const double GoodTestEfficacy = 0.7;
         public const double BadTestEfficacy = 0.5;
-        public const double TestAndIsolateGDP = 0.95;
-        public const double CancelTestAndIsolateGDP = 0.97;
+        public const double TestAndIsolateGdp = 0.95;
+        public const double CancelTestAndIsolateGdp = 0.97;
 
         public const double StayAtHomeEfficacy = 0.9;
         public const double StayAtHomeCompliance = -0.1;
-        public const double StayAtHomeGDP = 0.95;
+        public const double StayAtHomeGdp = 0.95;
         public const double CancelStayAtHomeCompliance = 0.05;
-        public const double CancelStayAtHomeGDP = 0.97;
+        public const double CancelStayAtHomeGdp = 0.97;
 
         public const double CloseSchoolsEfficacy = 0.1;
-        public const double CloseSchoolsGDP = 0.95;
+        public const double CloseSchoolsGdp = 0.95;
         public const double CloseSchoolsCompliance = -0.1;
         public const double CloseSchoolsPublicOpinion = 0.9;
-        public const double CancelCloseSchoolsGDP = 0.97;
+        public const double CancelCloseSchoolsGdp = 0.97;
         public const double CancelCloseSchoolsCompliance = 0.05;
         public const double CancelCloseSchoolsPublicOpinion = 0.93;
 
         public const double CloseRecreationalAreasEfficacy = 0.6;
-        public const double CloseRecreationalAreasGDP = 0.95;
+        public const double CloseRecreationalAreasGdp = 0.95;
         public const double CloseRecreationalAreasCompliance = -0.1;
         public const double CloseRecreationalAreasPublicOpinion = 0.9;
-        public const double CancelCloseRecreationalAreasGDP = 0.97;
+        public const double CancelCloseRecreationalAreasGdp = 0.97;
         public const double CancelCloseRecreationalAreasCompliance = 0.05;
         public const double CancelCloseRecreationalAreasPublicOpinion = 0.93;
 
@@ -40,20 +40,20 @@ namespace Virus
         public const double ShieldingProgramCompliance = -0.1;
         public const double CancelShieldingProgramCompliance = 0.05;
 
-        public const double MovementRestrictionGDP = 0.95;
+        public const double MovementRestrictionGdp = 0.95;
         public const double MovementRestrictionPublicOpinion = 0.9;
-        public const double CancelMovementRestrictionGDP = 0.97;
+        public const double CancelMovementRestrictionGdp = 0.97;
         public const double CancelMovementRestrictionPublicOpinion = 0.93;
 
-        public const double CloseBorderGDP = 0.95;
+        public const double CloseBorderGdp = 0.95;
         public const double CloseBorderPublicOpinion = 0.9;
         public const double CloseBorderCompliance = -0.1;
-        public const double CancelCloseBorderGDP = 0.97;
+        public const double CancelCloseBorderGdp = 0.97;
         public const double CancelCloseBorderPublicOpinion = 0.93;
         public const double CancelCloseBorderCompliance = 0.05;
 
         //TOO LAZY TO DO THE REST RIGHT NOW
-        
+
 
         public int Index { get; }
         public List<string> Location { get; }
@@ -62,35 +62,37 @@ namespace Virus
 
         private readonly Random _random = new();
         private readonly int _startPopulation;
-        private readonly double _interactivity;
-        private readonly int[] _asympHistory;
-        private int _historyHead;
-        private readonly int[] _sympHistory;
-        private readonly int[] _seriousHistory;
+        private readonly int[] _asympHistory = new int[14]; // infections last 14 days
+        private readonly int[] _sympHistory = new int[14];
+        private readonly int[] _seriousHistory = new int[14];
+        private double _interactivity;
+        private int _historyHead = 0;
 
-        //variables for WHO effects and effectiveness
-        private double _baseCompliance; 
-        private double _compliance; //between 0-1 as a modifier on WHO actions
-        private double _complianceModifiers; //used to track drops in compliance over time
-        public double GDP;
-        public double[] Demographics; //list of proportions following {<5, 5-17, 18-29, 30-9, 40-9, 50-64, 65-74, 75-84, 85+} 
-        private double _localLethality;
-        public double PublicOpinion;
-        public int NumPressReleases;
+        // variables for WHO effects and effectiveness
+        public double Gdp { get; set; } = 50;
+        public double[] Demographics { get; set; } // list of proportions following {<5, 5-17, 18-29, 30-9, 40-9, 50-64, 65-74, 75-84, 85+}
+            = new[] { 0.2, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1 };
+        public double PublicOpinion { get; set; } = 1;
+        public int NumPressReleases { get; set; } = 0;
 
-        //compliances used to remember compliances for specific policies - needed to undo
-        private double _testAndIsolateCompliance;
-        private double _stayAtHomeCompliance;
-        private double _closeRecreationalAreasCompliance;
-        private double _shieldingProgramCompliance;
-        private double _maskMandateCompliance;
-        private double _healthDriveCompliance;
-        private double _socialDistancingCompliance;
-        private double _curfewCompliance;
+        private readonly double _baseCompliance = 0.8;
+        private double _compliance = 0.8; // between 0-1 as a modifier on WHO actions
+        private double _complianceModifiers = 1; // used to track drops in compliance over time
+        private double _localLethality = 1; // modifier on virus fatality for the local node
 
-        //used to see if certain schemes are active
-        private bool _stayAtHomeBool;
-        private bool _closeRecAreaBool;
+        // compliances used to remember compliances for specific policies - needed to undo
+        private double _testAndIsolateCompliance = 0.8;
+        private double _stayAtHomeCompliance = 0.8;
+        private double _closeRecreationalAreasCompliance = 0.8;
+        private double _shieldingProgramCompliance = 0.8;
+        private double _maskMandateCompliance = 0.8;
+        private double _healthDriveCompliance = 0.8;
+        private double _socialDistancingCompliance = 0.8;
+        private double _curfewCompliance = 0.8;
+
+        // used to see if certain schemes are active
+        private bool _stayAtHomeBool = false;
+        private bool _closeRecArea = false;
 
         public Node(int index, int population, double interactivity)
         {
@@ -101,32 +103,6 @@ namespace Virus
             this.Totals = new Models.InfectionTotals(this.Location, population, 0, 0, 0, 0, 0, 0);
 
             this._interactivity = interactivity;
-            this._historyHead = 0;
-            this._asympHistory = new int[14]; // infections last 14 days
-            this._sympHistory = new int[14];
-            this._seriousHistory = new int[14];
-
-            //all presets to avoid messing with constructors in other parts
-            this._baseCompliance = 0.8
-            this._compliance = 0.8;
-            this.GDP = 50;
-            this._complianceModifiers = 1;
-            this.Demographics = { 0.2, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1 }
-            this._localLethality = 1; //modifier on virus fatality for the local node
-            this.PublicOpinion = 1;
-            this.NumPressReleases = 0;
-
-            this._testAndIsolateCompliance = 0.8;
-            this._stayAtHomeCompliance = 0.8;
-            this._closeRecreationalAreasCompliance = 0.8;
-            this._maskMandateCompliance = 0.8;
-            this._shieldingProgramCompliance = 0.8
-            this._healthDriveCompliance = 0.8;
-            this._socialDistancingCompliance = 0.8;
-            this._curfewCompliance = 0.8;
-
-            this._stayAtHomeBool = false;
-            this._closeRecAreaBool = false;
 
         }
 
@@ -249,13 +225,15 @@ namespace Virus
         /// Changes compliance modifier without going out of bounds
         /// TODO: change to a less scuffed system with bounds on 0 and 1 - tanh?
         /// </summary>
-        public void ChangeComplianceModifier(int change)
+        public void ChangeComplianceModifier(double change)
         {
             this._complianceModifiers += change;
             if (this._complianceModifiers > 1)
             {
                 this._complianceModifiers = 1;
-            } else if (this._complianceModifiers < 0) {
+            }
+            else if (this._complianceModifiers < 0)
+            {
                 this._complianceModifiers = 0;
             }
 
@@ -266,21 +244,20 @@ namespace Virus
         /// </summary>
         public void TestAndIsolate(bool goodTest, int quarantinePeriod, int testQuantity)
         {
-            //TODO: implementation of testing/quarantine - unsure on how to implement quarantine period with current model
-            this.GDP *= TestAndIsolateGDP;
-            
-            //interactivity determined by the test quality and how many tests there are 
+            // TODO: implementation of testing/quarantine - unsure on how to implement quarantine period with current model
+            this.Gdp *= TestAndIsolateGdp;
+
+            // interactivity determined by the test quality and how many tests there are 
             if (goodTest)
             {
-                this._interactivity *= this._compliance  * GoodTestEfficacy * ((double)testQuantity / this.TotalPopulation);
-            } else
+                this._interactivity *= this._compliance * GoodTestEfficacy * ((double)testQuantity / this.TotalPopulation);
+            }
+            else
             {
-                this._interactivity *= this._compliance  * BadTestEfficacy * ((double)testQuantity / this.TotalPopulation);
+                this._interactivity *= this._compliance * BadTestEfficacy * ((double)testQuantity / this.TotalPopulation);
             }
 
             this._testAndIsolateCompliance = this._compliance;
-            
-
         }
 
         /// <summary>
@@ -288,150 +265,150 @@ namespace Virus
         /// </summary>
         public void CancelTestAndIsolate(bool goodTest, int quarantinePeriod, int testQuantity)
         {
-            this.GDP /= CancelTestAndIsolateGDP;
+            this.Gdp /= CancelTestAndIsolateGdp;
 
-            //interactivity determined by the test quality and how many tests there are 
+            // interactivity determined by the test quality and how many tests there are 
             if (goodTest)
             {
                 this._interactivity /= this._testAndIsolateCompliance * GoodTestEfficacy * ((double)testQuantity / this.TotalPopulation);
-            } else
+            }
+            else
             {
                 this._interactivity /= this._testAndIsolateCompliance * BadTestEfficacy * ((double)testQuantity / this.TotalPopulation);
             }
-
         }
 
-        ///<summary>
+        /// <summary>
         /// Stay at home order - lowers interactivity within a node by a preset amount, contains a cost to compliance
         /// </summary>
         public void StayAtHomeOrder()
         {
-            this._interactivity *= this._compliance * StayAtHomeEfficacy; //preset to 0.9, make it changeable?
-            ChangeComplianceModifier(StayAtHomeCompliance);
-            this.GDP *= StayAtHomeGDP; //arbitrary GDP cost chosen
+            this._interactivity *= this._compliance * StayAtHomeEfficacy; // preset to 0.9, make it changeable?
+            this.ChangeComplianceModifier(StayAtHomeCompliance);
+            this.Gdp *= StayAtHomeGdp; // arbitrary GDP cost chosen
             this._stayAtHomeCompliance = this._compliance;
             this._stayAtHomeBool = true;
         }
 
-        ///<summary>
+        /// <summary>
         /// Undoes stay at home order
         /// </summary>
         public void CancelStayAtHomeOrder()
         {
             this._interactivity /= this._stayAtHomeCompliance * StayAtHomeEfficacy;
-            ChangeComplianceModifier(CancelStayAtHomeCompliance);
-            this.GDP /= CancelStayAtHomeGDP;
+            this.ChangeComplianceModifier(CancelStayAtHomeCompliance);
+            this.Gdp /= CancelStayAtHomeGdp;
             this._stayAtHomeBool = false;
         }
 
-        ///<summary>
+        /// <summary>
         /// Closes schools - lowers interactivity based on how much of the population is school age (5-17) - full compliance
         /// </summary>
         public void CloseSchools()
         {
-            this._interactivity *= (this.Demographics[1]) * CloseSchoolsEfficacy) + (1 - this.Demographics);
-            this.GDP *= CloseSchoolsGDP;
-            ChangeComplianceModifier(CloseSchoolsCompliance);
+            this._interactivity *= (this.Demographics[1] * CloseSchoolsEfficacy) + (1 - this.Demographics[1]);
+            this.Gdp *= CloseSchoolsGdp;
+            this.ChangeComplianceModifier(CloseSchoolsCompliance);
             this.PublicOpinion *= CloseSchoolsPublicOpinion;
         }
 
-        ///<summary>
+        /// <summary>
         /// Cancels close schools
         /// </summary>
         public void CancelCloseSchools()
         {
-            this._interactivity /= (this.Demographics[1] * CloseSchoolsEfficacy) + (1- this.Demographics);
-            this.GDP /= CancelCloseSchoolsGDP;
-            ChangeComplianceModifier(CancelCloseSchoolsCompliance);
+            this._interactivity /= (this.Demographics[1] * CloseSchoolsEfficacy) + (1 - this.Demographics[1]);
+            this.Gdp /= CancelCloseSchoolsGdp;
+            this.ChangeComplianceModifier(CancelCloseSchoolsCompliance);
             this.PublicOpinion /= CancelCloseSchoolsPublicOpinion;
-        }   
+        }
 
-        ///<summary>
+        /// <summary>
         /// Closes recreational areas
         /// </summary>
         public void CloseRecreationalAreas()
         {
             this._interactivity *= this._compliance * CloseRecreationalAreasCompliance;
-            this.GDP *= CloseRecreationalAreasGDP;
-            ChangeComplianceModifier(CloseRecreationalAreasCompliance);
+            this.Gdp *= CloseRecreationalAreasGdp;
+            this.ChangeComplianceModifier(CloseRecreationalAreasCompliance);
             this.PublicOpinion *= CloseRecreationalAreasPublicOpinion;
             this._closeRecreationalAreasCompliance = this._compliance;
-            this._closeRecAreaBool = true;
+            this._closeRecArea = true;
         }
 
-        ///<summary>
+        /// <summary>
         /// Cancels close recreational areas
         /// </summary>
         public void CancelCloseRecreationalAreas()
         {
             this._interactivity /= this._closeRecreationalAreasCompliance * CloseRecreationalAreasEfficacy;
-            this.GDP /= CancelCloseRecreationalAreasGDP;
-            ChangeComplianceModifier(CancelCloseRecreationalAreasCompliance);
+            this.Gdp /= CancelCloseRecreationalAreasGdp;
+            this.ChangeComplianceModifier(CancelCloseRecreationalAreasCompliance);
             this.PublicOpinion /= CancelCloseRecreationalAreasPublicOpinion;
-            this._closeRecAreaBool = false;
+            this._closeRecArea = false;
 
         }
 
-        ///<summary>
+        /// <summary>
         /// Shields at risk groups - interactivty lowered depending on proportional of 65+
         /// </summary>
         public void ShieldingProgram()
         {
             double vulnerable = this.Demographics[6] + this.Demographics[7] + this.Demographics[8];
-            this._interactivity *= (this._compliance * vulnerable * ShieldingProgramEfficacy) + (1-vulnerable);
-            ChangeComplianceModifier(ShieldingProgramCompliance);
+            this._interactivity *= (this._compliance * vulnerable * ShieldingProgramEfficacy) + (1 - vulnerable);
+            this.ChangeComplianceModifier(ShieldingProgramCompliance);
             this._shieldingProgramCompliance = this._compliance;
         }
 
-        ///<summary>
+        /// <summary>
         /// Undoes shielding program
         /// </summary>
         public void CancelShieldingProgram()
         {
             double vulnerable = this.Demographics[6] + this.Demographics[7] + this.Demographics[8];
-            this._interactivity /= (this._shieldingProgramCompliance * vulnerable * ShieldingProgramEfficacy) + (1-vulnerable);
-            ChangeComplianceModifier(CancelShieldingProgramCompliance);
+            this._interactivity /= (this._shieldingProgramCompliance * vulnerable * ShieldingProgramEfficacy) + (1 - vulnerable);
+            this.ChangeComplianceModifier(CancelShieldingProgramCompliance);
         }
 
-        ///<summary>
+        /// <summary>
         /// Implements public opinion and gdp effects of movement restrictions
         /// </summary>
         public void MovementRestrictions()
         {
             this.PublicOpinion *= MovementRestrictionPublicOpinion;
-            this.GDP *= MovementRestrictionGDP;
+            this.Gdp *= MovementRestrictionGdp;
         }
 
-        ///<summary>
+        /// <summary>
         /// Cancels effects of movement restrictions
-        ///</summary>
+        /// </summary>
         public void CancelMovementRestrictions()
         {
-            this.PublicOpinion /= CancelMovementRestrictionGDP;
-            this.GDP /= CancelMovementRestrictionPublicOpinion;
+            this.PublicOpinion /= CancelMovementRestrictionGdp;
+            this.Gdp /= CancelMovementRestrictionPublicOpinion;
         }
 
-        ///<summary>
+        /// <summary>
         /// Implements public opinion, gdp and compliance modifers effects of close borders
-        ///</summary>
+        /// </summary>
         public void CloseBorders()
         {
             this.PublicOpinion *= CloseBorderPublicOpinion;
-            this.GDP *= CloseBorderGDP;
-            ChangeComplianceModifier(CloseBorderCompliance);
+            this.Gdp *= CloseBorderGdp;
+            this.ChangeComplianceModifier(CloseBorderCompliance);
         }
 
-        ///<summary>
+        /// <summary>
         /// Cancels effects of close borders
         /// </summary>
         public void CancelCloseBorders()
         {
             this.PublicOpinion /= CancelCloseBorderPublicOpinion;
-            this.GDP /= CancelCloseBorderGDP;
-            ChangeComplianceModifier(CancelCloseBorderCompliance);
+            this.Gdp /= CancelCloseBorderGdp;
+            this.ChangeComplianceModifier(CancelCloseBorderCompliance);
         }
 
-        ///<summary>
+        /// <summary>
         /// Furlough scheme - lowers interactivity if enough to prevent people from moving raound for work
         /// </summary>
         public void FurloughScheme(int n)
@@ -440,16 +417,17 @@ namespace Virus
             {
                 this._interactivity *= 0.9;
             }
-            if (this._stayAtHomeBool & this._closeRecAreaBool)
+            if (this._stayAtHomeBool & this._closeRecArea)
             {
-                this.GDP *= 0.95;
-            } else
+                this.Gdp *= 0.95;
+            }
+            else
             {
-                this.GDP *= 0.9;
+                this.Gdp *= 0.9;
             }
         }
 
-        ///<summary>
+        /// <summary>
         /// Cancels furlough scheme
         /// </summary>
         public void CancelFurloughScheme(int n)
@@ -460,7 +438,7 @@ namespace Virus
             }
         }
 
-        ///<summary>
+        /// <summary>
         /// Information press releases reduce interactivity and improves public opinion - one time action with permenant, diminishing value
         /// </summary>
         public void InformationPressRelease()
@@ -469,7 +447,7 @@ namespace Virus
             this.PublicOpinion = Math.Min(1, this.PublicOpinion + (this.NumPressReleases * 0.05));
         }
 
-        ///<summary>
+        /// <summary>
         /// Mask mandate reduces interactivity based on compliance, maskProvided, mask effectiveness (0-1)
         /// </summary>
         public void MaskMandate(bool maskProvided, double maskEffectiveness)
@@ -478,7 +456,8 @@ namespace Virus
             {
                 this._interactivity *= this._compliance * (1 - maskEffectiveness);
                 this.PublicOpinion *= 0.8;
-            } else 
+            }
+            else
             {
                 this._interactivity *= this._compliance * 0.6;
                 this.PublicOpinion *= 0.5;
@@ -486,7 +465,7 @@ namespace Virus
             this._maskMandateCompliance = this._compliance;
         }
 
-        ///<summary>
+        /// <summary>
         /// Cancels mask mandate
         /// </summary>
         public void CancelMaskMandate(bool maskProvided, double maskEffectiveness)
@@ -495,14 +474,15 @@ namespace Virus
             {
                 this._interactivity /= this._maskMandateCompliance * (1 - maskEffectiveness);
                 this.PublicOpinion /= 0.8;
-            } else
+            }
+            else
             {
                 this._interactivity /= this._maskMandateCompliance * 0.6;
                 this.PublicOpinion /= 0.5;
             }
         }
 
-        ///<summary>
+        /// <summary>
         /// Health drive - reduces local lethality
         /// </summary>
         public void HealthDrive()
@@ -510,7 +490,7 @@ namespace Virus
             this._localLethality *= 0.95;
         }
 
-        ///<summary>
+        /// <summary>
         /// Cancels health drive
         /// </summary>
         public void CancelHealthDrive()
@@ -518,7 +498,7 @@ namespace Virus
             this._localLethality /= 0.95;
         }
 
-        ///<summary>
+        /// <summary>
         /// Social distancing - reduction in interactivity at the cost of public opinion and compliance
         /// </summary>
         public void SocialDistancing(double distance)
@@ -526,21 +506,21 @@ namespace Virus
             //TODO: add distance measure to virus - effectiveness based on distance measure in virus spreadability
             this._interactivity *= this._compliance * 0.5;
             this.PublicOpinion *= 0.9;
-            ChangeComplianceModifier(-0.1);
-            this._socialDistancingCompliance = this._compliance
+            this.ChangeComplianceModifier(-0.1);
+            this._socialDistancingCompliance = this._compliance;
         }
 
-        ///<summary>
+        /// <summary>
         /// Cancels social distancing program
         /// </summary>
         public void CancelSocialDistancing(double distance)
         {
             this._interactivity /= this._socialDistancingCompliance * 0.5;
             this.PublicOpinion /= 0.9;
-            ChangeComplianceModifier(0.1);
+            this.ChangeComplianceModifier(0.1);
         }
 
-        ///<summary>
+        /// <summary>
         /// Invests in health services for a reduction in lethality + increase in public opinion
         /// </summary>
         public void InvestInHealthServices(int investment)
@@ -549,7 +529,7 @@ namespace Virus
             this.PublicOpinion /= (investment / 1000000) * 0.9;
         }
 
-        ///<summary>
+        /// <summary>
         /// Cancles investment in health services
         /// </summary>
         public void CancelInvestInHealthServices(int investment)
@@ -558,21 +538,21 @@ namespace Virus
             this.PublicOpinion *= (investment / 1000000) * 0.9;
         }
 
-        ///<summary>
+        /// <summary>
         /// Implements curfew - reduction in interactivity, at the cost of GDP if recreational areas are already closed and public opinion
         /// </summary>
         public void Curfew()
         {
             this._interactivity *= this._compliance * 0.8;
             this.PublicOpinion *= 0.9;
-            if (!_closeRecAreaBool)
+            if (!this._closeRecArea)
             {
-                this.GDP *= 0.95;
+                this.Gdp *= 0.95;
             }
             this._curfewCompliance = this._compliance;
         }
 
-        ///<summary>
+        /// <summary>
         /// Cancels curfew
         /// </summary>
         public void CancelCurfew()
@@ -581,9 +561,9 @@ namespace Virus
             this.PublicOpinion /= 0.9;
         }
 
-        ///<summary>
-        ///Administers vaccine to offer a permanent reduction in interactivity based on age group provided
-        ///</summary>
+        /// <summary>
+        /// Administers vaccine to offer a permanent reduction in interactivity based on age group provided
+        /// </summary>
         public void AdministerVaccine(int ageRange)
         {
             //should maybe change populations but with current implementation thats a little awkward and I couldn't get it to work well
