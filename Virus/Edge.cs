@@ -14,16 +14,21 @@ namespace Virus
         private readonly Random _random = new();
         private readonly double _baseInteractivity;
 
+        private int _basePopulation;
         private int _totalPopulation;
         private double _currentInteractivity;
+
+        public int distance { get;} //the physical distance the edge traverses
 
         public Edge(Node left, Node right, int population, double interactivity)
         {
             this.Left = left;
             this.Right = right;
+            this._basePopulation = population;
             this._totalPopulation = population;
             this._baseInteractivity = interactivity;
             this._currentInteractivity = interactivity;
+            this.distance = 50;
         }
 
         /// <summary>
@@ -88,5 +93,23 @@ namespace Virus
 
             return (n1Out, n2Out);
         }
+
+        ///<summary>
+        /// Closes edge - Reduces population on a node to 0 - restricts all movement
+        /// </summary>
+        public void CloseEdge()
+        {
+            this._totalPopulation = this._basePopulation * 0.1;
+        }
+
+        ///<summary>
+        /// Reopens the edge
+        /// </summary>
+        public void OpenEdge()
+        {
+            this._totalPopulation = this._basePopulation;
+        }
+
+        //TODO: Add more variable changes - maybe based off compliance in left/right nodes?
     }
 }
