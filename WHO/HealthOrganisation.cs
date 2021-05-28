@@ -290,12 +290,13 @@ namespace WHO
         }
 
         //ToDo Ask about budget endpoints
+        // Will each location have its own particular budget?
         private void calculateBestAction(int budgetAvailable, List<string> loc, float threshold = 1.2f) 
         {
             string location = string.Join("", loc);
 
             // Calculate amount of people infected
-            var asymptomaticInfectedInfectious = this._locationTrackers[location].Latest.Value.GetParameterTotals(TrackingValue.AsymptomaticInfectedInfectious);#
+            var asymptomaticInfectedInfectious = this._locationTrackers[location].Latest.Value.GetParameterTotals(TrackingValue.AsymptomaticInfectedInfectious);
             var symptomaticInfected = this._locationTrackers[location].Latest.Value.GetParameterTotals(TrackingValue.Symptomatic);
 
             int locationPopulation = this._locationTrackers[location].Latest.Value.GetTotalPeople();
@@ -304,8 +305,7 @@ namespace WHO
             float infectionRate = (asymptomaticInfectedInfectious + symptomaticInfected)/locationPopulation;
 
             if (infectionRate > threshold) {
-                // Need to get list of actions
-                List<WhoAction> actions = new List<WhoAction>();
+                List<WhoAction> actions = getWhoActions(loc);
 
                 List<WhoAction> actionsAvailable = new List<WhoAction>();
 
@@ -314,6 +314,7 @@ namespace WHO
                     // Need to figure out how to get cost of each action
                     if (action.cost < budgetAvailable) {
                         actionsAvailable.Add(action);
+                        budgetAvailable = budgetAvailable - action.cost;
                     }
                 }
 
@@ -323,7 +324,82 @@ namespace WHO
                 this._tasksToExecute.Add(actionsAvailable[index]);
 
             }
-        } 
+        }
+
+        private List<WhoAction> getWhoActions(List<string> loc) {
+            // ToDo write this function
+            List<WhoAction> whoActions = new List<WhoAction>();
+            
+            TestAndIsolation testAndIsolation = new(0, 0, 0, loc, false);
+            WhoAction testAndIsolationAction = new(this._currentActionId++, testAndIsolation);
+            whoActions.Add(testAndIsolationAction);
+            
+            CloseBorders closeBorders = new(loc);
+            WhoAction closeBordersAction = new(this._currentActionId++, closeBorders);
+            whoActions.Add(closeBordersAction);
+
+            CloseRecreationalLocations closeRecreationalLocations = new(loc);
+            WhoAction closeRecreationalLocationsAction = new(this._currentActionId++, closeRecreationalLocations);
+            whoActions.Add(closeRecreationalLocationsAction);
+
+            CloseSchools closeSchools = new(loc);
+            WhoAction closeSchoolsAction = new(this._currentActionId++, closeSchools);
+            whoActions.Add(closeSchoolsAction);
+
+            Curfew curfew = new(loc);
+            WhoAction curfewAction = new(this._currentActionId++, curfew);
+            whoActions.Add(curfewAction);
+
+            // Need to think about investment logic
+            Furlough furlough = new(1000, loc);
+            WhoAction furloughAction = new(this._currentActionId++, furlough);
+            whoActions.Add(furloughAction);
+
+            HealthDrive healthDrive = new(loc);
+            WhoAction healthDriveAction = new(this._currentActionId++, healthDrive);
+            whoActions.Add(healthDriveAction);
+
+            // Need to think about investment logic
+            InformationPressRelease informationPressRelease = new(1000, loc);
+            WhoAction informationPressReleaseAction = new(this._currentActionId++, informationPressRelease);
+            whoActions.Add(informationPressReleaseAction);
+
+            // Need to think about investment logic
+            InvestInHealthServices investInHealthServices = new(1000);
+            WhoAction investInHealthServicesAction = new(this._currentActionId++, investInHealthServices);
+            whoActions.Add(investInHealthServicesAction);
+
+            // Need to think about investment logic
+            InvestInVaccine investInVaccine = new(1000);
+            WhoAction investInVaccineAction = new(this._currentActionId++, investInVaccine);
+            whoActions.Add(investInVaccineAction);
+
+            // Need to think about amount loaned, I don't even know what the loan action does
+            Loan loan = new(1000);
+            WhoAction loanAction = new(this._currentActionId++, loan);
+            whoActions.Add(loanAction);
+
+            // Need to think about the MaskProvisionLevel
+            MaskMandate maskMandate = new(loc, 0);
+            WhoAction maskMandateAction = new(this._currentActionId++, maskMandate);
+            whoActions.Add(maskMandateAction);
+
+            // Need to think about distances
+            MovementRestrictions movementRestrictions = new(loc, 50);
+            WhoAction movementRestricitionsAction = new(this._currentActionId++, movementRestrictions);
+            whoActions.Add(movementRestricitionsAction);
+
+            // Need to think about distances
+            SocialDistancingMandate socialDistancingMandate = new(loc, 50);
+            WhoAction socialDistancingMandateAction = new(this._currentActionId++, socialDistancingMandate);
+            whoActions.Add(socialDistancingMandateAction);
+
+            StayAtHome stayAtHome = new(loc);
+            WhoAction stayAtHomeAction = new(this._currentActionId++, stayAtHome);
+            whoActions.Add(stayAtHomeAction);
+
+            return whoActions;
+        }
 
     }
 }
