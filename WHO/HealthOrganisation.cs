@@ -86,7 +86,9 @@ namespace WHO
         public void CreateTriggers()
         {
             // Example triggers
-            ITrigger bestAction = new CustomTrigger(TrackingValue.SeriousInfection, p => p.CurrentParameterCount > 100, (loc) => this.calculateBestAction(0, loc), 7);
+
+            // This trigger tries to calculate what the best actions are
+            ITrigger bestAction = new CustomTrigger(TrackingValue.SeriousInfection, p => p.CurrentParameterCount > 100, (loc) => this.calculateBestAction(this._budget, loc), 7);
             this._triggersForLocalLocations.Add(bestAction);
 
             ITrigger deployVaccines = new CustomTrigger(TrackingValue.SeriousInfection, p => p.CurrentParameterCount > 100, (loc) => this.StartTestAndIsolation(0, 0, 0, loc, false), 7);
