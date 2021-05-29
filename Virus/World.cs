@@ -18,14 +18,15 @@ namespace Virus
     {
         // Effect constants - dictate how big effect certain actions should have - should probably be in config file
         public const double PressReleaseCost = 0.01;
-        public const double GoodTestCost = 150;
-        public const double BadTestCost = 15;
+        public const double GoodTestCost = 140;
+        public const double BadTestCost = 5.5;
+        public const double CloseSchoolsStudentCost = 96.5
         public const double VaccineCost = 80000000;
         public const double HomeMadeMask = 0.5;
         public const double LowLevelMask = 0.6;
         public const double HighLevelMask = 0.7;
         public const double LowLevelMaskCost = 1;
-        public const double HighLevelMaskCost = 15;
+        public const double HighLevelMaskCost = 10;
 
         // TODO: nodes and edges should be dictionaries to improve compatability
         // with the interface
@@ -158,7 +159,7 @@ namespace Virus
 
             // TODO: rework cost calculations elsewhere
             //(weekly cost/7) * number of schoolaged children
-            this._budgetIncrease -= (0.165 / 7) * this._nodes[i].TotalPopulation * this._nodes[i].Demographics[1];
+            this.Budget -= (CloseSchoolsStudentCost / 7) * this._nodes[i].TotalPopulation * this._nodes[i].Demographics[1];
             return PressReleaseCost * this._nodes[i].TotalPopulation;
         }
 
@@ -167,7 +168,10 @@ namespace Virus
         /// </summary>
         public void CancelCloseSchools(Models.Parameters.CloseSchools p)
         {
+            int i = p.Location.ToNodeIndex();
             this._nodes.Get(p.Location).CancelCloseSchools();
+            this.Budget += (CloseSchoolsStudentCost / 7) * this._nodes[i].TotalPopulation * this._nodes[i].Demographics[1];
+            
         }
 
         /// <summary>
@@ -293,7 +297,7 @@ namespace Virus
 
             // TODO: rework cost calculations elsewhere
             int cost = p.AmountInvested * this._nodes[i].TotalPopulation; //currently overestimates
-            this._budgetIncrease -= cost;
+            this.Budget -= cost;
             return cost;
         }
 
@@ -302,7 +306,9 @@ namespace Virus
         /// </summary>
         public void CancelFurloughScheme(Models.Parameters.Furlough p)
         {
+            int i = p.Location.ToNodeIndex();
             this._nodes.Get(p.Location).CancelFurloughScheme(p.AmountInvested);
+            this.Budget += p.AmountInvested * this._nodes[i].TotalPopulation;
         }
 
         /// <summary>
