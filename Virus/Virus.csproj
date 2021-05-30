@@ -1,19 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFramework>netstandard2.0</TargetFramework>
-		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net5.0</TargetFramework>
+		<StartupObject>Virus.Program</StartupObject>
 		<Nullable>enable</Nullable>
-	</PropertyGroup>
-	<PropertyGroup>
-		<CustomCommands>
-			<CustomCommands>
-				<Command>
-					<type>AfterBuild</type>
-					<command>cp -r ${TargetPath} ../Visualisation/Assets/Libraries/</command>
-					<workingdir>${SolutionDir}</workingdir>
-				</Command>
-			</CustomCommands>
-		</CustomCommands>
 	</PropertyGroup>
 </Project>

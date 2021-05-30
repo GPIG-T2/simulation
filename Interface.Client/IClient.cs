@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Models;
 
-namespace WHO.Interface
+namespace Interface.Client
 {
     public interface IClient
     {
