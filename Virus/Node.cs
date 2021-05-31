@@ -61,6 +61,7 @@ namespace Virus
         public Models.InfectionTotals Totals { get; }
         public int XCoordinate { get; set;}
         public int YCoordinate { get; set;}
+        public int Name { get; set;}
 
         private readonly Random _random = new();
         private readonly int _startPopulation;
@@ -96,7 +97,7 @@ namespace Virus
         private bool _stayAtHomeBool = false;
         private bool _closeRecArea = false;
 
-        public Node(int index, int population, double interactivity, int x, int y)
+        public Node(int index, int population, double interactivity, string name, int x, int y)
         {
             this.Index = index;
             this.Location = new List<string> { $"N{index}" };
@@ -105,6 +106,7 @@ namespace Virus
             this.Totals = new Models.InfectionTotals(this.Location, population, 0, 0, 0, 0, 0, 0);
 
             this._interactivity = interactivity;
+            this.Name = name;
             this.XCoordinate = x;
             this.YCoordinate = y;
 
