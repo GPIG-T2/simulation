@@ -187,7 +187,7 @@ namespace WHO
                 var status = await this._client.GetStatus();
                 if (status.IsWhoTurn)
                 {
-                    return status.Budget;
+                    return this._budget + status.Budget;
                 }
                 await Task.Delay(_statusPingDelayInMs);
             }
