@@ -82,5 +82,28 @@ namespace WHO.Test
             Assert.Equal(0, status.ActionCount);
         }
 
+        [Fact]
+        public void TestGetActionSuccess()
+        {
+            string locationIn = "A1";
+            int actionId = 99;
+            LocationStatus status = new(locationIn);
+            WhoAction action = new(actionId, new MaskMandate(status.Location, 1));
+            status.AddAction(action);
+            WhoAction? actionOut = status.GetAction(actionId);
+            Assert.NotNull(actionOut);
+            Assert.Equal(action, actionOut);
+        }
+
+        [Fact]
+        public void TestGetActionFail()
+        {
+            string locationIn = "A1";
+            int actionId = 99;
+            LocationStatus status = new(locationIn);
+            WhoAction? actionOut = status.GetAction(actionId);
+            Assert.Null(actionOut);
+        }
+
     }
 }
