@@ -40,6 +40,8 @@ namespace WHO
         /// Keeps track of which actions have been applied to the locations as well as the location list\<string\> form
         /// </summary>
         private Dictionary<string, LocationStatus> _locationStatuses = new();
+
+        public Dictionary<string, LocationTracker> LocationTrackers => this._locationTrackers;
         public Dictionary<string, LocationStatus> LocationStatuses => this._locationStatuses;
 
         /// <summary>
@@ -187,7 +189,7 @@ namespace WHO
                 var status = await this._client.GetStatus();
                 if (status.IsWhoTurn)
                 {
-                    return status.Budget;
+                    return this._budget + status.Budget;
                 }
                 await Task.Delay(_statusPingDelayInMs);
             }
