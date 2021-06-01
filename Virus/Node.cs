@@ -74,7 +74,6 @@ namespace Virus
         // variables for WHO effects and effectiveness
         public double Gdp { get; set; } = 50;
         public double[] Demographics { get; set; } // list of proportions following {<5, 5-17, 18-29, 30-9, 40-9, 50-64, 65-74, 75-84, 85+}
-            = new[] { 0.2, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1 };
         public double PublicOpinion { get; set; } = 1;
         public int NumPressReleases { get; set; } = 0;
 
@@ -97,7 +96,7 @@ namespace Virus
         private bool _stayAtHomeBool = false;
         private bool _closeRecArea = false;
 
-        public Node(int index, int population, double interactivity, string name, int x, int y)
+        public Node(int index, int population, double interactivity, string name, int x, int y, double[] demographics, double gdp)
         {
             this.Index = index;
             this.Location = new List<string> { $"N{index}" };
@@ -109,6 +108,8 @@ namespace Virus
             this.Name = name;
             this.XCoordinate = x;
             this.YCoordinate = y;
+            this.Demographics = demographics;
+            this.Gdp = gdp;
 
         }
 
@@ -165,7 +166,7 @@ namespace Virus
 
             // a portion (25% - should be variable) of symptomatic go to serious after 2 days
             // TODO - replace 0.5 with proper virus variable
-            int symp2Serious = (int)Math.Floor((double)this._sympHistory[symp2SeriousHead] * 0.25);
+            int symp2Serious = (int)Math.Floor((double)this._sympHistory[symp2SeriousHead] * virus.SeriousRate);
             this.Totals.Symptomatic -= symp2Serious;
             this.Totals.SeriousInfection += symp2Serious;
             this._sympHistory[symp2SeriousHead] -= symp2Serious;

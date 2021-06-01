@@ -21,9 +21,9 @@ namespace Virus
         private int _totalPopulation;
         private double _currentInteractivity;
 
-        public int Distance { get; } = 50; // the physical distance the edge traverses
+        public int Distance { get; } // the physical distance the edge traverses
 
-        public Edge(Node left, Node right, int population, double interactivity)
+        public Edge(Node left, Node right, int population, double interactivity, int distance)
         {
             this.Left = left;
             this.Right = right;
@@ -31,6 +31,7 @@ namespace Virus
             this._totalPopulation = population;
             this._baseInteractivity = interactivity;
             this._currentInteractivity = interactivity;
+            this.Distance = distance;
         }
 
         /// <summary>
