@@ -315,10 +315,12 @@ namespace WHO
 
                 foreach (WhoAction action in actions)
                 {
+                    float actionCost =  CostCalculator.CalculateCost(action, ActionMode.Create);
+                    
                     // Need to figure out how to get cost of each action
-                    if (action.cost < budgetAvailable) {
+                    if (actionCost < budgetAvailable) {
                         actionsAvailable.Add(action);
-                        budgetAvailable = budgetAvailable - action.cost;
+                        budgetAvailable = budgetAvailable - actionCost;
                     }
                 }
 
