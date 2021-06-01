@@ -318,7 +318,7 @@ namespace WHO
 
                 foreach (WhoAction action in actions)
                 {
-                    float actionCost =  CostCalculator.CalculateCost(action, ActionMode.Create);
+                    float actionCost =  ActionCostCalculator.CalculateCost(action, ActionMode.Create);
                     
                     if (actionCost < budgetAvailable) {
                         actionsAvailable.Add(action);
