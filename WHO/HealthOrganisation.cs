@@ -308,27 +308,37 @@ namespace WHO
             // Calcualte infection rate
             float infectionRate = (asymptomaticInfectedInfectious + symptomaticInfected)/locationPopulation;
 
+            // Get all WhoActions
+            List<WhoAction> actions = getWhoActions(loc);
+
+            // Actions which are collectively all available given the budget
+            List<WhoAction> actionsAvailable = new List<WhoAction>();
+
             if (infectionRate > threshold) {
-
-                // Get all WhoActions
-                List<WhoAction> actions = getWhoActions(loc);
-
-                // Actions which are collectively all available given the budget
-                List<WhoAction> actionsAvailable = new List<WhoAction>();
-
                 foreach (WhoAction action in actions)
                 {
-                    float actionCost =  ActionCostCalculator.CalculateCost(action, ActionMode.Create);
+                    float actionCost =  ActionCostCalculator.CalculateCost(action, ActionCostCalculator.ActionMode.Create);
                     
                     if (actionCost < budgetAvailable) {
                         actionsAvailable.Add(action);
                         budgetAvailable = budgetAvailable - actionCost;
                     }
                 }
-
-                this._tasksToExecute = actionsAvailable;
-
             }
+            else 
+            {
+                foreach (WhoAction action in actions)
+                {
+                    float actionCost =  ActionCostCalculator.CalculateCost(action, ActionCostCalculator.ActionMode.Delete);
+                    
+                    if (actionCost < budgetAvailable) {
+                        actionsAvailable.Add(action);
+                        budgetAvailable = budgetAvailable - actionCost;
+                    }
+                }
+            }
+
+            this._tasksToExecute = actionsAvailable;
         }
 
         private List<WhoAction> getWhoActions(List<string> loc) {
