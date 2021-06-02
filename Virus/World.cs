@@ -30,7 +30,7 @@ namespace Virus
 
         // TODO: nodes and edges should be dictionaries to improve compatability
         // with the interface
-        public double Budget { get; set; } = 1_000_000;
+        public double Budget { get; set; };
 
         private readonly Node[] _nodes;
         private readonly Edge[] _edges;
@@ -38,7 +38,7 @@ namespace Virus
         private readonly List<int>[] _nodeMap; //array of lists containing index of each node connected to a node
 
         private int _day = 0;
-        private double _budgetIncrease = 500_000;
+        private double _budgetIncrease;
         private double _vaccineProgress = 0;
         private double _loanMoney = 0;
         private double _totalLoanMoney = 0;
@@ -57,10 +57,16 @@ namespace Virus
             this._edges = edges;
             this._virus = virus;
 
+            this.Budget = 0;
+            this._budgetIncrease = 0;
+
             this._nodeMap = new List<int>[nodes.Length];
             foreach (Node n in nodes)
             {
                 this._nodeMap[n.Index] = new List<int>();
+                
+                //budget proportional to the population size
+                this.Budget += 0.5 * n.TotalPopulation //in a population of 7 billion, should be close to WHO's 2018-19 budget of 4.4 billion
             }
 
             foreach ((Edge e, int i) in edges.Select((e, i) => (e, i)))
@@ -78,6 +84,7 @@ namespace Virus
         {
             int[] edgeInfections = new int[this._nodes.Length];
             Array.Clear(edgeInfections, 0, edgeInfections.Length);
+            this._budgetIncrease = 0;
 
             // Goes through all edges and increases the number of new infections to add to the node.
             foreach (Edge e in this._edges)
@@ -93,6 +100,7 @@ namespace Virus
                 n.Update(this._virus);
                 n.Infect(edgeInfections[n.Index]);
                 n.IncrementHead();
+                this._budgetIncrease = 10 * n.Totals.SeriousInfection + n.Totals.Dead;
             }
 
             this._day++;
