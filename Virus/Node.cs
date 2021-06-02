@@ -59,9 +59,9 @@ namespace Virus
         public List<string> Location { get; }
         public int TotalPopulation { get; set; }
         public Models.InfectionTotals Totals { get; }
-        public int XCoordinate { get; set;}
-        public int YCoordinate { get; set;}
-        public int Name { get; set;}
+        public int XCoordinate { get; set; }
+        public int YCoordinate { get; set; }
+        public string Name { get; set; }
 
         private readonly Random _random = new();
         private readonly int _startPopulation;
@@ -110,7 +110,6 @@ namespace Virus
             this.YCoordinate = y;
             this.Demographics = demographics;
             this.Gdp = gdp;
-
         }
 
         /// <summary>

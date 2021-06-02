@@ -20,7 +20,7 @@ namespace Virus
         public const double PressReleaseCost = 0.01;
         public const double GoodTestCost = 140;
         public const double BadTestCost = 5.5;
-        public const double CloseSchoolsStudentCost = 96.5
+        public const double CloseSchoolsStudentCost = 96.5;
         public const double VaccineCost = 80000000;
         public const double HomeMadeMask = 0.5;
         public const double LowLevelMask = 0.6;
@@ -30,7 +30,7 @@ namespace Virus
 
         // TODO: nodes and edges should be dictionaries to improve compatability
         // with the interface
-        public double Budget { get; set; };
+        public double Budget { get; set; }
 
         private readonly Node[] _nodes;
         private readonly Edge[] _edges;
@@ -64,9 +64,9 @@ namespace Virus
             foreach (Node n in nodes)
             {
                 this._nodeMap[n.Index] = new List<int>();
-                
+
                 //budget proportional to the population size
-                this.Budget += 0.5 * n.TotalPopulation //in a population of 7 billion, should be close to WHO's 2018-19 budget of 4.4 billion
+                this.Budget += 0.5 * n.TotalPopulation; //in a population of 7 billion, should be close to WHO's 2018-19 budget of 4.4 billion
             }
 
             foreach ((Edge e, int i) in edges.Select((e, i) => (e, i)))
@@ -179,7 +179,7 @@ namespace Virus
             int i = p.Location.ToNodeIndex();
             this._nodes.Get(p.Location).CancelCloseSchools();
             this.Budget += (CloseSchoolsStudentCost / 7) * this._nodes[i].TotalPopulation * this._nodes[i].Demographics[1];
-            
+
         }
 
         /// <summary>
