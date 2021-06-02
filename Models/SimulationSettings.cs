@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Models
 {
@@ -27,14 +28,26 @@ namespace Models
         /// <value>Provides the effectivenessess of various tools the WHO can use.</value>
         public SimulationEffectivenesses Effectivenesses { get; set; }
 
+        /// <summary>
+        /// An edge in the graph.
+        /// </summary>
+        /// <remarks>
+        /// This property is indended to be used by the visualisation to allow
+        /// the position to be shown.
+        /// </remarks>
+        [JsonPropertyName("_edges")]
+        public List<Edge> Edges { get; set; }
+
         public SimulationSettings(
             SimulationTurnLength turnLength,
             List<LocationDefinition> locations,
-            SimulationEffectivenesses effectivenesses)
+            SimulationEffectivenesses effectivenesses,
+            List<Edge> edges)
         {
             this.TurnLength = turnLength;
             this.Locations = locations;
             this.Effectivenesses = effectivenesses;
+            this.Edges = edges;
         }
 
         /// <summary>

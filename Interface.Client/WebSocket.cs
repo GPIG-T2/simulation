@@ -6,12 +6,13 @@ using Models;
 using Serilog;
 using Websocket.Client;
 
-namespace WHO.Interface
+namespace Interface.Client
 {
     public class WebSocket : IClient, IAsyncDisposable
     {
         private readonly IWebsocketClient _client;
-        private readonly Dictionary<int, TaskCompletionSource<Models.WebSocket.Response>> _messages = new();
+        private readonly Dictionary<int, TaskCompletionSource<Models.WebSocket.Response>> _messages
+            = new();
         private readonly JsonSerializerOptions _jsonSerializerOptions = new()
         {
             IgnoreNullValues = true,

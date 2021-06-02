@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Models
 {
@@ -19,6 +20,16 @@ namespace Models
         /// </summary>
         /// <value>An array of sub-locations that are under this location. If not given, or empty, then there are no sub-locations.  Each item in this array is another LocationDefinition object.</value>
         public List<LocationDefinition>? SubLocations { get; set; }
+
+        /// <summary>
+        /// The position of the node in the graph.
+        /// </summary>
+        /// <remarks>
+        /// This property is indended to be used by the visualisation to allow
+        /// the position to be shown.
+        /// </remarks>
+        [JsonPropertyName("_position")]
+        public Coordinate Position { get; set; }
 
         public LocationDefinition(string coord)
         {

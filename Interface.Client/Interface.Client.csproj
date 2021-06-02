@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+		<LangVersion>9.0</LangVersion>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Models\Models.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Serilog" Version="2.10.0" />
+		<PackageReference Include="Websocket.Client" Version="4.3.32" />
+	</ItemGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+		<CustomCommands>
+			<CustomCommands>
+				<Command>
+					<type>AfterBuild</type>
+					<command>python3 copy_dll.py "${ProjectDir}/bin/Debug/netstandard2.0" "${SolutionDir}/Visualisation/Assets/Libraries"</command>
+					<workingdir>${SolutionDir}</workingdir>
+				</Command>
+			</CustomCommands>
+		</CustomCommands>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+		<CustomCommands>
+			<CustomCommands>
+				<Command>
+					<type>AfterBuild</type>
+					<command>python3 copy_dll.py "${ProjectDir}/bin/Release/netstandard2.0" "${SolutionDir}/Visualisation/Assets/Libraries"</command>
+					<workingdir>${SolutionDir}</workingdir>
+				</Command>
+			</CustomCommands>
+		</CustomCommands>
+	</PropertyGroup>
+</Project>
