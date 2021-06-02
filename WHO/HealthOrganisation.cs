@@ -140,6 +140,7 @@ namespace WHO
                     await this.ExecuteTasks();
                     this._tasksToExecute.Clear();
                 }
+                await (this._client as WebSocket).EndTurn();
             }
 
         }
