@@ -315,7 +315,12 @@ namespace WHO
             float budgetForLocation = budgetAvailable * percentageOfInfections;
 
             // Get all WhoActions
-            List actions = getWhoActions(loc);
+            List actions;
+            if (infectionRate > threshold) {
+                actions = getWhoActions(loc, ActionCostCalculator.ActionMode.Create);
+            } else {
+                actions = getWhoActions(loc, ActionCostCalculator.ActionMode.Delete);
+            }
 
             // Actions which are collectively all available given the budget
             List actionsAvailable = new List();
@@ -356,7 +361,7 @@ namespace WHO
             this._tasksToExecute = whoActionsAvailable;
         }
 
-        private List getWhoActions(List<string> loc) {
+        private List getWhoActions(List<string> loc, ActionCostCalculator.ActionMode mode) {
             List actions = new List();
             
             TestAndIsolation testAndIsolation = new(0, 0, 0, loc, false);
@@ -397,9 +402,16 @@ namespace WHO
             Loan loan = new(1000);
             actions.Add(loan);
 
-            // Need to think about the MaskProvisionLevel
-            MaskMandate maskMandate = new(loc, 0);
-            actions.Add(maskMandate);
+            // Using the action mode determine the level of the mask mandate
+            switch(mode)
+            {
+                case ActionCostCalculator.ActionMode.Create:
+                    MaskMandate maskMandate = new(loc, 2);
+                    actions.Add(maskMandate);
+                    break;
+                case ActionCostCalculator.ActionMode.Delete:
+                    MaskMandate maskMandate = new(loc, 0);
+            }
 
             // Need to think about distances
             MovementRestrictions movementRestrictions = new(loc, 50);
