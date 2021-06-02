@@ -416,7 +416,7 @@ namespace WHO
 
                     float investmentBudget = budgetForLocation * 0.25;
                     
-                    // Each of the following have been given a proportion of the 15% according to their criticality
+                    // Each of the following have been given a proportion of the 25% according to their criticality
                     Furlough furlough = new(investmentBudget * 0.2, loc);
                     actions.Add(furlough);
 
