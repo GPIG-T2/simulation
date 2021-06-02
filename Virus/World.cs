@@ -32,6 +32,9 @@ namespace Virus
         // with the interface
         public double Budget { get; set; }
 
+        public Node[] Nodes => this._nodes;
+        public Edge[] Edges => this._edges;
+
         private readonly Node[] _nodes;
         private readonly Edge[] _edges;
         private readonly Virus _virus;

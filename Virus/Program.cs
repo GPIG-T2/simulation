@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Models;
 using Models.Parameters;
@@ -9,11 +11,26 @@ namespace Virus
     public class Program : Interface.IHandler, IDisposable
     {
         private readonly Interface.IServer _server = new Interface.WebSocket();
-        private World _world;
+        private readonly World _world;
+        private readonly Lock _lock = new();
+
+        private readonly SemaphoreSlim _startWait = new(0);
+        private bool _started = false;
+        private readonly SemaphoreSlim _turnWait = new(0);
+        private bool _running = true;
+
+        private readonly SimulationSettings _settings;
+        private readonly SimulationStatus _status = new(false, 0, 0);
 
         public Program(World world)
         {
             this._world = world;
+            this._settings = new(
+                new("day", 1),
+                world.Nodes.Cast<LocationDefinition>().ToList(),
+                new(new(World.LowLevelMask, World.HighLevelMask), new(), new(Node.BadTestEfficacy, Node.GoodTestEfficacy)),
+                world.Edges.Cast<Models.Edge>().ToList()
+            );
         }
 
         public void Start()
@@ -26,32 +43,76 @@ namespace Virus
             this._server.Stop();
         }
 
+        public async Task Loop()
+        {
+            await this._startWait.WaitAsync();
+
+            while (this._running)
+            {
+                {
+                    using var _ = await this._lock.Aquire();
+
+                    // Perform a tick.
+                    this._world.Update();
+                }
+
+                // Wait until it is our turn again.
+                this._status.IsWhoTurn = true;
+                await this._turnWait.WaitAsync();
+            }
+        }
+
         public async Task<List<ActionResult>> ApplyActions(List<WhoAction> actions)
         {
+            if (this._status.IsWhoTurn)
+            {
+                throw new Exceptions.TooEarlyException();
+            }
+
+            using var _ = await this._lock.Aquire();
             var results = new List<ActionResult>();
 
             foreach (var action in actions)
             {
-                switch (action.Mode)
-                {
-                    case "create":
-                        this.HandleAction(action, true);
-                        break;
-                    case "delete":
-                        // TODO: pull action from storage
-                        break;
-                    default:
+                var result = new ActionResult(action.Id, 200, "");
 
-                        break;
+                try
+                {
+                    switch (action.Mode)
+                    {
+                        case "create":
+                            this.HandleAction(action, true);
+                            break;
+                        case "delete":
+                            // TODO: pull action from storage
+                            break;
+                        default:
+                            throw new Exceptions.BadRequestException("Mode has to be either 'create' or 'delete'");
+                    }
+                }
+                catch (Exceptions.BaseException ex)
+                {
+                    result.Code = ex.Code;
+                    result.Message = ex.Message;
+                }
+                catch (Exception ex)
+                {
+                    result.Code = 500;
+                    result.Message = ex.Message;
                 }
             }
 
             return results;
         }
 
-        public Task<SimulationStatus> EndTurn()
+        public async Task<SimulationStatus> EndTurn()
         {
-            throw new NotImplementedException();
+            this._status.IsWhoTurn = false;
+            var status = await this.GetStatus();
+
+            this._turnWait.Release();
+
+            return status;
         }
 
         public Task<List<Actor>> GetInfoActor(List<int> ids)
@@ -74,25 +135,31 @@ namespace Virus
             throw new NotImplementedException();
         }
 
-        public Task<List<InfectionTotals>> GetInfoTotals(SearchRequest request)
+        public async Task<List<InfectionTotals>> GetInfoTotals(SearchRequest request)
         {
-            throw new NotImplementedException();
+            using var _ = await this._lock.Aquire();
+
+            return request.Locations.Select(l => this._world.Nodes.Get(l).Totals).ToList();
         }
 
-        public Task<SimulationSettings> GetSettings()
+        public Task<SimulationSettings> GetSettings() => Task.FromResult(this._settings);
+
+        public async Task<SimulationStatus> GetStatus()
         {
-            throw new NotImplementedException();
+            using var _ = await this._lock.Aquire();
+
+            if (!this._started)
+            {
+                this._startWait.Release();
+                this._started = true;
+            }
+
+            this._status.Budget = (int)Math.Floor(this._world.Budget);
+
+            return this._status;
         }
 
-        public Task<SimulationStatus> GetStatus()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Dispose()
-        {
-            this._server.Dispose();
-        }
+        public void Dispose() => this._server.Dispose();
 
         private void HandleAction(WhoAction action, bool create)
         {
@@ -105,7 +172,6 @@ namespace Virus
             {
                 case TestAndIsolation.ActionName:
                     if (create) { this._world.TestAndIsolation(action.Parameters); }
-                    else { this._world.CancelTestAndIsolate(action.Parameters); }
                     break;
                 case StayAtHome.ActionName:
                     if (create) { this._world.StayAtHomeOrder(action.Parameters); }
@@ -133,7 +199,6 @@ namespace Virus
                     break;
                 case InvestInVaccine.ActionName:
                     if (create) { this._world.InvestInVaccine(action.Parameters); }
-                    else { /* TODO: throw exception */ }
                     break;
                 case Furlough.ActionName:
                     if (create) { this._world.FurloughScheme(action.Parameters); }
@@ -141,11 +206,9 @@ namespace Virus
                     break;
                 case InformationPressRelease.ActionName:
                     if (create) { this._world.InformationPressRelease(action.Parameters); }
-                    else { /* TODO: throw exception */ }
                     break;
                 case Loan.ActionName:
                     if (create) { this._world.TakeLoan(action.Parameters); }
-                    else { /* TODO: throw exception */ }
                     break;
                 case MaskMandate.ActionName:
                     if (create) { this._world.MaskMandate(action.Parameters); }

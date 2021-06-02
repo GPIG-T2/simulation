@@ -1,6 +1,8 @@
 ﻿using System;
-using System.Text.Json;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Models;
+using Models.WebSocket;
 using WebSocketSharp;
 using WebSocketSharp.Server;
 
@@ -56,7 +58,7 @@ namespace Virus.Interface
                 }
 
                 // Deserialise message.
-                var request = JsonSerializer.Deserialize<Models.WebSocket.Request>(e.Data);
+                var request = Json.Deserialize<Request>(e.Data);
                 if (request == null)
                 {
                     Console.Error.WriteLine("ERROR: Failed to parse message");
@@ -67,13 +69,97 @@ namespace Virus.Interface
                 var response = await this.HandleMessage(request);
 
                 // Serialise and respond.
-                string data = JsonSerializer.Serialize(response);
+                string data = Json.Serialize(response);
                 this.Send(data);
             }
 
-            private Task<Models.WebSocket.Response> HandleMessage(Models.WebSocket.Request request)
+            private async Task<Response> HandleMessage(Request request)
             {
-                throw new NotImplementedException();
+                var response = new Response(request.Id, 200, "");
+                try
+                {
+                    switch (request.Endpoint)
+                    {
+                        case Endpoints.InfoTotals:
+                            AssertMethod(request.Method, HttpMethod.POST, Endpoints.InfoTotals);
+                            response.Message = Json.Serialize(
+                                await this._handler.GetInfoTotals(Deserialize<SearchRequest>(request.Message))
+                            );
+                            break;
+                        case Endpoints.InfoTestResults:
+                            AssertMethod(request.Method, HttpMethod.POST, Endpoints.InfoTestResults);
+                            response.Message = Json.Serialize(
+                                await this._handler.GetInfoTestResults(Deserialize<SearchRequest>(request.Message))
+                            );
+                            break;
+                        case Endpoints.Status:
+                            switch (request.Method)
+                            {
+                                case HttpMethod.GET:
+                                    request.Message = Json.Serialize(
+                                        await this._handler.GetStatus()
+                                    );
+                                    break;
+                                case HttpMethod.POST:
+                                    request.Message = Json.Serialize(
+                                        await this._handler.EndTurn()
+                                    );
+                                    break;
+                            }
+                            break;
+                        case Endpoints.Settings:
+                            AssertMethod(request.Method, HttpMethod.GET, Endpoints.Settings);
+                            response.Message = Json.Serialize(
+                                await this._handler.GetSettings()
+                            );
+                            break;
+                        case Endpoints.Actions:
+                            AssertMethod(request.Method, HttpMethod.POST, Endpoints.Actions);
+                            response.Message = Json.Serialize(
+                                await this._handler.ApplyActions(Deserialize<List<WhoAction>>(request.Message))
+                            );
+                            break;
+                        default:
+                            throw new Exceptions.BadRequestException($"Endpoint ${request.Endpoint} is not recognised");
+                    }
+                }
+                catch (Exceptions.BaseException ex)
+                {
+                    response.Status = ex.Code;
+                    response.Message = ex.Message;
+                }
+                catch (Exception ex)
+                {
+                    response.Status = 500;
+                    response.Message = ex.Message;
+                }
+
+                return response;
+            }
+
+            private static T Deserialize<T>(string? data)
+            {
+                if (data == null)
+                {
+                    throw new Exceptions.BadRequestException($"Expected message, got null");
+                }
+
+                T? o = Json.Deserialize<T>(data);
+
+                if (o == null)
+                {
+                    throw new Exceptions.BadRequestException($"Failed to deserialise ${data}");
+                }
+
+                return o;
+            }
+
+            private static void AssertMethod(HttpMethod method, HttpMethod target, string endpoint)
+            {
+                if (method != target)
+                {
+                    throw new Exceptions.BadRequestException($"{endpoint} only supports {target}");
+                }
             }
         }
     }

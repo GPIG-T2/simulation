@@ -114,5 +114,8 @@ namespace Virus
         }
 
         //TODO: Add more variable changes - maybe based off compliance in left/right nodes?
+
+        public static explicit operator Models.Edge(Edge edge)
+            => new(edge.Left.Location, edge.Right.Location);
     }
 }

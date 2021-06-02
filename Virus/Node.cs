@@ -577,5 +577,8 @@ namespace Virus
             //TODO: add serious probability to vaccine for effect
             //TODO: add vaccine compliancy 
         }
+
+        public static explicit operator Models.LocationDefinition(Node node)
+            => new(node.Location[0], new(node.XCoordinate, node.YCoordinate), node.Name);
     }
 }

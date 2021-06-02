@@ -117,7 +117,7 @@ namespace Models
             /// An array of effectiveness values, one for each vaccine.
             /// </summary>
             /// <value>An array of effectiveness values, one for each vaccine.</value>
-            public List<float> Vaccines { get; set; }
+            public List<double> Vaccines { get; set; }
 
             /// <summary>
             /// Provides the effectiveness of the low- and high-quality items of a given tool.
@@ -125,7 +125,7 @@ namespace Models
             /// <value>Provides the effectiveness of the low- and high-quality items of a given tool.</value>
             public EffectivenessQuality Tests { get; set; }
 
-            public SimulationEffectivenesses(EffectivenessQuality masks, List<float> vaccines, EffectivenessQuality tests)
+            public SimulationEffectivenesses(EffectivenessQuality masks, List<double> vaccines, EffectivenessQuality tests)
             {
                 this.Masks = masks;
                 this.Vaccines = vaccines;

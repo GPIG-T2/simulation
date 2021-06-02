@@ -9,15 +9,15 @@ namespace Models
         /// Effectiveness of the low-quality item.
         /// </summary>
         /// <value>Effectiveness of the low-quality item.</value>
-        public float LowQuality { get; set; }
+        public double LowQuality { get; set; }
 
         /// <summary>
         /// Effectiveness of the high-quality item.
         /// </summary>
         /// <value>Effectiveness of the high-quality item.</value>
-        public float HighQuality { get; set; }
+        public double HighQuality { get; set; }
 
-        public EffectivenessQuality(float lowQuality, float highQuality)
+        public EffectivenessQuality(double lowQuality, double highQuality)
         {
             this.LowQuality = lowQuality;
             this.HighQuality = highQuality;
