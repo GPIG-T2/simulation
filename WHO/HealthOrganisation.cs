@@ -317,9 +317,9 @@ namespace WHO
             // Get all WhoActions
             List actions;
             if (infectionRate > threshold) {
-                actions = getWhoActions(loc, ActionCostCalculator.ActionMode.Create);
+                actions = getWhoActions(loc, ActionCostCalculator.ActionMode.Create, budgetForLocation);
             } else {
-                actions = getWhoActions(loc, ActionCostCalculator.ActionMode.Delete);
+                actions = getWhoActions(loc, ActionCostCalculator.ActionMode.Delete, budgetForLocation);
             }
 
             // Actions which are collectively all available given the budget
@@ -361,7 +361,7 @@ namespace WHO
             this._tasksToExecute = whoActionsAvailable;
         }
 
-        private List getWhoActions(List<string> loc, ActionCostCalculator.ActionMode mode) {
+        private List getWhoActions(List<string> loc, ActionCostCalculator.ActionMode mode, float budgetForLocation) {
             List actions = new List();
             
             TestAndIsolation testAndIsolation = new(0, 0, 0, loc, false);
@@ -379,40 +379,65 @@ namespace WHO
             Curfew curfew = new(loc);
             actions.Add(curfew);
 
-            // Need to think about investment logic
-            Furlough furlough = new(1000, loc);
-            actions.Add(furlough);
-
-            HealthDrive healthDrive = new(loc);
-            actions.Add(healthDrive);
-
-            // Need to think about investment logic
-            InformationPressRelease informationPressRelease = new(1000, loc);
-            actions.Add(informationPressRelease);
-
-            // Need to think about investment logic
-            InvestInHealthServices investInHealthServices = new(1000);
-            actions.Add(investInHealthServices);
-
-            // Need to think about investment logic
-            InvestInVaccine investInVaccine = new(1000);
-            actions.Add(investInVaccine);
-
-            // Need to think about amount loaned, I don't even know what the loan action does
-            Loan loan = new(1000);
-            actions.Add(loan);
-
-            // Using the action mode determine the level of the mask mandate
-            switch(mode)
+            // Investment - if creating restrictions 15% of the budget will be allocated to investment
+            // If deleting restrictions 25% of the budget will be allocated to investment
+            switch (mode) 
             {
                 case ActionCostCalculator.ActionMode.Create:
+
+                    // Using the action mode determine the level of the mask mandate
                     MaskMandate maskMandate = new(loc, 2);
                     actions.Add(maskMandate);
+
+                    float investmentBudget = budgetForLocation * 0.15;
+
+                    // Each of the following have been given a proportion of the 15% according to their criticality
+                    Furlough furlough = new(investmentBudget * 0.2, loc);
+                    actions.Add(furlough);
+
+                    InformationPressRelease informationPressRelease = new(investmentBudget * 0.1, loc);
+                    actions.Add(informationPressRelease);
+
+                    InvestInHealthServices investInHealthServices = new(investmentBudget * 0.3);
+                    actions.Add(investInHealthServices);
+
+                    InvestInVaccine investInVaccine = new(investmentBudget * 0.3);
+                    actions.Add(investInVaccine);
+
+                    Loan loan = new(investmentBudget * 0.1);
+                    actions.Add(loan);
+
                     break;
                 case ActionCostCalculator.ActionMode.Delete:
+
+                    // Using the action mode determine the level of the mask mandate
                     MaskMandate maskMandate = new(loc, 0);
+                    actions.Add(maskMandate);
+
+                    float investmentBudget = budgetForLocation * 0.25;
+                    
+                    // Each of the following have been given a proportion of the 15% according to their criticality
+                    Furlough furlough = new(investmentBudget * 0.2, loc);
+                    actions.Add(furlough);
+
+                    InformationPressRelease informationPressRelease = new(investmentBudget * 0.1, loc);
+                    actions.Add(informationPressRelease);
+
+                    InvestInHealthServices investInHealthServices = new(investmentBudget * 0.3);
+                    actions.Add(investInHealthServices);
+
+                    InvestInVaccine investInVaccine = new(investmentBudget * 0.3);
+                    actions.Add(investInVaccine);
+
+                    Loan loan = new(investmentBudget * 0.1);
+                    actions.Add(loan);
+
+                    break;
             }
 
+            HealthDrive healthDrive = new(loc);
+            actions.Add(healthDrive);                        
+        
             // Need to think about distances
             MovementRestrictions movementRestrictions = new(loc, 50);
             actions.Add(movementRestricitions);
