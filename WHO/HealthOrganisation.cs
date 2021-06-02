@@ -293,8 +293,6 @@ namespace WHO
             this._tasksToExecute.Add(testAction);
         }
 
-        //ToDo Ask about budget endpoints
-        // Will each location have its own particular budget?
         private void calculateBestAction(int budgetAvailable, List<string> loc, float threshold = 1.2f) 
         {
             string location = string.Join("", loc);
@@ -308,7 +306,13 @@ namespace WHO
             // Calcualte infection rate
             float infectionRate = (asymptomaticInfectedInfectious + symptomaticInfected)/locationPopulation;
 
-            //ToDo Using the population calcualte how much budget should be allocated to that area
+            // Using the proportion of people who are infected calculate an appropriate budget for that location
+            int totalInfections =  this._locationTrackers[ALL_LOCATION_ID].Latest.Value.GetTotalPeople() - this._locationTrackers[ALL_LOCATION_ID].Latest.Value.GetParameterTotals(TrackingValue.Uninfected);
+            int infectionsInArea = this._locationTrackers[location].Latest.Value.GetTotalPeople() - this._locationTrackers[location].Latest.Value.GetParameterTotals(TrackingValue.Uninfected);
+            
+            float percentageOfInfections = (infectionsInArea/totalInfections);
+
+            float budgetForLocation = budgetAvailable * percentageOfInfections;
 
             // Get all WhoActions
             List actions = getWhoActions(loc);
@@ -321,9 +325,9 @@ namespace WHO
                 {
                     float actionCost =  ActionCostCalculator.CalculateCost(action, ActionCostCalculator.ActionMode.Create);
                     
-                    if (actionCost < budgetAvailable) {
+                    if (actionCost < budgetForLocation) {
                         actionsAvailable.Add(action);
-                        budgetAvailable = budgetAvailable - actionCost;
+                        budgetForLocation = budgetForLocation - actionCost;
                     }
                 }
             }
@@ -333,9 +337,9 @@ namespace WHO
                 {
                     float actionCost =  ActionCostCalculator.CalculateCost(action, ActionCostCalculator.ActionMode.Delete);
                     
-                    if (actionCost < budgetAvailable) {
+                    if (actionCost < budgetForLocation) {
                         actionsAvailable.Add(action);
-                        budgetAvailable = budgetAvailable - actionCost;
+                        budgetForLocation = budgetForLocation - actionCost;
                     }
                 }
             }
