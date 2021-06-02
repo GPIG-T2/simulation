@@ -308,14 +308,16 @@ namespace WHO
             // Calcualte infection rate
             float infectionRate = (asymptomaticInfectedInfectious + symptomaticInfected)/locationPopulation;
 
+            //ToDo Using the population calcualte how much budget should be allocated to that area
+
             // Get all WhoActions
-            List<WhoAction> actions = getWhoActions(loc);
+            List actions = getWhoActions(loc);
 
             // Actions which are collectively all available given the budget
-            List<WhoAction> actionsAvailable = new List<WhoAction>();
+            List actionsAvailable = new List();
 
             if (infectionRate > threshold) {
-                foreach (WhoAction action in actions)
+                foreach (Object action in actions)
                 {
                     float actionCost =  ActionCostCalculator.CalculateCost(action, ActionCostCalculator.ActionMode.Create);
                     
@@ -327,7 +329,7 @@ namespace WHO
             }
             else 
             {
-                foreach (WhoAction action in actions)
+                foreach (Object action in actions)
                 {
                     float actionCost =  ActionCostCalculator.CalculateCost(action, ActionCostCalculator.ActionMode.Delete);
                     
@@ -338,82 +340,75 @@ namespace WHO
                 }
             }
 
-            this._tasksToExecute = actionsAvailable;
+            List<WhoAction> whoActionsAvailable = new List<WhoAction>();
+
+            // Convert actions to WhoActions
+            foreach (Object action in actionsAvailable)
+            {
+                WhoAction whoAction = new(this._currentActionId++, action);
+                whoActionsAvailable.Add(whoAction);
+            }
+
+            this._tasksToExecute = whoActionsAvailable;
         }
 
-        private List<WhoAction> getWhoActions(List<string> loc) {
-            // ToDo write this function
-            List<WhoAction> whoActions = new List<WhoAction>();
+        private List getWhoActions(List<string> loc) {
+            List actions = new List();
             
             TestAndIsolation testAndIsolation = new(0, 0, 0, loc, false);
-            WhoAction testAndIsolationAction = new(this._currentActionId++, testAndIsolation);
-            whoActions.Add(testAndIsolationAction);
+            actions.Add(testAndIsolation);
             
             CloseBorders closeBorders = new(loc);
-            WhoAction closeBordersAction = new(this._currentActionId++, closeBorders);
-            whoActions.Add(closeBordersAction);
+            actions.Add(closeBorders);
 
             CloseRecreationalLocations closeRecreationalLocations = new(loc);
-            WhoAction closeRecreationalLocationsAction = new(this._currentActionId++, closeRecreationalLocations);
-            whoActions.Add(closeRecreationalLocationsAction);
+            actions.Add(closeRecreationalLocations);
 
             CloseSchools closeSchools = new(loc);
-            WhoAction closeSchoolsAction = new(this._currentActionId++, closeSchools);
-            whoActions.Add(closeSchoolsAction);
+            actions.Add(closeSchools);
 
             Curfew curfew = new(loc);
-            WhoAction curfewAction = new(this._currentActionId++, curfew);
-            whoActions.Add(curfewAction);
+            actions.Add(curfew);
 
             // Need to think about investment logic
             Furlough furlough = new(1000, loc);
-            WhoAction furloughAction = new(this._currentActionId++, furlough);
-            whoActions.Add(furloughAction);
+            actions.Add(furlough);
 
             HealthDrive healthDrive = new(loc);
-            WhoAction healthDriveAction = new(this._currentActionId++, healthDrive);
-            whoActions.Add(healthDriveAction);
+            actions.Add(healthDrive);
 
             // Need to think about investment logic
             InformationPressRelease informationPressRelease = new(1000, loc);
-            WhoAction informationPressReleaseAction = new(this._currentActionId++, informationPressRelease);
-            whoActions.Add(informationPressReleaseAction);
+            actions.Add(informationPressRelease);
 
             // Need to think about investment logic
             InvestInHealthServices investInHealthServices = new(1000);
-            WhoAction investInHealthServicesAction = new(this._currentActionId++, investInHealthServices);
-            whoActions.Add(investInHealthServicesAction);
+            actions.Add(investInHealthServices);
 
             // Need to think about investment logic
             InvestInVaccine investInVaccine = new(1000);
-            WhoAction investInVaccineAction = new(this._currentActionId++, investInVaccine);
-            whoActions.Add(investInVaccineAction);
+            actions.Add(investInVaccine);
 
             // Need to think about amount loaned, I don't even know what the loan action does
             Loan loan = new(1000);
-            WhoAction loanAction = new(this._currentActionId++, loan);
-            whoActions.Add(loanAction);
+            actions.Add(loan);
 
             // Need to think about the MaskProvisionLevel
             MaskMandate maskMandate = new(loc, 0);
-            WhoAction maskMandateAction = new(this._currentActionId++, maskMandate);
-            whoActions.Add(maskMandateAction);
+            actions.Add(maskMandate);
 
             // Need to think about distances
             MovementRestrictions movementRestrictions = new(loc, 50);
-            WhoAction movementRestricitionsAction = new(this._currentActionId++, movementRestrictions);
-            whoActions.Add(movementRestricitionsAction);
+            actions.Add(movementRestricitions);
 
             // Need to think about distances
             SocialDistancingMandate socialDistancingMandate = new(loc, 50);
-            WhoAction socialDistancingMandateAction = new(this._currentActionId++, socialDistancingMandate);
-            whoActions.Add(socialDistancingMandateAction);
+            actions.Add(socialDistancingMandate);
 
             StayAtHome stayAtHome = new(loc);
-            WhoAction stayAtHomeAction = new(this._currentActionId++, stayAtHome);
-            whoActions.Add(stayAtHomeAction);
+            actions.Add(stayAtHome);
 
-            return whoActions;
+            return actions;
         }
 
     }
