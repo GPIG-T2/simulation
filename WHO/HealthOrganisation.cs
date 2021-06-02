@@ -389,6 +389,14 @@ namespace WHO
                     MaskMandate maskMandate = new(loc, 2);
                     actions.Add(maskMandate);
 
+                    // Make the movement and social distancing measures harsh
+                    MovementRestrictions movementRestrictions = new(loc, 2);
+                    actions.Add(movementRestricitions);
+
+                    SocialDistancingMandate socialDistancingMandate = new(loc, 2);
+                    actions.Add(socialDistancingMandate);
+
+                    // Calculate amoount of budget allocated for investment
                     float investmentBudget = budgetForLocation * 0.15;
 
                     // Each of the following have been given a proportion of the 15% according to their criticality
@@ -414,6 +422,14 @@ namespace WHO
                     MaskMandate maskMandate = new(loc, 0);
                     actions.Add(maskMandate);
 
+                    // Make the movement and social distancing measures harsh
+                    MovementRestrictions movementRestrictions = new(loc, 0);
+                    actions.Add(movementRestricitions);
+
+                    SocialDistancingMandate socialDistancingMandate = new(loc, 0);
+                    actions.Add(socialDistancingMandate);
+
+                    // Calculate amoount of budget allocated for investment
                     float investmentBudget = budgetForLocation * 0.25;
                     
                     // Each of the following have been given a proportion of the 25% according to their criticality
@@ -437,14 +453,6 @@ namespace WHO
 
             HealthDrive healthDrive = new(loc);
             actions.Add(healthDrive);                        
-        
-            // Need to think about distances
-            MovementRestrictions movementRestrictions = new(loc, 50);
-            actions.Add(movementRestricitions);
-
-            // Need to think about distances
-            SocialDistancingMandate socialDistancingMandate = new(loc, 50);
-            actions.Add(socialDistancingMandate);
 
             StayAtHome stayAtHome = new(loc);
             actions.Add(stayAtHome);
