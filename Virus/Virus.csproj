@@ -1,15 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-<<<<<<< Updated upstream
 		<OutputType>Exe</OutputType>
 		<TargetFramework>net5.0</TargetFramework>
 		<StartupObject>Virus.Program</StartupObject>
-=======
-		<TargetFramework>netstandard2.0</TargetFramework>
-		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    <LangVersion>latest</LangVersion>
->>>>>>> Stashed changes
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 </Project>

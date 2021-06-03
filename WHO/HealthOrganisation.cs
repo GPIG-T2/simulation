@@ -312,5 +312,186 @@ namespace WHO
             this._tasksToExecute.Add(testAction);
         }
 
+        private void calculateBestAction(int budgetAvailable, List<string> loc, float threshold = 1.2f)
+        {
+            string location = string.Join("", loc);
+
+            // Calculate amount of people infected
+            var asymptomaticInfectedInfectious = this._locationTrackers[location].Latest.Value.GetParameterTotals(TrackingValue.AsymptomaticInfectedInfectious);
+            var symptomaticInfected = this._locationTrackers[location].Latest.Value.GetParameterTotals(TrackingValue.Symptomatic);
+
+            int locationPopulation = this._locationTrackers[location].Latest.Value.GetTotalPeople();
+
+            // Calcualte infection rate
+            float infectionRate = (asymptomaticInfectedInfectious + symptomaticInfected) / locationPopulation;
+
+            // Using the proportion of people who are infected calculate an appropriate budget for that location
+            int totalInfections = this._locationTrackers[ALL_LOCATION_ID].Latest.Value.GetTotalPeople() - this._locationTrackers[ALL_LOCATION_ID].Latest.Value.GetParameterTotals(TrackingValue.Uninfected);
+            int infectionsInArea = this._locationTrackers[location].Latest.Value.GetTotalPeople() - this._locationTrackers[location].Latest.Value.GetParameterTotals(TrackingValue.Uninfected);
+
+            float percentageOfInfections = (infectionsInArea / totalInfections);
+
+            // Limit the amount of money spent each term to a third of the budget
+            budgetAvailable = budgetAvailable / 3;
+
+            float budgetForLocation = budgetAvailable * percentageOfInfections;
+
+            // Get all WhoActions
+            List<Object> actions;
+
+            if (infectionRate > threshold)
+            {
+                actions = getWhoActions(loc, ActionCostCalculator.ActionMode.Create, budgetForLocation);
+            }
+            else
+            {
+                actions = getWhoActions(loc, ActionCostCalculator.ActionMode.Delete, budgetForLocation);
+            }
+
+            // Actions which are collectively all available given the budget
+            List<Object> actionsAvailable = new List<Object>();
+
+            if (infectionRate > threshold)
+            {
+                foreach (Object action in actions)
+                {
+                    float actionCost = ActionCostCalculator.CalculateCost(action, ActionCostCalculator.ActionMode.Create);
+
+                    if (actionCost < budgetForLocation)
+                    {
+                        actionsAvailable.Add(action);
+                        budgetForLocation = budgetForLocation - actionCost;
+                    }
+                }
+            }
+            else if (infectionRate < (threshold * 0.75))
+            {
+                foreach (Object action in actions)
+                {
+                    float actionCost = ActionCostCalculator.CalculateCost(action, ActionCostCalculator.ActionMode.Delete);
+
+                    if (actionCost < budgetForLocation)
+                    {
+                        actionsAvailable.Add(action);
+                        budgetForLocation = budgetForLocation - actionCost;
+                    }
+                }
+            }
+
+            List<WhoAction> whoActionsAvailable = new List<WhoAction>();
+
+            // Convert actions to WhoActions
+            foreach (Object action in actionsAvailable)
+            {
+                WhoAction whoAction = new(this._currentActionId++, action);
+                whoActionsAvailable.Add(whoAction);
+            }
+
+            foreach (WhoAction whoAction in whoActionsAvailable)
+            {
+                this._tasksToExecute.Add(whoAction);
+            }
+        }
+
+        private List<Object> getWhoActions(List<string> loc, ActionCostCalculator.ActionMode mode, float budgetForLocation)
+        {
+            List<Object> actions = new List<Object>();
+
+            TestAndIsolation testAndIsolation = new(0, 0, 0, loc, false);
+            actions.Add(testAndIsolation);
+
+            CloseBorders closeBorders = new(loc);
+            actions.Add(closeBorders);
+
+            CloseRecreationalLocations closeRecreationalLocations = new(loc);
+            actions.Add(closeRecreationalLocations);
+
+            CloseSchools closeSchools = new(loc);
+            actions.Add(closeSchools);
+
+            Curfew curfew = new(loc);
+            actions.Add(curfew);
+
+            // Investment - if creating restrictions 15% of the budget will be allocated to investment
+            // If deleting restrictions 25% of the budget will be allocated to investment
+            switch (mode)
+            {
+                case ActionCostCalculator.ActionMode.Create:
+
+                    // Using the action mode determine the level of the mask mandate
+                    MaskMandate maskMandate = new(loc, 2);
+                    actions.Add(maskMandate);
+
+                    // Make the movement and social distancing measures harsh
+                    MovementRestrictions movementRestrictions = new(loc, 2);
+                    actions.Add(movementRestrictions);
+
+                    SocialDistancingMandate socialDistancingMandate = new(loc, 2);
+                    actions.Add(socialDistancingMandate);
+
+                    // Calculate amoount of budget allocated for investment
+                    double investmentBudget = budgetForLocation * 0.15;
+
+                    // Each of the following have been given a proportion of the 15% according to their criticality
+                    Furlough furlough = new((int)Math.Round((investmentBudget * 0.2), 0), loc);
+                    actions.Add(furlough);
+
+                    InformationPressRelease informationPressRelease = new((int)Math.Round((investmentBudget * 0.1), 0), loc);
+                    actions.Add(informationPressRelease);
+
+                    InvestInHealthServices investInHealthServices = new((int)Math.Round((investmentBudget * 0.3), 0));
+                    actions.Add(investInHealthServices);
+
+                    InvestInVaccine investInVaccine = new((int)Math.Round((investmentBudget * 0.3), 0));
+                    actions.Add(investInVaccine);
+
+                    Loan loan = new((int)Math.Round((investmentBudget * 0.1), 0));
+                    actions.Add(loan);
+
+                    break;
+                case ActionCostCalculator.ActionMode.Delete:
+
+                    // Using the action mode determine the level of the mask mandate
+                    MaskMandate maskMandateDelete = new(loc, 0);
+                    actions.Add(maskMandateDelete);
+
+                    // Make the movement and social distancing measures harsh
+                    MovementRestrictions movementRestrictionsDelete = new(loc, 0);
+                    actions.Add(movementRestrictionsDelete);
+
+                    SocialDistancingMandate socialDistancingMandateDelete = new(loc, 0);
+                    actions.Add(socialDistancingMandateDelete);
+
+                    // Calculate amoount of budget allocated for investment
+                    double investmentBudgetDelete = budgetForLocation * 0.25;
+
+                    // Each of the following have been given a proportion of the 25% according to their criticality
+                    Furlough furloughDelete = new((int)Math.Round((investmentBudgetDelete * 0.2), 0), loc);
+                    actions.Add(furloughDelete);
+
+                    InformationPressRelease informationPressReleaseDelete = new((int)Math.Round((investmentBudgetDelete * 0.1), 0), loc);
+                    actions.Add(informationPressReleaseDelete);
+
+                    InvestInHealthServices investInHealthServicesDelete = new((int)Math.Round((investmentBudgetDelete * 0.3), 0));
+                    actions.Add(investInHealthServicesDelete);
+
+                    InvestInVaccine investInVaccineDelete = new((int)Math.Round((investmentBudgetDelete * 0.3), 0));
+                    actions.Add(investInVaccineDelete);
+
+                    Loan loanDelete = new((int)Math.Round((investmentBudgetDelete * 0.3), 0));
+                    actions.Add(loanDelete);
+
+                    break;
+            }
+
+            HealthDrive healthDrive = new(loc);
+            actions.Add(healthDrive);
+
+            StayAtHome stayAtHome = new(loc);
+            actions.Add(stayAtHome);
+
+            return actions;
+        }
+
     }
 }
