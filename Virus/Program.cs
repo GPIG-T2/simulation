@@ -78,15 +78,15 @@ namespace Virus
 
                 try
                 {
-                    switch (action.Mode)
-                    {
-                        case "create":
-                            this.HandleAction(action, true);
-                            break;
-                        case "delete":
-                            // TODO: pull action from storage
-                            break;
-                        default:
+                switch (action.Mode)
+                {
+                    case "create":
+                        this.HandleAction(action, true);
+                        break;
+                    case "delete":
+                        // TODO: pull action from storage
+                        break;
+                    default:
                             throw new Exceptions.BadRequestException("Mode has to be either 'create' or 'delete'");
                     }
                 }
@@ -149,10 +149,10 @@ namespace Virus
             using var _ = await this._lock.Aquire();
 
             if (!this._started)
-            {
+        {
                 this._startWait.Release();
                 this._started = true;
-            }
+        }
 
             this._status.Budget = (int)Math.Floor(this._world.Budget);
 
@@ -172,6 +172,7 @@ namespace Virus
             {
                 case TestAndIsolation.ActionName:
                     if (create) { this._world.TestAndIsolation(action.Parameters); }
+                    else { this._world.CancelTestAndIsolate(action.Parameters); }
                     break;
                 case StayAtHome.ActionName:
                     if (create) { this._world.StayAtHomeOrder(action.Parameters); }
@@ -199,6 +200,7 @@ namespace Virus
                     break;
                 case InvestInVaccine.ActionName:
                     if (create) { this._world.InvestInVaccine(action.Parameters); }
+                    else { /* TODO: throw exception */ }
                     break;
                 case Furlough.ActionName:
                     if (create) { this._world.FurloughScheme(action.Parameters); }
@@ -206,9 +208,11 @@ namespace Virus
                     break;
                 case InformationPressRelease.ActionName:
                     if (create) { this._world.InformationPressRelease(action.Parameters); }
+                    else { /* TODO: throw exception */ }
                     break;
                 case Loan.ActionName:
                     if (create) { this._world.TakeLoan(action.Parameters); }
+                    else { /* TODO: throw exception */ }
                     break;
                 case MaskMandate.ActionName:
                     if (create) { this._world.MaskMandate(action.Parameters); }

@@ -170,7 +170,7 @@ namespace Virus
 
             // TODO: rework cost calculations elsewhere
             //(weekly cost/7) * number of schoolaged children
-            this.Budget -= (CloseSchoolsStudentCost / 7) * this._nodes[i].TotalPopulation * this._nodes[i].Demographics[1];
+            this.Budget -= (CloseSchoolsStudentCost / 7) * this._nodes[i].TotalPopulation * this._nodes[i].NodeDemographics.FiveToSeventeen;
             return PressReleaseCost * this._nodes[i].TotalPopulation;
         }
 
@@ -181,8 +181,8 @@ namespace Virus
         {
             int i = p.Location.ToNodeIndex();
             this._nodes.Get(p.Location).CancelCloseSchools();
-            this.Budget += (CloseSchoolsStudentCost / 7) * this._nodes[i].TotalPopulation * this._nodes[i].Demographics[1];
-
+            this.Budget += (CloseSchoolsStudentCost / 7) * this._nodes[i].TotalPopulation * this._nodes[i].NodeDemographics.FiveToSeventeen;
+            
         }
 
         /// <summary>
