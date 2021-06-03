@@ -34,6 +34,7 @@ namespace Virus
 
         public Node[] Nodes => this._nodes;
         public Edge[] Edges => this._edges;
+        public int Day => this._day;
 
         private readonly Node[] _nodes;
         private readonly Edge[] _edges;
@@ -102,7 +103,6 @@ namespace Virus
             {
                 n.Update(this._virus);
                 n.Infect(edgeInfections[n.Index]);
-                n.IncrementHead();
                 this._budgetIncrease = 10 * n.Totals.SeriousInfection + n.Totals.Dead;
             }
 
@@ -182,7 +182,6 @@ namespace Virus
             int i = p.Location.ToNodeIndex();
             this._nodes.Get(p.Location).CancelCloseSchools();
             this.Budget += (CloseSchoolsStudentCost / 7) * this._nodes[i].TotalPopulation * this._nodes[i].NodeDemographics.FiveToSeventeen;
-            
         }
 
         /// <summary>

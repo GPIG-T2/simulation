@@ -105,7 +105,6 @@ namespace Virus
         private readonly CycleQueue<int> _seriousHistory = new(14);
         private Demographics _interactivity;
         private double _interactivityModifier = 1;
-        private int _historyHead = 0;
 
         private bool _testing = false;
         private bool _sympTesting = false;
@@ -180,28 +179,31 @@ namespace Virus
                     //will use all goodtests first before resorting to bad tests
                     if (this._goodTests > this._testingCapacity)
                     {
-                        turnIsolated += (int)((this.Totals.Symptomatic/(double) this.TotalPopulation) * GoodTestEfficacy * this._testingCapacity);
+                        turnIsolated += (int)((this.Totals.Symptomatic / (double)this.TotalPopulation) * GoodTestEfficacy * this._testingCapacity);
                         this.PositiveTests += turnIsolated;
                         this.TestsAdministered += this._testingCapacity;
-                    } else if ((this._badTests + this._goodTests) > this._testingCapacity)
+                    }
+                    else if ((this._badTests + this._goodTests) > this._testingCapacity)
                     {
                         turnIsolated += (int)((this.Totals.Symptomatic / (double)this.TotalPopulation) * GoodTestEfficacy * this._goodTests);
                         turnIsolated += (int)((this.Totals.Symptomatic / (double)this.TotalPopulation) * BadTestEfficacy * (this._testingCapacity - this._goodTests));
                         this.PositiveTests += turnIsolated;
                         this.TestsAdministered += this._testingCapacity;
-                    } else
+                    }
+                    else
                     {
                         turnIsolated += (int)((this.Totals.Symptomatic / (double)this.TotalPopulation) * GoodTestEfficacy * this._goodTests);
                         turnIsolated += (int)((this.Totals.Symptomatic / (double)this.TotalPopulation) * BadTestEfficacy * this._badTests);
                         this.PositiveTests += turnIsolated;
                         this.TestsAdministered += this._goodTests + this._badTests;
                     }
-                } else
+                }
+                else
                 {
                     if (this._goodTests > this._testingCapacity)
                     {
                         turnIsolated += (int)(((this.TotalPopulation - this.Totals.Uninfected - this.Totals.RecoveredImmune) / (double)this.TotalPopulation) * GoodTestEfficacy * this._testingCapacity);
-                        falsePositives += (int)(((this.Totals.Uninfected + this.Totals.RecoveredImmune) / (double)this.TotalPopulation) * (1-GoodTestEfficacy) * this._testingCapacity);
+                        falsePositives += (int)(((this.Totals.Uninfected + this.Totals.RecoveredImmune) / (double)this.TotalPopulation) * (1 - GoodTestEfficacy) * this._testingCapacity);
                         this.TestsAdministered += this._testingCapacity;
                         this.PositiveTests += turnIsolated + falsePositives;
                     }
@@ -229,8 +231,8 @@ namespace Virus
             //adds people isolated this turn to total isolation numbers + isolation history
             turnIsolated = (int)(this._compliance * turnIsolated);
             falsePositives = (int)(this._compliance * falsePositives);
-            this._isolated -= this._isolationHistory[1];
-            this._falseIsolated -= this._falseIsolationHistory[1];
+            this._isolated -= this._isolationHistory.Front;
+            this._falseIsolated -= this._falseIsolationHistory.Front;
             this._isolated += turnIsolated;
             this._falseIsolated += falsePositives;
             this._isolationHistory.Push(turnIsolated);
@@ -243,12 +245,14 @@ namespace Virus
                 - this._isolated;
 
             // find the aggregate interactivity by multiplying demographic interactivities by node demographics
-            double aggregateInteractivity = aggregateDemographics(this._interactivity);
+            double aggregateInteractivity = this.AggregateDemographics(this._interactivity);
 
             // infectiousness (infectious interactions) decided by the number of infectious people, the portion of the population which can be infected, and the interactivity of the node
             // TODO: Unsure if uninfected/totalPopulation is appropriate for this utiliziation - may need specific statstical method
-            double infectiousness = totalInfectious * ((double)this.Totals.Uninfected / (double)this.TotalPopulation - this._falseIsolated) * aggregateInteractivity * this._interactivityModifier;
-            infectiousness *= aggregateDemographics(virus.Infectivity); //multiplies interactions * infectivity to get total number of people infected
+            double infectiousness = totalInfectious
+                * ((double)this.Totals.Uninfected / (double)this.TotalPopulation - this._falseIsolated)
+                * aggregateInteractivity * this._interactivityModifier;
+            infectiousness *= this.AggregateDemographics(virus.Infectivity); //multiplies interactions * infectivity to get total number of people infected
             // the infectiousness is the number of people infected + the chance of 1 more
             int infected = (int)Math.Floor(infectiousness);
 
@@ -273,7 +277,8 @@ namespace Virus
             this.Totals.AsymptomaticInfectedInfectious += this._asympHistory[aUninf2InfOffset];
 
             // follwing 4 days (2 days after asympUninf -> asympInf) a portion of the asympInf move to symp depdendent on symptomaticity
-            int aInf2Symp = (int)Math.Floor((double)this._asympHistory[aInf2SympOffset] * aggregateDemographics(virus.Symptomaticity)); //rounds to 0 under 1
+            int aInf2Symp = (int)Math.Floor((double)this._asympHistory[aInf2SympOffset]
+                * this.AggregateDemographics(virus.Symptomaticity)); //rounds to 0 under 1
             this.Totals.AsymptomaticInfectedInfectious -= aInf2Symp;
             this.Totals.Symptomatic += aInf2Symp;
             // moves histories
@@ -286,14 +291,16 @@ namespace Virus
 
             // a portion (25% - should be variable) of symptomatic go to serious after 2 days
             // TODO - replace 0.5 with proper virus variable
-            int symp2Serious = (int)Math.Floor((double)this._sympHistory[symp2SeriousOffset] * aggregateDemographics(virus.SeriousRate));
+            int symp2Serious = (int)Math.Floor((double)this._sympHistory[symp2SeriousOffset]
+                * this.AggregateDemographics(virus.SeriousRate));
             this.Totals.Symptomatic -= symp2Serious;
             this.Totals.SeriousInfection += symp2Serious;
             this._sympHistory[symp2SeriousOffset] -= symp2Serious;
             this._seriousHistory[symp2SeriousOffset] += symp2Serious;
 
             // a portion of serious cases result in death - depdenent on virus fatality rate
-            int serious2Dead = (int)Math.Floor((double)this._seriousHistory[serious2DeadOffset] * aggregateDemographics(virus.Fatality) * _localLethality);
+            int serious2Dead = (int)Math.Floor((double)this._seriousHistory[serious2DeadOffset]
+                * this.AggregateDemographics(virus.Fatality) * this._localLethality);
             this.Totals.SeriousInfection -= serious2Dead;
             this.Totals.Dead += serious2Dead;
             this.TotalPopulation -= serious2Dead; //removes dead people from the current population
@@ -309,15 +316,17 @@ namespace Virus
             this.Totals.RecoveredImmune += asymp2Recovered + symp2Recovered + serious2Recovered;
 
             // moves a proportion of recovered to uninfected based on virus reinfectivity
-            int reinfections = (int)Math.Floor(this.Totals.RecoveredImmune * aggregateDemographics(virus.Reinfectivity));
+            int reinfections = (int)Math.Floor(this.Totals.RecoveredImmune * this.AggregateDemographics(virus.Reinfectivity));
             this.Totals.RecoveredImmune -= reinfections;
             this.Totals.Uninfected += reinfections;
 
             //changes complaince by the compliance modifier
             this._compliance = this._baseCompliance * this._complianceModifiers;
 
-            // Increment head not included in update - has to be done by world
-            // This is due to edges also needing to use the head for infections
+            // Increment head
+            this._asympHistory.Push(0);
+            this._sympHistory.Push(0);
+            this._seriousHistory.Push(0);
         }
 
         /// <summary>
@@ -339,7 +348,7 @@ namespace Virus
         /// Vaccinates a given number of people, taking them from uninfected to recovered immune
         /// </summary>
         /// <param name="pop"></param>
-        private void vaccinatePeople(int pop)
+        private void VaccinatePeople(int pop)
         {
             if (pop > this.Totals.Uninfected)
             {
@@ -350,21 +359,11 @@ namespace Virus
         }
 
         /// <summary>
-        /// Increments the head of the infection history (queue).
-        /// </summary>
-        public void IncrementHead()
-        {
-            this._asympHistory.Push(0);
-            this._sympHistory.Push(0);
-            this._seriousHistory.Push(0);
-        }
-
-        /// <summary>
-        /// Gets an average value by applting across all demographics
+        /// Gets an average value by applying across all demographics
         /// </summary>
         /// <param name="demographics"></param>
         /// <returns>An aggregate average value taking into account demographic makeup</returns>
-        private double aggregateDemographics (Demographics demographics)
+        private double AggregateDemographics(Demographics demographics)
         {
             return this.NodeDemographics.UnderFive * demographics.UnderFive
                 + this.NodeDemographics.FiveToSeventeen * demographics.FiveToSeventeen
@@ -407,7 +406,8 @@ namespace Virus
             if (goodTest)
             {
                 this._goodTests += testQuantity;
-            } else
+            }
+            else
             {
                 this._badTests += testQuantity;
             }
@@ -595,7 +595,7 @@ namespace Virus
         public void InformationPressRelease()
         {
             this._interactivityModifier *= Math.Min(1, InformationPressReleaseBestEfficacy + (this.NumPressReleases * InformationPressReleaseDiminishmentRate));
-            this.PublicOpinion = Math.Min(1, this.PublicOpinion + InformationPressReleaseBestPublicOpinionBoost - Math.Max((this.NumPressReleases * InformationPressReleaseDiminishmentRate),0.5));
+            this.PublicOpinion = Math.Min(1, this.PublicOpinion + InformationPressReleaseBestPublicOpinionBoost - Math.Max((this.NumPressReleases * InformationPressReleaseDiminishmentRate), 0.5));
         }
 
         /// <summary>
