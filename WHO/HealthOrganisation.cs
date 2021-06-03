@@ -388,7 +388,7 @@ namespace WHO
             // Convert actions to WhoActions
             foreach (Object action in actionsAvailable)
             {
-                WhoAction whoAction = new(this._currentActionId++, action);
+                WhoAction whoAction = new(this._currentActionId++, new(action.GetType().Name));
                 whoActionsAvailable.Add(whoAction);
             }
 
