@@ -14,13 +14,13 @@ namespace Virus
         public Demographics Symptomaticity { get; }
         public Demographics SeriousRate { get; }
 
-        public Virus(Demographics infectivity, Demographics fatality, Demographics reinfectivity, Demographics symptomaticity, Demographics serious)
+        public Virus(Demographics infectivity, Demographics fatality, Demographics reinfectivity, Demographics symptomaticity, Demographics seriousRate)
         {
             this.Infectivity = infectivity;
             this.Fatality = fatality;
             this.Reinfectivity = reinfectivity;
             this.Symptomaticity = symptomaticity;
-            this.SeriousRate = serious;
+            this.SeriousRate = seriousRate;
         }
     }
 }

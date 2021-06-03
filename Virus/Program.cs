@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,6 +11,54 @@ namespace Virus
 {
     public class Program : Interface.IHandler, IDisposable
     {
+        private const int _totalDays = 365;
+
+        public static async Task<int> Main(string[] args)
+        {
+            string path;
+            if (args.Length < 1)
+            {
+                Console.Write("World file: ");
+                string? result = Console.ReadLine();
+
+                if (result == null)
+                {
+                    return 1;
+                }
+
+                path = result;
+            }
+            else
+            {
+                path = args[0];
+            }
+
+            if (!File.Exists(path))
+            {
+                Console.WriteLine($"File at '{path}' not found");
+                return 1;
+            }
+
+            string json = File.ReadAllText(path);
+            var data = Json.Deserialize<Serialization.WorldData>(json);
+
+            if (data == null)
+            {
+                Console.WriteLine("Failed to load world");
+                return 1;
+            }
+
+            var world = (World)data;
+            Console.WriteLine("Loaded world");
+
+            using var program = new Program(world);
+
+            program.Start();
+            await program.Loop();
+
+            return 0;
+        }
+
         private readonly Interface.IServer _server = new Interface.WebSocket();
         private readonly World _world;
         private readonly Lock _lock = new();
@@ -17,7 +66,6 @@ namespace Virus
         private readonly SemaphoreSlim _startWait = new(0);
         private bool _started = false;
         private readonly SemaphoreSlim _turnWait = new(0);
-        private bool _running = true;
 
         private readonly SimulationSettings _settings;
         private readonly SimulationStatus _status = new(false, 0, 0);
@@ -27,9 +75,9 @@ namespace Virus
             this._world = world;
             this._settings = new(
                 new("day", 1),
-                world.Nodes.Cast<LocationDefinition>().ToList(),
+                world.Nodes.Select(n => (LocationDefinition)n).ToList(),
                 new(new(World.LowLevelMask, World.HighLevelMask), new(), new(Node.BadTestEfficacy, Node.GoodTestEfficacy)),
-                world.Edges.Cast<Models.Edge>().ToList()
+                world.Edges.Select(e => (Models.Edge)e).ToList()
             );
         }
 
@@ -47,16 +95,18 @@ namespace Virus
         {
             await this._startWait.WaitAsync();
 
-            while (this._running)
+            while (this._world.Day < _totalDays)
             {
                 {
                     using var _ = await this._lock.Aquire();
 
                     // Perform a tick.
+                    Console.WriteLine("Processing update...");
                     this._world.Update();
                 }
 
                 // Wait until it is our turn again.
+                Console.WriteLine("Waiting for WHO...");
                 this._status.IsWhoTurn = true;
                 await this._turnWait.WaitAsync();
             }
@@ -78,15 +128,15 @@ namespace Virus
 
                 try
                 {
-                switch (action.Mode)
-                {
-                    case "create":
-                        this.HandleAction(action, true);
-                        break;
-                    case "delete":
-                        // TODO: pull action from storage
-                        break;
-                    default:
+                    switch (action.Mode)
+                    {
+                        case "create":
+                            this.HandleAction(action, true);
+                            break;
+                        case "delete":
+                            // TODO: pull action from storage
+                            break;
+                        default:
                             throw new Exceptions.BadRequestException("Mode has to be either 'create' or 'delete'");
                     }
                 }
@@ -149,10 +199,10 @@ namespace Virus
             using var _ = await this._lock.Aquire();
 
             if (!this._started)
-        {
+            {
                 this._startWait.Release();
                 this._started = true;
-        }
+            }
 
             this._status.Budget = (int)Math.Floor(this._world.Budget);
 

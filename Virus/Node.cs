@@ -61,7 +61,6 @@ namespace Virus
         public const double InformationPressReleaseDiminishmentRate = 0.05;
         public const double InformationPressReleaseBestPublicOpinionBoost = 0.5;
 
-
         public const double MaskMandateProvidedPublicOpinion = 0.7;
         public const double MaskMandateUnprovidedPublicOpinion = 0.4;
         public const double CancelMaskMandateProvidedPublicOpinion = 0.75;
@@ -94,8 +93,7 @@ namespace Virus
         public List<string> Location { get; }
         public int TotalPopulation { get; set; }
         public Models.InfectionTotals Totals { get; }
-        public int XCoordinate { get; set; }
-        public int YCoordinate { get; set; }
+        public Models.Coordinate Position { get; }
         public string Name { get; set; }
 
         private readonly Random _random = new();
@@ -124,7 +122,6 @@ namespace Virus
         public double PublicOpinion { get; set; } = 1;
         public int NumPressReleases { get; set; } = 0;
 
-
         private readonly double _baseCompliance = 0.8;
         private double _compliance = 0.8; // between 0-1 as a modifier on WHO actions
         private double _complianceModifiers = 1; // used to track drops in compliance over time
@@ -144,7 +141,7 @@ namespace Virus
         private bool _stayAtHomeBool = false;
         private bool _closeRecArea = false;
 
-        public Node(int index, int population, Demographics interactivity, string name, int x, int y, Demographics demographics, double gdp, int testingCapacity)
+        public Node(int index, int population, Demographics interactivity, string name, Models.Coordinate position, Demographics demographics, double gdp, int testingCapacity)
         {
             this.Index = index;
             this.Location = new List<string> { $"N{index}" };
@@ -154,8 +151,7 @@ namespace Virus
 
             this._interactivity = interactivity;
             this.Name = name;
-            this.XCoordinate = x;
-            this.YCoordinate = y;
+            this.Position = position;
             this.NodeDemographics = demographics;
             this.Gdp = gdp;
             this._testingCapacity = testingCapacity;
@@ -265,7 +261,6 @@ namespace Virus
 
             // infects the population
             this.Infect(infected);
-
 
             // based on the infection history, moves people through levels of infectiousness
             // asympUninf (2 days) -> asympInf (2 days)
@@ -718,6 +713,6 @@ namespace Virus
         }
 
         public static explicit operator Models.LocationDefinition(Node node)
-            => new(node.Location[0], new(node.XCoordinate, node.YCoordinate), node.Name);
+            => new(node.Location[0], node.Position, node.Name);
     }
 }

@@ -7,14 +7,15 @@
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 	<ItemGroup>
-	  <ProjectReference Include="..\Models\Models.csproj" />
+		<ProjectReference Include="..\Models\Models.csproj" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Folder Include="Interface\" />
-	  <Folder Include="Exceptions\" />
+		<Folder Include="Interface\" />
+		<Folder Include="Exceptions\" />
+		<Folder Include="Serialization\" />
 	</ItemGroup>
 	<ItemGroup>
-	  <PackageReference Include="WebSocketSharp-netstandard" Version="1.0.1" />
-	  <PackageReference Include="System.Text.Json" Version="5.0.2" />
+		<PackageReference Include="WebSocketSharp-netstandard" Version="1.0.1" />
+		<PackageReference Include="System.Text.Json" Version="5.0.2" />
 	</ItemGroup>
 </Project>
