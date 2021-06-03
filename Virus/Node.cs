@@ -54,6 +54,10 @@ namespace Virus
 
         //TOO LAZY TO DO THE REST RIGHT NOW
 
+        public const int InfectiousWait = 2;
+        public const int SympomaticWait = 4;
+        public const int SeriousWait = 6;
+        public const int DeadWait = 8;
 
         public int Index { get; }
         public List<string> Location { get; }
@@ -65,11 +69,10 @@ namespace Virus
 
         private readonly Random _random = new();
         private readonly int _startPopulation;
-        private readonly int[] _asympHistory = new int[14]; // infections last 14 days
-        private readonly int[] _sympHistory = new int[14];
-        private readonly int[] _seriousHistory = new int[14];
+        private readonly CycleQueue<int> _asympHistory = new(14); // infections last 14 days
+        private readonly CycleQueue<int> _sympHistory = new(14);
+        private readonly CycleQueue<int> _seriousHistory = new(14);
         private double _interactivity;
-        private int _historyHead = 0;
 
         // variables for WHO effects and effectiveness
         public double Gdp { get; set; } = 50;
@@ -144,53 +147,48 @@ namespace Virus
 
             // based on the infection history, moves people through levels of infectiousness
             // asympUninf (2 days) -> asympInf (2 days)
-            int aUninf2InfHead = (this._historyHead + 14 - 2) % 14;
-            int aInf2SympHead = (this._historyHead + 14 - 4) % 14;
+            int aUninf2InfOffset = -InfectiousWait;
+            int aInf2SympOffset = -SympomaticWait;
 
             // following 2 days, all asympUninf go to asympInf
-            this.Totals.AsymptomaticInfectedNotInfectious -= this._asympHistory[aUninf2InfHead];
-            this.Totals.AsymptomaticInfectedInfectious += this._asympHistory[aUninf2InfHead];
+            this.Totals.AsymptomaticInfectedNotInfectious -= this._asympHistory[aUninf2InfOffset];
+            this.Totals.AsymptomaticInfectedInfectious += this._asympHistory[aUninf2InfOffset];
 
             // follwing 4 days (2 days after asympUninf -> asympInf) a portion of the asympInf move to symp depdendent on symptomaticity
-            int aInf2Symp = (int)Math.Floor((double)this._asympHistory[aInf2SympHead] * virus.Symptomaticity); //rounds to 0 under 1
+            int aInf2Symp = (int)Math.Floor((double)this._asympHistory[aInf2SympOffset] * virus.Symptomaticity); //rounds to 0 under 1
             this.Totals.AsymptomaticInfectedInfectious -= aInf2Symp;
             this.Totals.Symptomatic += aInf2Symp;
             // moves histories
-            this._sympHistory[aInf2SympHead] += aInf2Symp;
-            this._asympHistory[aInf2SympHead] -= aInf2Symp;
+            this._sympHistory[aInf2SympOffset] += aInf2Symp;
+            this._asympHistory[aInf2SympOffset] -= aInf2Symp;
 
             // symp (2 day min) -> serious (2 day min) 
-            int symp2SeriousHead = (this._historyHead + 14 - 6) % 14;
-            int serious2DeadHead = (this._historyHead + 14 - 8) % 14;
+            int symp2SeriousOffset = -SeriousWait;
+            int serious2DeadOffset = -DeadWait;
 
             // a portion (25% - should be variable) of symptomatic go to serious after 2 days
             // TODO - replace 0.5 with proper virus variable
-            int symp2Serious = (int)Math.Floor((double)this._sympHistory[symp2SeriousHead] * virus.SeriousRate);
+            int symp2Serious = (int)Math.Floor((double)this._sympHistory[symp2SeriousOffset] * virus.SeriousRate);
             this.Totals.Symptomatic -= symp2Serious;
             this.Totals.SeriousInfection += symp2Serious;
-            this._sympHistory[symp2SeriousHead] -= symp2Serious;
-            this._seriousHistory[symp2SeriousHead] += symp2Serious;
+            this._sympHistory[symp2SeriousOffset] -= symp2Serious;
+            this._seriousHistory[symp2SeriousOffset] += symp2Serious;
 
             // a portion of serious cases result in death - depdenent on virus fatality rate
-            int serious2Dead = (int)Math.Floor((double)this._seriousHistory[serious2DeadHead] * virus.Fatality * _localLethality);
+            int serious2Dead = (int)Math.Floor((double)this._seriousHistory[serious2DeadOffset] * virus.Fatality * _localLethality);
             this.Totals.SeriousInfection -= serious2Dead;
             this.Totals.Dead += serious2Dead;
             this.TotalPopulation -= serious2Dead; //removes dead people from the current population
-            this._seriousHistory[serious2DeadHead] -= serious2Dead; //removed from history for recovery tracking
+            this._seriousHistory[serious2DeadOffset] -= serious2Dead; //removed from history for recovery tracking
 
             // at the end of the 14 day period - everyone infected 14 days ago still alive recovers
-            int historyEnd = (_historyHead + 1) % 14;
-            int asymp2Recovered = this._asympHistory[historyEnd];
-            int symp2Recovered = this._sympHistory[historyEnd];
-            int serious2Recovered = this._seriousHistory[historyEnd];
+            int asymp2Recovered = this._asympHistory[1];
+            int symp2Recovered = this._sympHistory[1];
+            int serious2Recovered = this._seriousHistory[1];
             this.Totals.AsymptomaticInfectedInfectious -= asymp2Recovered;
             this.Totals.Symptomatic -= symp2Recovered;
             this.Totals.SeriousInfection -= serious2Recovered;
             this.Totals.RecoveredImmune += asymp2Recovered + symp2Recovered + serious2Recovered;
-            // clears history at the end
-            this._asympHistory[historyEnd] = 0;
-            this._sympHistory[historyEnd] = 0;
-            this._seriousHistory[historyEnd] = 0;
 
             // moves a proportion of recovered to uninfected based on virus reinfectivity
             int reinfections = (int)Math.Floor(this.Totals.RecoveredImmune * virus.Reinfectivity);
@@ -216,7 +214,7 @@ namespace Virus
             }
             this.Totals.Uninfected -= pop;
             this.Totals.AsymptomaticInfectedNotInfectious += pop;
-            this._asympHistory[this._historyHead] += pop;
+            this._asympHistory.Front += pop;
         }
 
         /// <summary>
@@ -224,7 +222,9 @@ namespace Virus
         /// </summary>
         public void IncrementHead()
         {
-            this._historyHead = (this._historyHead + 1) % 14;
+            this._asympHistory.Push(0);
+            this._sympHistory.Push(0);
+            this._seriousHistory.Push(0);
         }
 
         /// <summary>
