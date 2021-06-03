@@ -341,7 +341,7 @@ namespace WHO
                     }
                 }
             }
-            else 
+            else if (infectionRate < (threshold * 0.75))
             {
                 foreach (Object action in actions)
                 {
