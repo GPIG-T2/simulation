@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace WHO.Tracking
 {
-    class LocationTracker
+    public class LocationTracker
     {
 
         private readonly List<InfectionTotals> _totals = new();
@@ -101,6 +101,11 @@ namespace WHO.Tracking
             if (secondStep < 0 || secondStep >= this.Count)
             {
                 throw new ArgumentOutOfRangeException(nameof(secondStep), secondStep, $"{nameof(secondStep)} must be between 0 and {this.Count}");
+            }
+
+            if (secondStep < firstStep)
+            {
+                throw new ArgumentOutOfRangeException(nameof(secondStep), secondStep, $"{nameof(secondStep)} must be greater than or equal to {nameof(firstStep)}");
             }
 
             var first = this.Get(firstStep);

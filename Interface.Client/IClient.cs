@@ -15,5 +15,6 @@ namespace Interface.Client
         Task<SimulationStatus> GetStatus();
         Task<SimulationSettings> GetSettings();
         Task<List<ActionResult>> ApplyActions(List<WhoAction> actions);
+        Task<SimulationStatus> EndTurn();
     }
 }

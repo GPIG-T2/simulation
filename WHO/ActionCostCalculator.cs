@@ -19,13 +19,13 @@ namespace WHO
             Delete
         }
 
-        private const float PressReleaseCost = 0.01f;
+        public const float PressReleaseCost = 0.01f;
         
-        private const float BadTestCost = 5.5f;
-        private const float GoodTestCost = 140f;
+        public const float BadTestCost = 5.5f;
+        public const float GoodTestCost = 140f;
 
-        private const int LowLevelMaskCost = 1;
-        private const int HighLevelMaskCost = 15;
+        public const int LowLevelMaskCost = 1;
+        public const int HighLevelMaskCost = 15;
 
         private static int GetTotalPeople(List<string> location)
         {
@@ -38,15 +38,19 @@ namespace WHO
             return latestInformation == null ? -1 : latestInformation.GetTotalPeople() * PressReleaseCost;
         }
 
-        public static float CalculateCost(InformationPressRelease pressRelease, ActionMode _)
+        public static float CalculateCost(InformationPressRelease pressRelease, ActionMode mode)
         {
+            if (mode == ActionMode.Delete)
+            {
+                return -1;
+            }
+
             List<string> location = pressRelease.Location;
             return GetPressReleaseCost(location);
         }
 
         public static float CalculateCost(TestAndIsolation testAndIsolation, ActionMode mode)
         {
-            
             return mode == ActionMode.Delete ? 0 : testAndIsolation.TestQuality switch
             {
                 0 => testAndIsolation.Quantity * BadTestCost,

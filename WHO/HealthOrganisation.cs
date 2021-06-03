@@ -7,24 +7,31 @@ using Models;
 using Models.Parameters;
 using Serilog;
 using WHO.Tracking;
-using WHO.Interface;
+using Interface.Client;
 using WHO.Extensions;
 using System.Linq;
 using Serilog.Debugging;
+using System.Runtime.CompilerServices;
 
 namespace WHO
 {
-    class HealthOrganisation : IAsyncDisposable
+    public class HealthOrganisation : IAsyncDisposable
     {
 
         public static HealthOrganisation Instance { get; private set; }
+
+        internal static void SetInstanceForTestingOnly(HealthOrganisation org)
+        {
+            Instance = org;
+        }
 
         /// <summary>
         /// Constant for referring to the global tracker
         /// </summary>
         private const string ALL_LOCATION_ID = "_all";
 
-        private readonly IClient _client;
+        [AllowNull]
+        private IClient _client;
 
         private const int _statusPingDelayInMs = 100;
 
@@ -69,20 +76,30 @@ namespace WHO
         /// </summary>
         private readonly List<ITrigger> _triggersForGlobal = new();
 
+        public int TriggerCount => this._triggersForGlobal.Count + this._triggersForLocalLocations.Count;
+
         /// <summary>
         /// Keeps track of the current action id 
         /// </summary>
         private int _currentActionId = 0;
 
-        public HealthOrganisation(string uri)
+        public HealthOrganisation(string uri) : this(new WebSocket(uri))
+        {
+        }
+
+        public HealthOrganisation(IClient client)
         {
             if (Instance != null)
             {
                 throw new InvalidOperationException("Cannot instantiate two copies of the health organisation");
             }
             Instance = this;
-            this.CreateTriggers();
-            this._client = new WebSocket(uri);
+            this._client = client;
+        }
+
+        public void SetLocationTrackerFromTest(Dictionary<string, LocationTracker> tracker)
+        {
+            this._locationTrackers = tracker;
         }
 
         public void CreateTriggers()
@@ -107,12 +124,18 @@ namespace WHO
             await this.GetTrackingInformation();
         }
 
+        public void Stop()
+        {
+            this._running = false;
+        }
+
         public async Task Run()
         {
             if (this._running)
             {
                 throw new InvalidOperationException("Health Organisation is already running");
             }
+            this.CreateTriggers();
 
             this._running = true;
             bool firstTurn = true;
@@ -157,7 +180,7 @@ namespace WHO
             // Loop through all the triggers and if they should be applied then apply them
             foreach (var trigger in this._triggersForLocalLocations)
             {
-                if (trigger.IsValidDepth(depth))
+                if (ITrigger.IsValidDepth(depth, trigger.DepthRange))
                 {
                     trigger.Apply(this._locationTrackers[location.Coord]);
                 }
@@ -175,7 +198,7 @@ namespace WHO
             LocationTracker globalTracker = this._locationTrackers[ALL_LOCATION_ID];
             foreach (var trigger in this._triggersForGlobal)
             {
-                if (trigger.IsValidDepth(0))
+                if (ITrigger.IsValidDepth(0, trigger.DepthRange))
                 {
                     trigger.Apply(globalTracker);
                 }

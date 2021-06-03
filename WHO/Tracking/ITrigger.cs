@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace WHO.Tracking
 {
-    interface ITrigger
+    public interface ITrigger
     {
         /// <summary>The parameter that will be checked</summary>
         public TrackingValue Parameter { get; }
@@ -32,23 +32,23 @@ namespace WHO.Tracking
         /// </summary>
         /// <param name="depth">The depth that is being checked</param>
         /// <returns>true if the depth is within the range [a, b) otherwise false</returns>
-        public bool IsValidDepth(int depth)
+        public static bool IsValidDepth(int depth, (int, int) depthRange)
         {
             // This means no depth checks
-            if (this.DepthRange == (-1, -1))
+            if (depthRange == (-1, -1))
             {
                 return true;
             }
 
-            if (this.DepthRange.Item1 == -1)
+            if (depthRange.Item1 == -1)
             {
-                return depth < this.DepthRange.Item2;
+                return depth < depthRange.Item2;
             }
-            else if (this.DepthRange.Item2 == -1)
+            else if (depthRange.Item2 == -1)
             {
-                return depth >= this.DepthRange.Item1;
+                return depth >= depthRange.Item1;
             }
-            return depth >= this.DepthRange.Item1 && depth < this.DepthRange.Item2;
+            return depth >= depthRange.Item1 && depth < depthRange.Item2;
         }
 
     }

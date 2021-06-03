@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace WHO
 {
-    class LocationStatus
+    public class LocationStatus
     {
 
         private readonly List<string> _location;
