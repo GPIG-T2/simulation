@@ -402,7 +402,11 @@ namespace WHO
         {
             List<Object> actions = new List<Object>();
 
-            TestAndIsolation testAndIsolation = new(0, 0, 0, loc, false);
+            string location = string.Join("", loc);
+            int locationPopulation = this._locationTrackers[location].Latest.GetTotalPeople();
+
+
+            TestAndIsolation testAndIsolation = new(1, 14, (int)Math.Round((locationPopulation * 0.5), 0), loc, false);
             actions.Add(testAndIsolation);
 
             CloseBorders closeBorders = new(loc);
