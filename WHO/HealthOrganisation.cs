@@ -383,18 +383,60 @@ namespace WHO
                 }
             }
 
-            List<WhoAction> whoActionsAvailable = new List<WhoAction>();
-
-            // Convert actions to WhoActions
+            // Convert actions to WhoActions and add to tasks which need to be executed
             foreach (Object action in actionsAvailable)
             {
-                WhoAction whoAction = new(this._currentActionId++, new(action.GetType().Name));
-                whoActionsAvailable.Add(whoAction);
-            }
-
-            foreach (WhoAction whoAction in whoActionsAvailable)
-            {
-                this._tasksToExecute.Add(whoAction);
+                switch (action.GetType().Name)
+                {
+                    case nameof(InformationPressRelease):
+                        this._tasksToExecute.Add(new(this._currentActionId++, (InformationPressRelease) action));
+                        break;
+                    case nameof(TestAndIsolation):
+                        this._tasksToExecute.Add(new(this._currentActionId++, (TestAndIsolation) action));
+                        break;
+                    case nameof(StayAtHome):
+                        this._tasksToExecute.Add(new(this._currentActionId++, (StayAtHome) action));
+                        break;
+                    case nameof(CloseSchools):
+                        this._tasksToExecute.Add(new(this._currentActionId++, (CloseSchools) action));
+                        break;
+                    case nameof(CloseRecreationalLocations):
+                        this._tasksToExecute.Add(new(this._currentActionId++, (CloseRecreationalLocations) action));
+                        break;
+                    case nameof(ShieldingProgram):
+                        this._tasksToExecute.Add(new(this._currentActionId++, (ShieldingProgram) action));
+                        break;
+                    case nameof(MovementRestrictions):
+                        this._tasksToExecute.Add(new(this._currentActionId++, (MovementRestrictions) action));
+                        break;
+                    case nameof(CloseBorders):
+                        this._tasksToExecute.Add(new(this._currentActionId++, (CloseBorders) action));
+                        break;
+                    case nameof(InvestInVaccine):
+                        this._tasksToExecute.Add(new(this._currentActionId++, (InvestInVaccine) action));
+                        break;
+                    case nameof(Furlough):
+                        this._tasksToExecute.Add(new(this._currentActionId++, (Furlough) action));
+                        break;
+                    case nameof(Loan):
+                        this._tasksToExecute.Add(new(this._currentActionId++, (Loan) action));
+                        break;
+                    case nameof(MaskMandate):
+                        this._tasksToExecute.Add(new(this._currentActionId++, (MaskMandate) action));
+                        break;
+                    case nameof(HealthDrive):
+                        this._tasksToExecute.Add(new(this._currentActionId++, (HealthDrive) action));
+                        break;
+                    case nameof(InvestInHealthServices):
+                        this._tasksToExecute.Add(new(this._currentActionId++, (InvestInHealthServices) action));
+                        break;
+                    case nameof(SocialDistancingMandate):
+                        this._tasksToExecute.Add(new(this._currentActionId++, (SocialDistancingMandate) action));
+                        break;
+                    case nameof(Curfew):
+                        this._tasksToExecute.Add(new(this._currentActionId++, (Curfew) action));
+                        break;
+                }
             }
         }
 
