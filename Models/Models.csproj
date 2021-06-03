@@ -3,6 +3,7 @@
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+		<LangVersion>9.0</LangVersion>
 		<Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
 	</PropertyGroup>
@@ -10,7 +11,7 @@
 		<PackageReference Include="System.Text.Json" Version="5.0.2" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Folder Include="Parameters\" />
-	  <Folder Include="WebSocket\" />
+		<Folder Include="Parameters\" />
+		<Folder Include="WebSocket\" />
 	</ItemGroup>
 </Project>

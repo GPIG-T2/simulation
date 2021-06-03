@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WHO.Tracking
 {
-    enum TrackingFunction
+    public enum TrackingFunction
     {
         GREATER_THAN,
         LESS_THAN

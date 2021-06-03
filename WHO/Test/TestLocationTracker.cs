@@ -74,6 +74,20 @@ namespace WHO.Test
         }
 
         [Fact]
+        public void TestLatest()
+        {
+            string location = "A1";
+            LocationTracker tracker = new(location, null);
+            Assert.Null(tracker.Latest);
+            InfectionTotals totals1 = new(new() { location }, 10, 25, 120, 53, 12, 4, 14);
+            InfectionTotals totals2 = new(new() { location }, 12, 20, 110, 73, 15, 3, 14);
+            tracker.Track(totals1);
+            Assert.Equal(totals1, tracker.Latest);
+            tracker.Track(totals2);
+            Assert.Equal(totals2, tracker.Latest);
+        }
+
+        [Fact]
         public void TestGetSum()
         {
             string location = "A1";
@@ -87,6 +101,23 @@ namespace WHO.Test
             tracker.Track(totals3);
             InfectionTotals sumOut = tracker.GetSum(0, 2);
             Assert.True(sumOut.IsEqualTo(expectedSum));
+        }
+
+        [Fact]
+        public void TestGetSumOutOfRange()
+        {
+            string location = "A1";
+            LocationTracker tracker = new(location, null);
+            InfectionTotals totals1 = new(new() { location }, 10, 25, 120, 53, 12, 4, 14);
+            InfectionTotals totals2 = new(new() { location }, 12, 20, 110, 73, 15, 3, 14);
+            InfectionTotals totals3 = new(new() { location }, 14, 5, 120, 45, 12, 5, 10);
+            tracker.Track(totals1);
+            tracker.Track(totals2);
+            tracker.Track(totals3);
+            Assert.Throws<ArgumentOutOfRangeException>(() => tracker.GetSum(-1, 1));
+            Assert.Throws<ArgumentOutOfRangeException>(() => tracker.GetSum(2, 1));
+            Assert.Throws<ArgumentOutOfRangeException>(() => tracker.GetSum(4, 5));
+            Assert.Throws<ArgumentOutOfRangeException>(() => tracker.GetSum(1, 4));
         }
     }
 }

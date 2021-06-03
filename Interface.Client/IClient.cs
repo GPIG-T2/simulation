@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Models;
 
-namespace WHO.Interface
+namespace Interface.Client
 {
     public interface IClient
     {
@@ -15,5 +15,6 @@ namespace WHO.Interface
         Task<SimulationStatus> GetStatus();
         Task<SimulationSettings> GetSettings();
         Task<List<ActionResult>> ApplyActions(List<WhoAction> actions);
+        Task<SimulationStatus> EndTurn();
     }
 }

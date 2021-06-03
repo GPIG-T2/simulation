@@ -14,7 +14,7 @@ namespace WHO.Tracking
     /// BasicTrigger it only accepts either LESS_THAN or GREATER_THAN to check whether the percentage
     /// change of a parameter over the given timespan has changed by more or less than the threshold.
     /// </summary>
-    class BasicTrigger : ITrigger
+    public class BasicTrigger : ITrigger
     {
 
         private readonly TrackingValue _parameter;

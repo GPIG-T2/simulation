@@ -38,15 +38,19 @@ namespace WHO
             return latestInformation == null ? -1 : latestInformation.GetTotalPeople() * PressReleaseCost;
         }
 
-        public static float CalculateCost(InformationPressRelease pressRelease, ActionMode _)
+        public static float CalculateCost(InformationPressRelease pressRelease, ActionMode mode)
         {
+            if (mode == ActionMode.Delete)
+            {
+                return -1;
+            }
+          
             List<string> location = pressRelease.Location;
             return GetPressReleaseCost(location);
         }
 
         public static float CalculateCost(TestAndIsolation testAndIsolation, ActionMode mode)
         {
-            
             return mode == ActionMode.Delete ? 0 : testAndIsolation.TestQuality switch
             {
                 0 => testAndIsolation.Quantity * BadTestCost,
