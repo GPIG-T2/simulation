@@ -88,11 +88,11 @@ namespace WHO
         public void CreateTriggers()
         {
             // Example triggers
-
+            
             // This trigger tries to calculate what the best actions are
             ITrigger bestAction = new CustomTrigger(TrackingValue.SeriousInfection, p => p.CurrentParameterCount > 100, (loc) => this.calculateBestAction(this._budget, loc), 7);
             this._triggersForLocalLocations.Add(bestAction);
-
+            
             ITrigger deployVaccines = new CustomTrigger(TrackingValue.SeriousInfection, p => p.CurrentParameterCount > 100, (loc) => this.StartTestAndIsolation(0, 0, 0, loc, false), 7);
             this._triggersForGlobal.Add(deployVaccines);
 
@@ -145,6 +145,8 @@ namespace WHO
                     await this.ExecuteTasks();
                     this._tasksToExecute.Clear();
                 }
+                
+                await (this._client as WebSocket).EndTurn();
             }
 
         }
@@ -459,6 +461,5 @@ namespace WHO
 
             return actions;
         }
-
     }
 }
