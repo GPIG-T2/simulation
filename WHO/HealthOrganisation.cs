@@ -335,7 +335,8 @@ namespace WHO
             float budgetForLocation = budgetAvailable * percentageOfInfections;
 
             // Get all WhoActions
-            List actions;
+            List<Object> actions;
+
             if (infectionRate > threshold) {
                 actions = getWhoActions(loc, ActionCostCalculator.ActionMode.Create, budgetForLocation);
             } else {
@@ -343,7 +344,7 @@ namespace WHO
             }
 
             // Actions which are collectively all available given the budget
-            List actionsAvailable = new List();
+            List<Object> actionsAvailable = new List<Object>();
 
             if (infectionRate > threshold) {
                 foreach (Object action in actions)
@@ -378,7 +379,10 @@ namespace WHO
                 whoActionsAvailable.Add(whoAction);
             }
 
-            this._tasksToExecute = whoActionsAvailable;
+            foreach(WhoAction whoAction in whoActionsAvailable)
+            {
+                this._tasksToExecute.Add(whoAction);
+            }
         }
 
         private List<Object> getWhoActions(List<string> loc, ActionCostCalculator.ActionMode mode, float budgetForLocation) {
@@ -411,62 +415,62 @@ namespace WHO
 
                     // Make the movement and social distancing measures harsh
                     MovementRestrictions movementRestrictions = new(loc, 2);
-                    actions.Add(movementRestricitions);
+                    actions.Add(movementRestrictions);
 
                     SocialDistancingMandate socialDistancingMandate = new(loc, 2);
                     actions.Add(socialDistancingMandate);
 
                     // Calculate amoount of budget allocated for investment
-                    float investmentBudget = budgetForLocation * 0.15;
+                    double investmentBudget = budgetForLocation * 0.15;
 
                     // Each of the following have been given a proportion of the 15% according to their criticality
-                    Furlough furlough = new(investmentBudget * 0.2, loc);
+                    Furlough furlough = new((int)Math.Round((investmentBudget * 0.2), 0), loc);
                     actions.Add(furlough);
 
-                    InformationPressRelease informationPressRelease = new(investmentBudget * 0.1, loc);
+                    InformationPressRelease informationPressRelease = new((int)Math.Round((investmentBudget * 0.1), 0), loc);
                     actions.Add(informationPressRelease);
 
-                    InvestInHealthServices investInHealthServices = new(investmentBudget * 0.3);
+                    InvestInHealthServices investInHealthServices = new((int)Math.Round((investmentBudget * 0.3), 0));
                     actions.Add(investInHealthServices);
 
-                    InvestInVaccine investInVaccine = new(investmentBudget * 0.3);
+                    InvestInVaccine investInVaccine = new((int)Math.Round((investmentBudget * 0.3), 0));
                     actions.Add(investInVaccine);
 
-                    Loan loan = new(investmentBudget * 0.1);
+                    Loan loan = new((int)Math.Round((investmentBudget * 0.1), 0));
                     actions.Add(loan);
 
                     break;
                 case ActionCostCalculator.ActionMode.Delete:
 
                     // Using the action mode determine the level of the mask mandate
-                    MaskMandate maskMandate = new(loc, 0);
-                    actions.Add(maskMandate);
+                    MaskMandate maskMandateDelete = new(loc, 0);
+                    actions.Add(maskMandateDelete);
 
                     // Make the movement and social distancing measures harsh
-                    MovementRestrictions movementRestrictions = new(loc, 0);
-                    actions.Add(movementRestricitions);
+                    MovementRestrictions movementRestrictionsDelete = new(loc, 0);
+                    actions.Add(movementRestrictionsDelete);
 
-                    SocialDistancingMandate socialDistancingMandate = new(loc, 0);
-                    actions.Add(socialDistancingMandate);
+                    SocialDistancingMandate socialDistancingMandateDelete = new(loc, 0);
+                    actions.Add(socialDistancingMandateDelete);
 
                     // Calculate amoount of budget allocated for investment
-                    float investmentBudget = budgetForLocation * 0.25;
+                    double investmentBudgetDelete = budgetForLocation * 0.25;
                     
                     // Each of the following have been given a proportion of the 25% according to their criticality
-                    Furlough furlough = new(investmentBudget * 0.2, loc);
-                    actions.Add(furlough);
+                    Furlough furloughDelete = new((int)Math.Round((investmentBudgetDelete * 0.2), 0), loc);
+                    actions.Add(furloughDelete);
 
-                    InformationPressRelease informationPressRelease = new(investmentBudget * 0.1, loc);
-                    actions.Add(informationPressRelease);
+                    InformationPressRelease informationPressReleaseDelete = new((int)Math.Round((investmentBudgetDelete * 0.1), 0), loc);
+                    actions.Add(informationPressReleaseDelete);
 
-                    InvestInHealthServices investInHealthServices = new(investmentBudget * 0.3);
-                    actions.Add(investInHealthServices);
+                    InvestInHealthServices investInHealthServicesDelete = new((int)Math.Round((investmentBudgetDelete * 0.3), 0));
+                    actions.Add(investInHealthServicesDelete);
 
-                    InvestInVaccine investInVaccine = new(investmentBudget * 0.3);
-                    actions.Add(investInVaccine);
+                    InvestInVaccine investInVaccineDelete = new((int)Math.Round((investmentBudgetDelete * 0.3), 0));
+                    actions.Add(investInVaccineDelete);
 
-                    Loan loan = new(investmentBudget * 0.1);
-                    actions.Add(loan);
+                    Loan loanDelete = new((int)Math.Round((investmentBudgetDelete * 0.3), 0));
+                    actions.Add(loanDelete);
 
                     break;
             }
