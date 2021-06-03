@@ -42,5 +42,20 @@ namespace WHO.Test
 
         }
 
+        [Fact]
+        public void TestCalculateBestAction()
+        {
+            Mock<IClient> clientMock = new();
+            Mock<HealthOrganisation> healthOrgMock = new(clientMock.Object);
+            
+        }
+
+        [Fact]
+        public void TestGetWhoActions()
+        {
+            Mock<IClient> clientMock = new();
+            Mock<HealthOrganisation> healthOrgMock = new(clientMock.Object);
+        }
+
     }
 }

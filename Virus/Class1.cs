@@ -29,7 +29,7 @@ namespace Virus
             this.nodes = nodeList;
 
             //goes through all edges and creates them
-            for (int i = 0; i<interactivities.Length, i++)
+            for (int i = 0; i<interactivities.Length; i++)
             {
                 edges.add(new Edge(nodeList[connections[i].Item2],nodeList[connections[i].Item2],populations[i],interactivities[i]));
             }
