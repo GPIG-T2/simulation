@@ -79,7 +79,7 @@ namespace Virus
 
             // infectiousness (infectious interactions) decided by the number of infectious people, the portion of the population which can be infected, and the interactivity of the node
             double infectiousness = totalInfectious * ((double)totalUninfected / (double)this._totalPopulation) * this._currentInteractivity;
-            infectiousness *= virus.Infectivity; //multiplies interactions * infectivity to get total number of people infected
+            infectiousness *= virus.Infectivity.EighteenToTwentyNine; //multiplies interactions * infectivity to get total number of people infected
 
             // the infectiousness is the number of people infected + the chance of 1 more
             int infected = (int)Math.Floor(infectiousness);

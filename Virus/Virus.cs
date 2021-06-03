@@ -8,13 +8,13 @@ namespace Virus
     public class Virus
     {
         // TODO: rates for demographics & mutations
-        public double Infectivity { get; }
-        public double Fatality { get; }
-        public double Reinfectivity { get; }
-        public double Symptomaticity { get; }
-        public double SeriousRate { get; }
+        public Demographics Infectivity { get; }
+        public Demographics Fatality { get; }
+        public Demographics Reinfectivity { get; }
+        public Demographics Symptomaticity { get; }
+        public Demographics SeriousRate { get; }
 
-        public Virus(double infectivity, double fatality, double reinfectivity, double symptomaticity, double serious)
+        public Virus(Demographics infectivity, Demographics fatality, Demographics reinfectivity, Demographics symptomaticity, Demographics serious)
         {
             this.Infectivity = infectivity;
             this.Fatality = fatality;
