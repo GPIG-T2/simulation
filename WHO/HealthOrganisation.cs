@@ -314,6 +314,9 @@ namespace WHO
             
             float percentageOfInfections = (infectionsInArea/totalInfections);
 
+            // Limit the amount of money spent each term to a third of the budget
+            budgetAvailable = budgetAvailable/3;
+
             float budgetForLocation = budgetAvailable * percentageOfInfections;
 
             // Get all WhoActions
