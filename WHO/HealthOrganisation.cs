@@ -105,6 +105,11 @@ namespace WHO
         public void CreateTriggers()
         {
             // Example triggers
+
+            // This trigger tries to calculate what the best actions are
+            ITrigger bestAction = new CustomTrigger(TrackingValue.SeriousInfection, p => p.CurrentParameterCount > 100, (loc) => this.calculateBestAction(this._budget, loc), 7);
+            this._triggersForLocalLocations.Add(bestAction);
+
             ITrigger deployVaccines = new CustomTrigger(TrackingValue.SeriousInfection, p => p.CurrentParameterCount > 100, (loc) => this.StartTestAndIsolation(0, 0, 0, loc, false), 7);
             this._triggersForGlobal.Add(deployVaccines);
 
@@ -317,17 +322,17 @@ namespace WHO
             string location = string.Join("", loc);
 
             // Calculate amount of people infected
-            var asymptomaticInfectedInfectious = this._locationTrackers[location].Latest.Value.GetParameterTotals(TrackingValue.AsymptomaticInfectedInfectious);
-            var symptomaticInfected = this._locationTrackers[location].Latest.Value.GetParameterTotals(TrackingValue.Symptomatic);
+            var asymptomaticInfectedInfectious = this._locationTrackers[location].Latest.GetParameterTotals(TrackingValue.AsymptomaticInfectedInfectious);
+            var symptomaticInfected = this._locationTrackers[location].Latest.GetParameterTotals(TrackingValue.Symptomatic);
 
-            int locationPopulation = this._locationTrackers[location].Latest.Value.GetTotalPeople();
+            int locationPopulation = this._locationTrackers[location].Latest.GetTotalPeople();
 
             // Calcualte infection rate
-            float infectionRate = (asymptomaticInfectedInfectious + symptomaticInfected) / locationPopulation;
+            float infectionRate = ((asymptomaticInfectedInfectious + symptomaticInfected) / locationPopulation);
 
             // Using the proportion of people who are infected calculate an appropriate budget for that location
-            int totalInfections = this._locationTrackers[ALL_LOCATION_ID].Latest.Value.GetTotalPeople() - this._locationTrackers[ALL_LOCATION_ID].Latest.Value.GetParameterTotals(TrackingValue.Uninfected);
-            int infectionsInArea = this._locationTrackers[location].Latest.Value.GetTotalPeople() - this._locationTrackers[location].Latest.Value.GetParameterTotals(TrackingValue.Uninfected);
+            int totalInfections = this._locationTrackers[ALL_LOCATION_ID].Latest.GetTotalPeople() - this._locationTrackers[ALL_LOCATION_ID].Latest.GetParameterTotals(TrackingValue.Uninfected);
+            int infectionsInArea = this._locationTrackers[location].Latest.GetTotalPeople() - this._locationTrackers[location].Latest.GetParameterTotals(TrackingValue.Uninfected);
 
             float percentageOfInfections = (infectionsInArea / totalInfections);
 
