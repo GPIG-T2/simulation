@@ -74,11 +74,24 @@ namespace Virus
         private readonly CycleQueue<int> _seriousHistory = new(14);
         private double _interactivity;
 
+        private bool _testing = false;
+        private bool _sympTesting = false;
+        private int _goodTests = 0;
+        private int _badTests = 0;
+        public int TestsAdministered { get; set; } = 0;
+        public int PositiveTests { get; set; } = 0;
+        private readonly CycleQueue<int> _isolationHistory = new(14);
+        private readonly CycleQueue<int> _falseIsolationHistory = new(14);
+        private int _testingCapacity;
+        private int _isolated = 0;
+        private int _falseIsolated = 0;
+
         // variables for WHO effects and effectiveness
         public double Gdp { get; set; } = 50;
         public double[] Demographics { get; set; } // list of proportions following {<5, 5-17, 18-29, 30-9, 40-9, 50-64, 65-74, 75-84, 85+}
         public double PublicOpinion { get; set; } = 1;
         public int NumPressReleases { get; set; } = 0;
+      
 
         private readonly double _baseCompliance = 0.8;
         private double _compliance = 0.8; // between 0-1 as a modifier on WHO actions
@@ -99,7 +112,7 @@ namespace Virus
         private bool _stayAtHomeBool = false;
         private bool _closeRecArea = false;
 
-        public Node(int index, int population, double interactivity, string name, int x, int y, double[] demographics, double gdp)
+        public Node(int index, int population, double interactivity, string name, int x, int y, double[] demographics, double gdp, int testingCapacity)
         {
             this.Index = index;
             this.Location = new List<string> { $"N{index}" };
@@ -113,6 +126,7 @@ namespace Virus
             this.YCoordinate = y;
             this.Demographics = demographics;
             this.Gdp = gdp;
+            this._testingCapacity = testingCapacity;
         }
 
         /// <summary>
@@ -122,14 +136,82 @@ namespace Virus
         /// <param name="virus"></param>
         public void Update(Virus virus)
         {
+            //first applies tests - with test and isolate a portion need to be removed from the infectious population
+            int turnIsolated = 0;
+            int falsePositives = 0;
+            if (this._testing)
+            {
+                //testing only symptomatic people vs whole population - ignores people who are symptomatic but not infected (untracked)
+                if (this._sympTesting)
+                {
+                    //will use all goodtests first before resorting to bad tests
+                    if (this._goodTests > this._testingCapacity)
+                    {
+                        turnIsolated += (int)((this.Totals.Symptomatic/(double) this.TotalPopulation) * GoodTestEfficacy * this._testingCapacity);
+                        this.PositiveTests += turnIsolated;
+                        this.TestsAdministered += this._testingCapacity;
+                    } else if ((this._badTests + this._goodTests) > this._testingCapacity)
+                    {
+                        turnIsolated += (int)((this.Totals.Symptomatic / (double)this.TotalPopulation) * GoodTestEfficacy * this._goodTests);
+                        turnIsolated += (int)((this.Totals.Symptomatic / (double)this.TotalPopulation) * BadTestEfficacy * (this._testingCapacity - this._goodTests));
+                        this.PositiveTests += turnIsolated;
+                        this.TestsAdministered += this._testingCapacity;
+                    } else
+                    {
+                        turnIsolated += (int)((this.Totals.Symptomatic / (double)this.TotalPopulation) * GoodTestEfficacy * this._goodTests);
+                        turnIsolated += (int)((this.Totals.Symptomatic / (double)this.TotalPopulation) * BadTestEfficacy * this._badTests);
+                        this.PositiveTests += turnIsolated;
+                        this.TestsAdministered += this._goodTests + this._badTests;
+                    }
+                } else
+                {
+                    if (this._goodTests > this._testingCapacity)
+                    {
+                        turnIsolated += (int)(((this.TotalPopulation - this.Totals.Uninfected - this.Totals.RecoveredImmune) / (double)this.TotalPopulation) * GoodTestEfficacy * this._testingCapacity);
+                        falsePositives += (int)(((this.Totals.Uninfected + this.Totals.RecoveredImmune) / (double)this.TotalPopulation) * (1-GoodTestEfficacy) * this._testingCapacity);
+                        this.TestsAdministered += this._testingCapacity;
+                        this.PositiveTests += turnIsolated + falsePositives;
+                    }
+                    else if ((this._badTests + this._goodTests) > this._testingCapacity)
+                    {
+                        turnIsolated += (int)(((this.TotalPopulation - this.Totals.Uninfected - this.Totals.RecoveredImmune) / (double)this.TotalPopulation) * GoodTestEfficacy * this._goodTests);
+                        falsePositives += (int)(((this.Totals.Uninfected + this.Totals.RecoveredImmune) / (double)this.TotalPopulation) * (1 - GoodTestEfficacy) * this._goodTests);
+                        turnIsolated += (int)(((this.TotalPopulation - this.Totals.Uninfected - this.Totals.RecoveredImmune) / (double)this.TotalPopulation) * BadTestEfficacy * (this._testingCapacity - this._goodTests));
+                        falsePositives += (int)(((this.Totals.Uninfected + this.Totals.RecoveredImmune) / (double)this.TotalPopulation) * (1 - BadTestEfficacy) * (this._testingCapacity - this._goodTests));
+                        this.TestsAdministered += this._testingCapacity;
+                        this.PositiveTests += turnIsolated + falsePositives;
+                    }
+                    else
+                    {
+                        turnIsolated += (int)(((this.TotalPopulation - this.Totals.Uninfected - this.Totals.RecoveredImmune) / (double)this.TotalPopulation) * GoodTestEfficacy * this._goodTests);
+                        falsePositives += (int)(((this.Totals.Uninfected + this.Totals.RecoveredImmune) / (double)this.TotalPopulation) * (1 - GoodTestEfficacy) * this._goodTests);
+                        turnIsolated += (int)(((this.TotalPopulation - this.Totals.Uninfected - this.Totals.RecoveredImmune) / (double)this.TotalPopulation) * BadTestEfficacy * this._badTests);
+                        falsePositives += (int)(((this.Totals.Uninfected + this.Totals.RecoveredImmune) / (double)this.TotalPopulation) * (1 - BadTestEfficacy) * this._badTests);
+                        this.TestsAdministered += this._goodTests + this._badTests;
+                        this.PositiveTests += turnIsolated + falsePositives;
+                    }
+                }
+            }
+
+            //adds people isolated this turn to total isolation numbers + isolation history
+            turnIsolated = (int)(this._compliance * turnIsolated);
+            falsePositives = (int)(this._compliance * falsePositives);
+            this._isolated -= this._isolationHistory[1];
+            this._falseIsolated -= this._falseIsolationHistory[1];
+            this._isolated += turnIsolated;
+            this._falseIsolated += falsePositives;
+            this._isolationHistory.Push(turnIsolated);
+            this._falseIsolationHistory.Push(falsePositives);
+
             // finds the total number of infectious - could be separated for different interactivities
             int totalInfectious = this.Totals.AsymptomaticInfectedInfectious
                 + this.Totals.Symptomatic
-                + this.Totals.SeriousInfection;
+                + this.Totals.SeriousInfection
+                - this._isolated;
 
             // infectiousness (infectious interactions) decided by the number of infectious people, the portion of the population which can be infected, and the interactivity of the node
             // TODO: Unsure if uninfected/totalPopulation is appropriate for this utiliziation - may need specific statstical method
-            double infectiousness = totalInfectious * ((double)this.Totals.Uninfected / (double)this.TotalPopulation) * this._interactivity;
+            double infectiousness = totalInfectious * ((double)this.Totals.Uninfected / (double)(this.TotalPopulation - this._falseIsolated) * this._interactivity);
             infectiousness *= virus.Infectivity; //multiplies interactions * infectivity to get total number of people infected
             // the infectiousness is the number of people infected + the chance of 1 more
             int infected = (int)Math.Floor(infectiousness);
@@ -248,40 +330,29 @@ namespace Virus
         /// <summary>
         /// Does test and isolate within a node
         /// </summary>
-        public void TestAndIsolate(bool goodTest, int quarantinePeriod, int testQuantity)
+        public void TestAndIsolate(bool goodTest, int quarantinePeriod, int testQuantity, bool sympTest)
         {
             // TODO: implementation of testing/quarantine - unsure on how to implement quarantine period with current model
             this.Gdp *= TestAndIsolateGdp;
-
-            // interactivity determined by the test quality and how many tests there are 
+            this._testing = true;
+            this._sympTesting = sympTest;
             if (goodTest)
             {
-                this._interactivity *= this._compliance * GoodTestEfficacy * ((double)testQuantity / this.TotalPopulation);
-            }
-            else
+                this._goodTests += testQuantity;
+            } else
             {
-                this._interactivity *= this._compliance * BadTestEfficacy * ((double)testQuantity / this.TotalPopulation);
+                this._badTests += testQuantity;
             }
 
-            this._testAndIsolateCompliance = this._compliance;
         }
 
         /// <summary>
         /// Undoes test and isolate - inputs need to match the original test and isolate
         /// </summary>
-        public void CancelTestAndIsolate(bool goodTest, int quarantinePeriod, int testQuantity)
+        public void CancelTestAndIsolate(bool goodTest, int quarantinePeriod, int testQuantity, bool sympTest)
         {
             this.Gdp /= CancelTestAndIsolateGdp;
-
-            // interactivity determined by the test quality and how many tests there are 
-            if (goodTest)
-            {
-                this._interactivity /= this._testAndIsolateCompliance * GoodTestEfficacy * ((double)testQuantity / this.TotalPopulation);
-            }
-            else
-            {
-                this._interactivity /= this._testAndIsolateCompliance * BadTestEfficacy * ((double)testQuantity / this.TotalPopulation);
-            }
+            this._testing = false;
         }
 
         /// <summary>

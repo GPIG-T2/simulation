@@ -125,7 +125,7 @@ namespace Virus
         /// </summary>
         public double TestAndIsolation(Models.Parameters.TestAndIsolation p)
         {
-            this._nodes.Get(p.Location).TestAndIsolate(p.TestQuality == 1, p.QuarantinePeriod, p.Quantity);
+            this._nodes.Get(p.Location).TestAndIsolate(p.TestQuality == 1, p.QuarantinePeriod, p.Quantity, p.SymptomaticOnly);
 
             // TODO: rework cost calculations elsewhere
             return (p.TestQuality == 1 ? GoodTestCost : BadTestCost) * p.Quantity;
@@ -136,7 +136,7 @@ namespace Virus
         /// </summary>
         public void CancelTestAndIsolate(Models.Parameters.TestAndIsolation p)
         {
-            this._nodes.Get(p.Location).CancelTestAndIsolate(p.TestQuality == 1, p.QuarantinePeriod, p.Quantity);
+            this._nodes.Get(p.Location).CancelTestAndIsolate(p.TestQuality == 1, p.QuarantinePeriod, p.Quantity, p.SymptomaticOnly);
         }
 
         /// <summary>
