@@ -145,7 +145,7 @@ namespace Virus
         private bool _stayAtHomeBool = false;
         private bool _closeRecArea = false;
 
-        public Node(int index, int population, Demographics interactivity, string name, int x, int y, Demographics demographics, double gdp)
+        public Node(int index, int population, Demographics interactivity, string name, int x, int y, Demographics demographics, double gdp, int testingCapacity)
         {
             this.Index = index;
             this.Location = new List<string> { $"N{index}" };
@@ -307,10 +307,6 @@ namespace Virus
             this.Totals.Symptomatic -= symp2Recovered;
             this.Totals.SeriousInfection -= serious2Recovered;
             this.Totals.RecoveredImmune += asymp2Recovered + symp2Recovered + serious2Recovered;
-            // clears history at the end
-            this._asympHistory[historyEnd] = 0;
-            this._sympHistory[historyEnd] = 0;
-            this._seriousHistory[historyEnd] = 0;
 
             // moves a proportion of recovered to uninfected based on virus reinfectivity
             int reinfections = (int)Math.Floor(this.Totals.RecoveredImmune * aggregateDemographics(virus.Reinfectivity));
