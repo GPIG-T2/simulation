@@ -31,9 +31,21 @@ namespace Models
         [JsonPropertyName("_position")]
         public Coordinate Position { get; set; }
 
-        public LocationDefinition(string coord)
+        /// <summary>
+        /// The name of the node.
+        /// </summary>
+        /// <remarks>
+        /// This property is indended to be used by the visualisation to allow
+        /// the position to be shown.
+        /// </remarks>
+        [JsonPropertyName("_name")]
+        public string Name { get; set; }
+
+        public LocationDefinition(string coord, Coordinate position, string name)
         {
             this.Coord = coord;
+            this.Position = position;
+            this.Name = name;
         }
 
         /// <summary>
