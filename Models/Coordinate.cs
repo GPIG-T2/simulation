@@ -17,6 +17,12 @@ namespace Models
         /// </summary>
         public double Y { get; set; }
 
+        public Coordinate(double x, double y)
+        {
+            this.X = x;
+            this.Y = y;
+        }
+
         public override string ToString()
         {
             return $"Coordinate({this.X}, {this.Y})";

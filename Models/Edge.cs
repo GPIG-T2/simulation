@@ -19,6 +19,12 @@ namespace Models
         /// </summary>
         public List<string> To { get; set; }
 
+        public Edge(List<string> from, List<string> to)
+        {
+            this.From = from;
+            this.To = to;
+        }
+
         public override string ToString()
         {
             var sb = new StringBuilder();

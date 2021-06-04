@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Models;
 using Serilog;
@@ -13,11 +12,6 @@ namespace Interface.Client
         private readonly IWebsocketClient _client;
         private readonly Dictionary<int, TaskCompletionSource<Models.WebSocket.Response>> _messages
             = new();
-        private readonly JsonSerializerOptions _jsonSerializerOptions = new()
-        {
-            IgnoreNullValues = true,
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        };
         private readonly object _sync = new();
 
         private int _id = 0;
@@ -30,7 +24,7 @@ namespace Interface.Client
         }
 
         public Task<List<InfectionTotals>> GetInfoTotals(SearchRequest request) =>
-            this.SendRequest<SearchRequest, List<InfectionTotals>>("/info/totals", Models.WebSocket.HttpMethod.POST, request);
+            this.SendRequest<SearchRequest, List<InfectionTotals>>(Endpoints.InfoTotals, Models.WebSocket.HttpMethod.POST, request);
 
         public Task<List<ActorSearchResult>> GetInfoActors(SearchRequest request)
         {
@@ -48,24 +42,20 @@ namespace Interface.Client
         }
 
         public Task<List<TestResults>> GetInfoTestResults(SearchRequest request) =>
-            this.SendRequest<SearchRequest, List<TestResults>>("/info/test-results", Models.WebSocket.HttpMethod.POST, request);
+            this.SendRequest<SearchRequest, List<TestResults>>(Endpoints.InfoTestResults, Models.WebSocket.HttpMethod.POST, request);
 
         public Task<SimulationStatus> GetStatus() =>
-            this.SendRequest<SimulationStatus>("/status", Models.WebSocket.HttpMethod.GET);
+            this.SendRequest<SimulationStatus>(Endpoints.Status, Models.WebSocket.HttpMethod.GET);
 
         public Task<SimulationStatus> EndTurn() =>
             this.SendRequest<SimulationStatusUpdate, SimulationStatus>(
-                "/status", Models.WebSocket.HttpMethod.POST, new SimulationStatusUpdate());
+                Endpoints.Status, Models.WebSocket.HttpMethod.POST, new SimulationStatusUpdate());
 
         public Task<SimulationSettings> GetSettings() =>
-            this.SendRequest<SimulationSettings>("/settings", Models.WebSocket.HttpMethod.GET);
+            this.SendRequest<SimulationSettings>(Endpoints.Settings, Models.WebSocket.HttpMethod.GET);
 
         public Task<List<ActionResult>> ApplyActions(List<WhoAction> actions) =>
-            this.SendRequest<List<WhoAction>, List<ActionResult>>("/actions", Models.WebSocket.HttpMethod.POST, actions);
-
-        private string SerializeModel<T>(T model) => JsonSerializer.Serialize(model, this._jsonSerializerOptions);
-
-        private T? DeserializeModel<T>(string json) => JsonSerializer.Deserialize<T>(json, this._jsonSerializerOptions);
+            this.SendRequest<List<WhoAction>, List<ActionResult>>(Endpoints.Actions, Models.WebSocket.HttpMethod.POST, actions);
 
         private Task<T> SendRequest<T>(string endpoint, Models.WebSocket.HttpMethod method) =>
             this.SendRequest<object, T>(endpoint, method, null);
@@ -88,10 +78,10 @@ namespace Interface.Client
             var request = new Models.WebSocket.Request(id, endpoint, method);
             if (message != null)
             {
-                request.Message = this.SerializeModel(message);
+                request.Message = Json.Serialize(message);
             }
 
-            string msg = this.SerializeModel(request);
+            string msg = Json.Serialize(request);
             this._client.Send(msg);
             Log.Debug("Sent {0} to {1}", msg, endpoint);
 
@@ -101,7 +91,7 @@ namespace Interface.Client
                 throw new Exception($"Failed request with {response.Message}");
             }
 
-            var data = this.DeserializeModel<TResponse>(response.Message);
+            var data = Json.Deserialize<TResponse>(response.Message);
             if (data == null)
             {
                 throw new Exception("Failed to deserialise response");
@@ -119,7 +109,7 @@ namespace Interface.Client
             }
             Log.Debug("Received Message: {0}", msg.Text);
 
-            var response = this.DeserializeModel<Models.WebSocket.Response>(msg.Text);
+            var response = Json.Deserialize<Models.WebSocket.Response>(msg.Text);
             if (response == null)
             {
                 Log.Error("Failed to parse message {0}", msg.Text);
