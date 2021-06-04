@@ -64,7 +64,7 @@ namespace WHO
         /// <summary>
         /// List of tasks to execute
         /// </summary>
-        private readonly List<WhoAction> _tasksToExecute = new();
+        public List<WhoAction> _tasksToExecute = new();
 
         /// <summary>
         /// Local triggers on ran on each location and sub location in a depth first pattern
@@ -317,7 +317,7 @@ namespace WHO
             this._tasksToExecute.Add(testAction);
         }
 
-        private void calculateBestAction(int budgetAvailable, List<string> loc, float threshold = 1.2f)
+        public void calculateBestAction(int budgetAvailable, List<string> loc, float threshold = 1.2f)
         {
             string location = string.Join("", loc);
 
@@ -328,23 +328,23 @@ namespace WHO
             int locationPopulation = this._locationTrackers[location].Latest.GetTotalPeople();
 
             // Calcualte infection rate
-            float infectionRate = ((asymptomaticInfectedInfectious + symptomaticInfected) / locationPopulation);
+            decimal infectionRate = (asymptomaticInfectedInfectious + symptomaticInfected) / (decimal) locationPopulation;
 
             // Using the proportion of people who are infected calculate an appropriate budget for that location
             int totalInfections = this._locationTrackers[ALL_LOCATION_ID].Latest.GetTotalPeople() - this._locationTrackers[ALL_LOCATION_ID].Latest.GetParameterTotals(TrackingValue.Uninfected);
             int infectionsInArea = this._locationTrackers[location].Latest.GetTotalPeople() - this._locationTrackers[location].Latest.GetParameterTotals(TrackingValue.Uninfected);
 
-            float percentageOfInfections = (infectionsInArea / totalInfections);
+            decimal percentageOfInfections = (infectionsInArea / (decimal) totalInfections);
 
             // Limit the amount of money spent each term to a third of the budget
-            budgetAvailable = budgetAvailable / 3;
+            budgetAvailable = (int) Math.Round((budgetAvailable / (decimal) 3), 0);
 
-            float budgetForLocation = budgetAvailable * percentageOfInfections;
+            float budgetForLocation = (int) Math.Round((budgetAvailable * percentageOfInfections), 0);
 
             // Get all WhoActions
             List<Object> actions;
 
-            if (infectionRate > threshold)
+            if (infectionRate > (decimal) threshold)
             {
                 actions = getWhoActions(loc, ActionCostCalculator.ActionMode.Create, budgetForLocation);
             }
@@ -356,7 +356,7 @@ namespace WHO
             // Actions which are collectively all available given the budget
             List<Object> actionsAvailable = new List<Object>();
 
-            if (infectionRate > threshold)
+            if (infectionRate > (decimal) threshold)
             {
                 foreach (Object action in actions)
                 {
@@ -369,7 +369,7 @@ namespace WHO
                     }
                 }
             }
-            else if (infectionRate < (threshold * 0.75))
+            else if (infectionRate <= (decimal) (threshold * 0.75))
             {
                 foreach (Object action in actions)
                 {
@@ -440,7 +440,7 @@ namespace WHO
             }
         }
 
-        private List<Object> getWhoActions(List<string> loc, ActionCostCalculator.ActionMode mode, float budgetForLocation)
+        public List<Object> getWhoActions(List<string> loc, ActionCostCalculator.ActionMode mode, float budgetForLocation)
         {
             List<Object> actions = new List<Object>();
 
