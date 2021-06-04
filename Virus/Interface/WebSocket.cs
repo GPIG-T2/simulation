@@ -157,7 +157,7 @@ namespace Virus.Interface
             private static void AssertMethod(HttpMethod method, HttpMethod target, string endpoint)
             {
                 if (method != target)
-            {
+                {
                     throw new Exceptions.BadRequestException($"{endpoint} only supports {target}");
                 }
             }
