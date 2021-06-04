@@ -119,6 +119,7 @@
   ],
   "edges": [
     {
+      "name": "Test Edge BA",
       "left": 0,
       "right": 1,
       "population": 1,

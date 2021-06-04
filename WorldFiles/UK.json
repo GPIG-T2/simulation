@@ -1,0 +1,456 @@
+{
+	"virus": {
+		"infectivity": {
+			"underFive": 0,
+			"fiveToSeventeen": 0,
+			"eighteenToTwentyNine": 0,
+			"thirtyToThirtyNine": 0,
+			"fourtyToFourtyNine": 0,
+			"fiftyToSixtyFour": 0,
+			"sixtyFiveToSeventyFour": 0,
+			"seventyFiveToEightyFour": 0,
+			"overEightyFive": 0
+		},
+		"fatality": {
+			"underFive": 0,
+			"fiveToSeventeen": 0,
+			"eighteenToTwentyNine": 0,
+			"thirtyToThirtyNine": 0,
+			"fourtyToFourtyNine": 0,
+			"fiftyToSixtyFour": 0,
+			"sixtyFiveToSeventyFour": 0,
+			"seventyFiveToEightyFour": 0,
+			"overEightyFive": 0
+		},
+		"reinfectivity": {
+			"underFive": 0,
+			"fiveToSeventeen": 0,
+			"eighteenToTwentyNine": 0,
+			"thirtyToThirtyNine": 0,
+			"fourtyToFourtyNine": 0,
+			"fiftyToSixtyFour": 0,
+			"sixtyFiveToSeventyFour": 0,
+			"seventyFiveToEightyFour": 0,
+			"overEightyFive": 0
+		},
+		"symptomaticity": {
+			"underFive": 0,
+			"fiveToSeventeen": 0,
+			"eighteenToTwentyNine": 0,
+			"thirtyToThirtyNine": 0,
+			"fourtyToFourtyNine": 0,
+			"fiftyToSixtyFour": 0,
+			"sixtyFiveToSeventyFour": 0,
+			"seventyFiveToEightyFour": 0,
+			"overEightyFive": 0
+		},
+		"seriousRate": {
+			"underFive": 0,
+			"fiveToSeventeen": 0,
+			"eighteenToTwentyNine": 0,
+			"thirtyToThirtyNine": 0,
+			"fourtyToFourtyNine": 0,
+			"fiftyToSixtyFour": 0,
+			"sixtyFiveToSeventyFour": 0,
+			"seventyFiveToEightyFour": 0,
+			"overEightyFive": 0
+		}
+	},
+	"nodes": [
+		{
+			"population": 2669941,
+			"interactivity": {
+				"underFive": 5,
+				"fiveToSeventeen": 5,
+				"eighteenToTwentyNine": 5,
+				"thirtyToThirtyNine": 5,
+				"fourtyToFourtyNine": 5,
+				"fiftyToSixtyFour": 5,
+				"sixtyFiveToSeventyFour": 5,
+				"seventyFiveToEightyFour": 5,
+				"overEightyFive": 5
+			},
+			"name": "North East England",
+			"position": {
+				"x": 0,
+				"y": 0
+			},
+			"demographics": {
+				"underFive": 0.05,
+				"fiveToSeventeen": 0.15,
+				"eighteenToTwentyNine": 0.16,
+				"thirtyToThirtyNine": 0.12,
+				"fourtyToFourtyNine": 0.12,
+				"fiftyToSixtyFour": 0.20,
+				"sixtyFiveToSeventyFour": 0.11,
+				"seventyFiveToEightyFour": 0.07,
+				"overEightyFive": 0.02
+			},
+			"gdp": 62644,
+			"testingCapacity": 14507
+		},
+		{
+			"population": 7341196,
+			"interactivity": {
+				"underFive": 5,
+				"fiveToSeventeen": 5,
+				"eighteenToTwentyNine": 5,
+				"thirtyToThirtyNine": 5,
+				"fourtyToFourtyNine": 5,
+				"fiftyToSixtyFour": 5,
+				"sixtyFiveToSeventyFour": 5,
+				"seventyFiveToEightyFour": 5,
+				"overEightyFive": 5
+			},
+			"name": "North West England",
+			"position": {
+				"x": 0,
+				"y": 0
+			},
+			"demographics": {
+				"underFive": 0.06,
+				"fiveToSeventeen": 0.15,
+				"eighteenToTwentyNine": 0.16,
+				"thirtyToThirtyNine": 0.13,
+				"fourtyToFourtyNine": 0.12,
+				"fiftyToSixtyFour": 0.20,
+				"sixtyFiveToSeventyFour": 0.10,
+				"seventyFiveToEightyFour": 0.06,
+				"overEightyFive": 0.02
+			},
+			"gdp": 207452,
+			"testingCapacity": 44051
+		},
+		{
+			"population": 5502967,
+			"interactivity": {
+				"underFive": 5,
+				"fiveToSeventeen": 5,
+				"eighteenToTwentyNine": 5,
+				"thirtyToThirtyNine": 5,
+				"fourtyToFourtyNine": 5,
+				"fiftyToSixtyFour": 5,
+				"sixtyFiveToSeventyFour": 5,
+				"seventyFiveToEightyFour": 5,
+				"overEightyFive": 5
+			},
+			"name": "Yorkshire and The Humber",
+			"position": {
+				"x": 0,
+				"y": 0
+			},
+			"demographics": {
+				"underFive": 0.06,
+				"fiveToSeventeen": 0.16,
+				"eighteenToTwentyNine": 0.16,
+				"thirtyToThirtyNine": 0.13,
+				"fourtyToFourtyNine": 0.12,
+				"fiftyToSixtyFour": 0.19,
+				"sixtyFiveToSeventyFour": 0.10,
+				"seventyFiveToEightyFour": 0.06,
+				"overEightyFive": 0.02
+			},
+			"gdp": 141698,
+			"testingCapacity": 25917
+		},
+		{
+			"population": 4835928,
+			"interactivity": {
+				"underFive": 5,
+				"fiveToSeventeen": 5,
+				"eighteenToTwentyNine": 5,
+				"thirtyToThirtyNine": 5,
+				"fourtyToFourtyNine": 5,
+				"fiftyToSixtyFour": 5,
+				"sixtyFiveToSeventyFour": 5,
+				"seventyFiveToEightyFour": 5,
+				"overEightyFive": 5
+			},
+			"name": "East Midlands",
+			"position": {
+				"x": 0,
+				"y": 0
+			},
+			"demographics": {
+				"underFive": 0.06,
+				"fiveToSeventeen": 0.15,
+				"eighteenToTwentyNine": 0.16,
+				"thirtyToThirtyNine": 0.12,
+				"fourtyToFourtyNine": 0.12,
+				"fiftyToSixtyFour": 0.20,
+				"sixtyFiveToSeventyFour": 0.10,
+				"seventyFiveToEightyFour": 0.06,
+				"overEightyFive": 0.03
+			},
+			"gdp": 124647,
+			"testingCapacity": 26320
+		},
+		{
+			"population": 5934037,
+			"interactivity": {
+				"underFive": 5,
+				"fiveToSeventeen": 5,
+				"eighteenToTwentyNine": 5,
+				"thirtyToThirtyNine": 5,
+				"fourtyToFourtyNine": 5,
+				"fiftyToSixtyFour": 5,
+				"sixtyFiveToSeventyFour": 5,
+				"seventyFiveToEightyFour": 5,
+				"overEightyFive": 5
+			},
+			"name": "West Midlands",
+			"position": {
+				"x": 0,
+				"y": 0
+			},
+			"demographics": {
+				"underFive": 0.06,
+				"fiveToSeventeen": 0.16,
+				"eighteenToTwentyNine": 0.16,
+				"thirtyToThirtyNine": 0.13,
+				"fourtyToFourtyNine": 0.12,
+				"fiftyToSixtyFour": 0.19,
+				"sixtyFiveToSeventyFour": 0.10,
+				"seventyFiveToEightyFour": 0.06,
+				"overEightyFive": 0.02
+			},
+			"gdp": 159832,
+			"testingCapacity": 35042
+		},
+		{
+			"population": 6236072,
+			"interactivity": {
+				"underFive": 5,
+				"fiveToSeventeen": 5,
+				"eighteenToTwentyNine": 5,
+				"thirtyToThirtyNine": 5,
+				"fourtyToFourtyNine": 5,
+				"fiftyToSixtyFour": 5,
+				"sixtyFiveToSeventyFour": 5,
+				"seventyFiveToEightyFour": 5,
+				"overEightyFive": 5
+			},
+			"name": "East of England",
+			"position": {
+				"x": 0,
+				"y": 0
+			},
+			"demographics": {
+				"underFive": 0.06,
+				"fiveToSeventeen": 0.16,
+				"eighteenToTwentyNine": 0.13,
+				"thirtyToThirtyNine": 0.13,
+				"fourtyToFourtyNine": 0.13,
+				"fiftyToSixtyFour": 0.19,
+				"sixtyFiveToSeventyFour": 0.11,
+				"seventyFiveToEightyFour": 0.06,
+				"overEightyFive": 0.03
+			},
+			"gdp": 186462,
+			"testingCapacity": 50452
+		},
+		{
+			"population": 8961989,
+			"interactivity": {
+				"underFive": 5,
+				"fiveToSeventeen": 5,
+				"eighteenToTwentyNine": 5,
+				"thirtyToThirtyNine": 5,
+				"fourtyToFourtyNine": 5,
+				"fiftyToSixtyFour": 5,
+				"sixtyFiveToSeventyFour": 5,
+				"seventyFiveToEightyFour": 5,
+				"overEightyFive": 5
+			},
+			"name": "London",
+			"position": {
+				"x": 0,
+				"y": 0
+			},
+			"demographics": {
+				"underFive": 0.07,
+				"fiveToSeventeen": 0.16,
+				"eighteenToTwentyNine": 0.17,
+				"thirtyToThirtyNine": 0.18,
+				"fourtyToFourtyNine": 0.14,
+				"fiftyToSixtyFour": 0.16,
+				"sixtyFiveToSeventyFour": 0.06,
+				"seventyFiveToEightyFour": 0.04,
+				"overEightyFive": 0.02
+			},
+			"gdp": 487154,
+			"testingCapacity": 70542
+		},
+		{
+			"population": 9180135,
+			"interactivity": {
+				"underFive": 5,
+				"fiveToSeventeen": 5,
+				"eighteenToTwentyNine": 5,
+				"thirtyToThirtyNine": 5,
+				"fourtyToFourtyNine": 5,
+				"fiftyToSixtyFour": 5,
+				"sixtyFiveToSeventyFour": 5,
+				"seventyFiveToEightyFour": 5,
+				"overEightyFive": 5
+			},
+			"name": "South East England",
+			"position": {
+				"x": 0,
+				"y": 0
+			},
+			"demographics": {
+				"underFive": 0.06,
+				"fiveToSeventeen": 0.16,
+				"eighteenToTwentyNine": 0.14,
+				"thirtyToThirtyNine": 0.12,
+				"fourtyToFourtyNine": 0.13,
+				"fiftyToSixtyFour": 0.20,
+				"sixtyFiveToSeventyFour": 0.10,
+				"seventyFiveToEightyFour": 0.06,
+				"overEightyFive": 0.03
+			},
+			"gdp": 311300,
+			"testingCapacity": 63398
+		},
+		{
+			"population": 5624696,
+			"interactivity": {
+				"underFive": 5,
+				"fiveToSeventeen": 5,
+				"eighteenToTwentyNine": 5,
+				"thirtyToThirtyNine": 5,
+				"fourtyToFourtyNine": 5,
+				"fiftyToSixtyFour": 5,
+				"sixtyFiveToSeventyFour": 5,
+				"seventyFiveToEightyFour": 5,
+				"overEightyFive": 5
+			},
+			"name": "South West England",
+			"position": {
+				"x": 0,
+				"y": 0
+			},
+			"demographics": {
+				"underFive": 0.05,
+				"fiveToSeventeen": 0.15,
+				"eighteenToTwentyNine": 0.14,
+				"thirtyToThirtyNine": 0.12,
+				"fourtyToFourtyNine": 0.12,
+				"fiftyToSixtyFour": 0.20,
+				"sixtyFiveToSeventyFour": 0.12,
+				"seventyFiveToEightyFour": 0.07,
+				"overEightyFive": 0.03
+			},
+			"gdp": 158084,
+			"testingCapacity": 34048
+		},
+		{
+			"population": 3152879,
+			"interactivity": {
+				"underFive": 5,
+				"fiveToSeventeen": 5,
+				"eighteenToTwentyNine": 5,
+				"thirtyToThirtyNine": 5,
+				"fourtyToFourtyNine": 5,
+				"fiftyToSixtyFour": 5,
+				"sixtyFiveToSeventyFour": 5,
+				"seventyFiveToEightyFour": 5,
+				"overEightyFive": 5
+			},
+			"name": "Wales",
+			"position": {
+				"x": 0,
+				"y": 0
+			},
+			"demographics": {
+				"underFive": 0.05,
+				"fiveToSeventeen": 0.15,
+				"eighteenToTwentyNine": 0.15,
+				"thirtyToThirtyNine": 0.12,
+				"fourtyToFourtyNine": 0.12,
+				"fiftyToSixtyFour": 0.20,
+				"sixtyFiveToSeventyFour": 0.11,
+				"seventyFiveToEightyFour": 0.07,
+				"overEightyFive": 0.03
+			},
+			"gdp": 74906,
+			"testingCapacity": 65065
+		},
+		{
+			"population": 5463300,
+			"interactivity": {
+				"underFive": 5,
+				"fiveToSeventeen": 5,
+				"eighteenToTwentyNine": 5,
+				"thirtyToThirtyNine": 5,
+				"fourtyToFourtyNine": 5,
+				"fiftyToSixtyFour": 5,
+				"sixtyFiveToSeventyFour": 5,
+				"seventyFiveToEightyFour": 5,
+				"overEightyFive": 5
+			},
+			"name": "Scotland",
+			"position": {
+				"x": 0,
+				"y": 0
+			},
+			"demographics": {
+				"underFive": 0.05,
+				"fiveToSeventeen": 0.14,
+				"eighteenToTwentyNine": 0.16,
+				"thirtyToThirtyNine": 0.13,
+				"fourtyToFourtyNine": 0.12,
+				"fiftyToSixtyFour": 0.21,
+				"sixtyFiveToSeventyFour": 0.11,
+				"seventyFiveToEightyFour": 0.06,
+				"overEightyFive": 0.02
+			},
+			"gdp": 161295,
+			"testingCapacity": 35576
+		},
+		{
+			"population": 1893667,
+			"interactivity": {
+				"underFive": 5,
+				"fiveToSeventeen": 5,
+				"eighteenToTwentyNine": 5,
+				"thirtyToThirtyNine": 5,
+				"fourtyToFourtyNine": 5,
+				"fiftyToSixtyFour": 5,
+				"sixtyFiveToSeventyFour": 5,
+				"seventyFiveToEightyFour": 5,
+				"overEightyFive": 5
+			},
+			"name": "Northern Ireland",
+			"position": {
+				"x": 0,
+				"y": 0
+			},
+			"demographics": {
+				"underFive": 0.06,
+				"fiveToSeventeen": 0.17,
+				"eighteenToTwentyNine": 0.15,
+				"thirtyToThirtyNine": 0.13,
+				"fourtyToFourtyNine": 0.13,
+				"fiftyToSixtyFour": 0.19,
+				"sixtyFiveToSeventyFour": 0.09,
+				"seventyFiveToEightyFour": 0.06,
+				"overEightyFive": 0.02
+			},
+			"gdp": 48887,
+			"testingCapacity": 20613
+		}
+		
+	],
+	"edges": [
+		{
+			"name" : "Edge 1",
+			"left": 0,
+			"right": 1,
+			"population": 1,
+			"interactivity": 1.0,
+			"distance": 1
+		}
+	]
+}
