@@ -11,6 +11,7 @@ namespace Virus
         // Effect constants - dictate how big effect certain actions should have - should probably be in config file
         public const double PopulationFloor = 0.1;
 
+        public string Name { get; }
         public Node Left { get; }
         public Node Right { get; }
 
@@ -23,8 +24,9 @@ namespace Virus
 
         public int Distance { get; } // the physical distance the edge traverses
 
-        public Edge(Node left, Node right, int population, double interactivity, int distance)
+        public Edge(string name, Node left, Node right, int population, double interactivity, int distance)
         {
+            this.Name = name;
             this.Left = left;
             this.Right = right;
             this._basePopulation = population;
