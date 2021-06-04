@@ -40,7 +40,7 @@ namespace WHO.Test
             clientMock.Setup(c => c.EndTurn()).Callback(() => healthOrgMock.Object.Stop()).Returns(Task.FromResult(new SimulationStatus(false, 0, 4)));
             LocationDefinition location = new("A1", new(), "");
             location.SubLocations = new() { new("B2", new(), "") };
-            clientMock.Setup(c => c.GetSettings()).Returns(Task.FromResult(new SimulationSettings(new SimulationSettings.SimulationTurnLength("second", 5), new() { location }, new SimulationSettings.SimulationEffectivenesses(new EffectivenessQuality(0.3f, 0.5f), new(), new EffectivenessQuality(0.5f, 0.3f)), new List<Edge>())));
+            clientMock.Setup(c => c.GetSettings()).Returns(Task.FromResult(new SimulationSettings(new SimulationSettings.SimulationTurnLength("second", 5), new() { location }, new SimulationSettings.SimulationEffectivenesses(new EffectivenessQuality(0.3f, 0.5f), new(), new EffectivenessQuality(0.5f, 0.3f)), new List<Edge>(), SimulationSettings.SelectedMap.Country)));
             clientMock.Setup(c => c.GetInfoTotals(It.Is<SearchRequest>((req) => req.Locations[0].Count == 1))).Returns(Task.FromResult(new List<InfectionTotals>() { new InfectionTotals(new() { "A1" }, 1, 2, 3, 4, 5, 6, 7) }));
             clientMock.Setup(c => c.GetInfoTotals(It.Is<SearchRequest>((req) => req.Locations[0].Count == 2))).Returns(Task.FromResult(new List<InfectionTotals>() { new InfectionTotals(new() { "A1", "B2" }, 2, 3, 4, 5, 6, 7, 8) }));
             await healthOrgMock.Object.Run();
@@ -71,7 +71,7 @@ namespace WHO.Test
             clientMock.Setup(c => c.EndTurn()).Callback(() => { if (++turn > 2) { healthOrgMock.Object.Running = false; } }).Returns(Task.FromResult(new SimulationStatus(false, 0, 4)));
             LocationDefinition location = new("A1", new(), "");
             location.SubLocations = new() { new("B2", new(), "") };
-            clientMock.Setup(c => c.GetSettings()).Returns(Task.FromResult(new SimulationSettings(new SimulationSettings.SimulationTurnLength("second", 5), new() { location }, new SimulationSettings.SimulationEffectivenesses(new EffectivenessQuality(0.3f, 0.5f), new(), new EffectivenessQuality(0.5f, 0.3f)), new List<Edge>())));
+            clientMock.Setup(c => c.GetSettings()).Returns(Task.FromResult(new SimulationSettings(new SimulationSettings.SimulationTurnLength("second", 5), new() { location }, new SimulationSettings.SimulationEffectivenesses(new EffectivenessQuality(0.3f, 0.5f), new(), new EffectivenessQuality(0.5f, 0.3f)), new List<Edge>(), SimulationSettings.SelectedMap.Country)));
             clientMock.Setup(c => c.GetInfoTotals(It.Is<SearchRequest>((req) => turn == 1 && req.Locations[0].Count == 1))).Returns(Task.FromResult(new List<InfectionTotals>() { new InfectionTotals(new() { "A1" }, 1, 2, 3, 4, 5, 6, 7) }));
             clientMock.Setup(c => c.GetInfoTotals(It.Is<SearchRequest>((req) => turn == 1 && req.Locations[0].Count == 2))).Returns(Task.FromResult(new List<InfectionTotals>() { new InfectionTotals(new() { "A1", "B2" }, 2, 3, 4, 5, 6, 7, 8) }));
             clientMock.Setup(c => c.GetInfoTotals(It.Is<SearchRequest>((req) => turn == 2 && req.Locations[0].Count == 1))).Returns(Task.FromResult(new List<InfectionTotals>() { new InfectionTotals(new() { "A1" }, 2, 3, 4, 5, 6, 7, 8) }));
@@ -92,7 +92,7 @@ namespace WHO.Test
             Mock<HealthOrganisation> healthOrgMock = new(clientMock.Object);
             clientMock.Setup(c => c.GetStatus()).Returns(Task.FromResult(new SimulationStatus(true, 0, 4)));
             clientMock.Setup(c => c.EndTurn()).Callback(() => { if (++turn > 2) { healthOrgMock.Object.Running = false; } }).Returns(Task.FromResult(new SimulationStatus(false, 0, 4)));
-            clientMock.Setup(c => c.GetSettings()).Returns(Task.FromResult(new SimulationSettings(new SimulationSettings.SimulationTurnLength("second", 5), new() { new("A1", new(), ""), new("B2", new(), "") }, new SimulationSettings.SimulationEffectivenesses(new EffectivenessQuality(0.3f, 0.5f), new(), new EffectivenessQuality(0.5f, 0.3f)), new List<Edge>())));
+            clientMock.Setup(c => c.GetSettings()).Returns(Task.FromResult(new SimulationSettings(new SimulationSettings.SimulationTurnLength("second", 5), new() { new("A1", new(), ""), new("B2", new(), "") }, new SimulationSettings.SimulationEffectivenesses(new EffectivenessQuality(0.3f, 0.5f), new(), new EffectivenessQuality(0.5f, 0.3f)), new List<Edge>(), SimulationSettings.SelectedMap.Country)));
             clientMock.Setup(c => c.GetInfoTotals(It.Is<SearchRequest>((req) => turn == 1 && req.Locations[0][0] == "A1"))).Returns(Task.FromResult(new List<InfectionTotals>() { new InfectionTotals(new() { "A1" }, 1, 2, 3, 4, 5, 6, 7) }));
             clientMock.Setup(c => c.GetInfoTotals(It.Is<SearchRequest>((req) => turn == 1 && req.Locations[0][0] == "B2"))).Returns(Task.FromResult(new List<InfectionTotals>() { new InfectionTotals(new() { "B2" }, 2, 3, 4, 5, 6, 7, 8) }));
             clientMock.Setup(c => c.GetInfoTotals(It.Is<SearchRequest>((req) => turn == 2 && req.Locations[0][0] == "A1"))).Returns(Task.FromResult(new List<InfectionTotals>() { new InfectionTotals(new() { "A1" }, 2, 3, 4, 5, 6, 7, 8) }));
@@ -113,7 +113,7 @@ namespace WHO.Test
             clientMock.Setup(c => c.EndTurn()).Callback(() => { if (++turn > 2) { healthOrgMock.Object.Running = false; } }).Returns(Task.FromResult(new SimulationStatus(false, 0, 4)));
             LocationDefinition location = new("A1", new(), "");
             location.SubLocations = new() { new("B2", new(), "") };
-            clientMock.Setup(c => c.GetSettings()).Returns(Task.FromResult(new SimulationSettings(new SimulationSettings.SimulationTurnLength("second", 5), new() { location }, new SimulationSettings.SimulationEffectivenesses(new EffectivenessQuality(0.3f, 0.5f), new(), new EffectivenessQuality(0.5f, 0.3f)), new List<Edge>())));
+            clientMock.Setup(c => c.GetSettings()).Returns(Task.FromResult(new SimulationSettings(new SimulationSettings.SimulationTurnLength("second", 5), new() { location }, new SimulationSettings.SimulationEffectivenesses(new EffectivenessQuality(0.3f, 0.5f), new(), new EffectivenessQuality(0.5f, 0.3f)), new List<Edge>(), SimulationSettings.SelectedMap.Country)));
             clientMock.Setup(c => c.GetInfoTotals(It.Is<SearchRequest>((req) => turn == 1 && req.Locations[0].Count == 1))).Returns(Task.FromResult(new List<InfectionTotals>() { new InfectionTotals(new() { "A1" }, 1, 2, 3, 4, 5, 6, 7) }));
             clientMock.Setup(c => c.GetInfoTotals(It.Is<SearchRequest>((req) => turn == 1 && req.Locations[0].Count == 2))).Returns(Task.FromResult(new List<InfectionTotals>() { new InfectionTotals(new() { "A1", "B2" }, 2, 3, 4, 5, 6, 7, 8) }));
             clientMock.Setup(c => c.GetInfoTotals(It.Is<SearchRequest>((req) => turn == 2 && req.Locations[0].Count == 1))).Returns(Task.FromResult(new List<InfectionTotals>() { new InfectionTotals(new() { "A1" }, 2, 3, 4, 5, 6, 7, 8) }));

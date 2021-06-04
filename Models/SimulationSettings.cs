@@ -38,16 +38,28 @@ namespace Models
         [JsonPropertyName("_edges")]
         public List<Edge> Edges { get; set; }
 
+        /// <summary>
+        /// The current map that has been selected.
+        /// </summary>
+        /// <remarks>
+        /// This property is indended to be used by the visualisation to allow
+        /// the current map 
+        /// </remarks>
+        [JsonPropertyName("_map")]
+        public SelectedMap Map { get; set; }
+
         public SimulationSettings(
             SimulationTurnLength turnLength,
             List<LocationDefinition> locations,
             SimulationEffectivenesses effectivenesses,
-            List<Edge> edges)
+            List<Edge> edges,
+            SelectedMap map)
         {
             this.TurnLength = turnLength;
             this.Locations = locations;
             this.Effectivenesses = effectivenesses;
             this.Edges = edges;
+            this.Map = map;
         }
 
         /// <summary>
@@ -146,6 +158,13 @@ namespace Models
                 sb.Append("}\n");
                 return sb.ToString();
             }
+        }
+
+        public enum SelectedMap
+        {
+            Country,
+            Europe,
+            World
         }
     }
 }

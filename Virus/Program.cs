@@ -51,7 +51,7 @@ namespace Virus
             var world = (World)data;
             Console.WriteLine("Loaded world");
 
-            using var program = new Program(world);
+            using var program = new Program(world, data.Map);
 
             program.Start();
             await program.Loop();
@@ -70,14 +70,15 @@ namespace Virus
         private readonly SimulationSettings _settings;
         private readonly SimulationStatus _status = new(false, 0, 0);
 
-        public Program(World world)
+        public Program(World world, SimulationSettings.SelectedMap map)
         {
             this._world = world;
             this._settings = new(
                 new("day", 1),
                 world.Nodes.Select(n => (LocationDefinition)n).ToList(),
                 new(new(World.LowLevelMask, World.HighLevelMask), new(), new(Node.BadTestEfficacy, Node.GoodTestEfficacy)),
-                world.Edges.Select(e => (Models.Edge)e).ToList()
+                world.Edges.Select(e => (Models.Edge)e).ToList(),
+                map
             );
         }
 

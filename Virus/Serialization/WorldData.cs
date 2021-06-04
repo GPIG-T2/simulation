@@ -9,14 +9,17 @@ namespace Virus.Serialization
         public List<NodeData> Nodes { get; set; }
         public List<EdgeData> Edges { get; set; }
         public Virus Virus { get; set; }
+        public Models.SimulationSettings.SelectedMap Map { get; set; }
 
         public WorldData(List<NodeData> nodes,
             List<EdgeData> edges,
-            Virus virus)
+            Virus virus,
+            Models.SimulationSettings.SelectedMap map)
         {
             this.Nodes = nodes;
             this.Edges = edges;
             this.Virus = virus;
+            this.Map = map;
         }
 
         public static explicit operator World(WorldData data)
