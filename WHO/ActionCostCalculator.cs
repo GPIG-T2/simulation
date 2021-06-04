@@ -38,6 +38,65 @@ namespace WHO
             return latestInformation == null ? -1 : latestInformation.GetTotalPeople() * PressReleaseCost;
         }
 
+        public static float CalculateCost(Object action, ActionMode mode)
+        {
+            float cost = 0;
+
+            switch (action.GetType().Name)
+            {
+                case nameof(InformationPressRelease):
+                    cost = CalculateCost((InformationPressRelease) action, mode);
+                    break;
+                case nameof(TestAndIsolation):
+                    cost = CalculateCost((TestAndIsolation) action, mode);
+                    break;
+                case nameof(StayAtHome):
+                    cost = CalculateCost((StayAtHome) action, mode);
+                    break;
+                case nameof(CloseSchools):
+                    cost = CalculateCost((CloseSchools) action, mode);
+                    break;
+                case nameof(CloseRecreationalLocations):
+                    cost = CalculateCost((CloseRecreationalLocations) action, mode);
+                    break;
+                case nameof(ShieldingProgram):
+                    cost = CalculateCost((ShieldingProgram) action, mode);
+                    break;
+                case nameof(MovementRestrictions):
+                    cost = CalculateCost((MovementRestrictions) action, mode);
+                    break;
+                case nameof(CloseBorders):
+                    cost = CalculateCost((CloseBorders) action, mode);
+                    break;
+                case nameof(InvestInVaccine):
+                    cost = CalculateCost((InvestInVaccine) action, mode);
+                    break;
+                case nameof(Furlough):
+                    cost = CalculateCost((Furlough) action, mode);
+                    break;
+                case nameof(Loan):
+                    cost = CalculateCost((Loan) action, mode);
+                    break;
+                case nameof(MaskMandate):
+                    cost = CalculateCost((MaskMandate) action, mode);
+                    break;
+                case nameof(HealthDrive):
+                    cost = CalculateCost((HealthDrive) action, mode);
+                    break;
+                case nameof(InvestInHealthServices):
+                    cost = CalculateCost((InvestInHealthServices) action, mode);
+                    break;
+                case nameof(SocialDistancingMandate):
+                    cost = CalculateCost((SocialDistancingMandate) action, mode);
+                    break;
+                case nameof(Curfew):
+                    cost = CalculateCost((Curfew) action, mode);
+                    break;
+            }
+
+            return cost;
+        }
+        
         public static float CalculateCost(InformationPressRelease pressRelease, ActionMode mode)
         {
             if (mode == ActionMode.Delete)

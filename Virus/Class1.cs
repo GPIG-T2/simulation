@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace Virus
 {
@@ -29,7 +30,7 @@ namespace Virus
             this.nodes = nodeList;
 
             //goes through all edges and creates them
-            for (int i = 0; i<interactivities.Length, i++)
+            for (int i = 0; i<interactivities.Length; i++)
             {
                 edges.add(new Edge(nodeList[connections[i].Item2],nodeList[connections[i].Item2],populations[i],interactivities[i]));
             }
@@ -50,7 +51,7 @@ namespace Virus
             Array.Clear(edgeInfections,0,edgeInfections.Length);
             
             //goes through all edges and increases the number of new infections to add to the node
-            foreach (e in this.edges)
+            foreach (var e in this.edges)
             {
                 (int,int) adds = e.update(this.virus);
                 edgeInfections[e.node1.index] += adds.Item1;
@@ -58,7 +59,7 @@ namespace Virus
             }
 
             //goes through all nodes, updates each individual node and infects people based off the edges
-            foreach(n in this.nodes)
+            foreach(var n in this.nodes)
             {
                 n.update(this.virus);
                 n.infect(edgeInfections[n.index]);
@@ -182,7 +183,7 @@ namespace Virus
         //ATTRIBUTES
         public int totalPopulation;
         public double baseInteractivity;
-        public double currentInteractivity
+        public double currentInteractivity;
         public Node node1;
         public Node node2;
 

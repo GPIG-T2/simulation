@@ -119,6 +119,11 @@ namespace WHO
         public void CreateTriggers()
         {
             // Example triggers
+
+            // This trigger tries to calculate what the best actions are
+            ITrigger bestAction = new CustomTrigger(TrackingValue.SeriousInfection, p => p.CurrentParameterCount > 100, (loc) => this.calculateBestAction(this._budget, loc), 7);
+            this._triggersForLocalLocations.Add(bestAction);
+
             ITrigger basicIncreaseOfInfections = new BasicTrigger(TrackingValue.SeriousInfection, TrackingFunction.GREATER_THAN, 1.2f, (_) => Console.WriteLine("Increase"), 7);
             ITrigger complexIncreaseOfInfections = new CustomTrigger(TrackingValue.SeriousInfection, p => p.CurrentParameterCount > 1000 && p.Change > 1.2f, (_) => Console.WriteLine("Custom Increase"), 7);
             this._triggersForLocalLocations.Add(basicIncreaseOfInfections);
@@ -317,5 +322,232 @@ namespace WHO
             return totals;
         }
 
+        public void calculateBestAction(int budgetAvailable, List<string> loc, float threshold = 1.2f)
+        {
+            string location = string.Join("", loc);
+
+            // Calculate amount of people infected
+            var asymptomaticInfectedInfectious = this._locationTrackers[location].Latest.GetParameterTotals(TrackingValue.AsymptomaticInfectedInfectious);
+            var symptomaticInfected = this._locationTrackers[location].Latest.GetParameterTotals(TrackingValue.Symptomatic);
+
+            int locationPopulation = this._locationTrackers[location].Latest.GetTotalPeople();
+
+            // Calcualte infection rate
+            decimal infectionRate = (asymptomaticInfectedInfectious + symptomaticInfected) / (decimal) locationPopulation;
+
+            // Using the proportion of people who are infected calculate an appropriate budget for that location
+            int totalInfections = this._locationTrackers[ALL_LOCATION_ID].Latest.GetTotalPeople() - this._locationTrackers[ALL_LOCATION_ID].Latest.GetParameterTotals(TrackingValue.Uninfected);
+            int infectionsInArea = this._locationTrackers[location].Latest.GetTotalPeople() - this._locationTrackers[location].Latest.GetParameterTotals(TrackingValue.Uninfected);
+
+            decimal percentageOfInfections = (infectionsInArea / (decimal) totalInfections);
+
+            // Limit the amount of money spent each term to a third of the budget
+            budgetAvailable = (int) Math.Round((budgetAvailable / (decimal) 3), 0);
+
+            float budgetForLocation = (int) Math.Round((budgetAvailable * percentageOfInfections), 0);
+
+            // Get all WhoActions
+            List<Object> actions;
+
+            if (infectionRate > (decimal) threshold)
+            {
+                actions = getWhoActions(loc, ActionCostCalculator.ActionMode.Create, budgetForLocation);
+            }
+            else
+            {
+                actions = getWhoActions(loc, ActionCostCalculator.ActionMode.Delete, budgetForLocation);
+            }
+
+            // Actions which are collectively all available given the budget
+            List<Object> actionsAvailable = new List<Object>();
+
+            if (infectionRate > (decimal) threshold)
+            {
+                foreach (Object action in actions)
+                {
+                    float actionCost = ActionCostCalculator.CalculateCost(action, ActionCostCalculator.ActionMode.Create);
+
+                    if (actionCost < budgetForLocation)
+                    {
+                        actionsAvailable.Add(action);
+                        budgetForLocation = budgetForLocation - actionCost;
+                    }
+                }
+            }
+            else if (infectionRate <= (decimal) (threshold * 0.75))
+            {
+                foreach (Object action in actions)
+                {
+                    float actionCost = ActionCostCalculator.CalculateCost(action, ActionCostCalculator.ActionMode.Delete);
+
+                    if (actionCost < budgetForLocation)
+                    {
+                        actionsAvailable.Add(action);
+                        budgetForLocation = budgetForLocation - actionCost;
+                    }
+                }
+            }
+
+            // Convert actions to WhoActions and add to tasks which need to be executed
+            foreach (Object action in actionsAvailable)
+            {
+                switch (action.GetType().Name)
+                {
+                    case nameof(InformationPressRelease):
+                        this._tasksToExecute.Add(new(this._currentActionId++, (InformationPressRelease) action));
+                        break;
+                    case nameof(TestAndIsolation):
+                        this._tasksToExecute.Add(new(this._currentActionId++, (TestAndIsolation) action));
+                        break;
+                    case nameof(StayAtHome):
+                        this._tasksToExecute.Add(new(this._currentActionId++, (StayAtHome) action));
+                        break;
+                    case nameof(CloseSchools):
+                        this._tasksToExecute.Add(new(this._currentActionId++, (CloseSchools) action));
+                        break;
+                    case nameof(CloseRecreationalLocations):
+                        this._tasksToExecute.Add(new(this._currentActionId++, (CloseRecreationalLocations) action));
+                        break;
+                    case nameof(ShieldingProgram):
+                        this._tasksToExecute.Add(new(this._currentActionId++, (ShieldingProgram) action));
+                        break;
+                    case nameof(MovementRestrictions):
+                        this._tasksToExecute.Add(new(this._currentActionId++, (MovementRestrictions) action));
+                        break;
+                    case nameof(CloseBorders):
+                        this._tasksToExecute.Add(new(this._currentActionId++, (CloseBorders) action));
+                        break;
+                    case nameof(InvestInVaccine):
+                        this._tasksToExecute.Add(new(this._currentActionId++, (InvestInVaccine) action));
+                        break;
+                    case nameof(Furlough):
+                        this._tasksToExecute.Add(new(this._currentActionId++, (Furlough) action));
+                        break;
+                    case nameof(Loan):
+                        this._tasksToExecute.Add(new(this._currentActionId++, (Loan) action));
+                        break;
+                    case nameof(MaskMandate):
+                        this._tasksToExecute.Add(new(this._currentActionId++, (MaskMandate) action));
+                        break;
+                    case nameof(HealthDrive):
+                        this._tasksToExecute.Add(new(this._currentActionId++, (HealthDrive) action));
+                        break;
+                    case nameof(InvestInHealthServices):
+                        this._tasksToExecute.Add(new(this._currentActionId++, (InvestInHealthServices) action));
+                        break;
+                    case nameof(SocialDistancingMandate):
+                        this._tasksToExecute.Add(new(this._currentActionId++, (SocialDistancingMandate) action));
+                        break;
+                    case nameof(Curfew):
+                        this._tasksToExecute.Add(new(this._currentActionId++, (Curfew) action));
+                        break;
+                }
+            }
+        }
+
+        public List<Object> getWhoActions(List<string> loc, ActionCostCalculator.ActionMode mode, float budgetForLocation)
+        {
+            List<Object> actions = new List<Object>();
+
+            string location = string.Join("", loc);
+            int locationPopulation = this._locationTrackers[location].Latest.GetTotalPeople();
+
+
+            TestAndIsolation testAndIsolation = new(1, 14, (int)Math.Round((locationPopulation * 0.5), 0), loc, false);
+            actions.Add(testAndIsolation);
+
+            CloseBorders closeBorders = new(loc);
+            actions.Add(closeBorders);
+
+            CloseRecreationalLocations closeRecreationalLocations = new(loc);
+            actions.Add(closeRecreationalLocations);
+
+            CloseSchools closeSchools = new(loc);
+            actions.Add(closeSchools);
+
+            Curfew curfew = new(loc);
+            actions.Add(curfew);
+
+            // Investment - if creating restrictions 15% of the budget will be allocated to investment
+            // If deleting restrictions 25% of the budget will be allocated to investment
+            switch (mode)
+            {
+                case ActionCostCalculator.ActionMode.Create:
+
+                    // Using the action mode determine the level of the mask mandate
+                    MaskMandate maskMandate = new(loc, 2);
+                    actions.Add(maskMandate);
+
+                    // Make the movement and social distancing measures harsh
+                    MovementRestrictions movementRestrictions = new(loc, 2);
+                    actions.Add(movementRestrictions);
+
+                    SocialDistancingMandate socialDistancingMandate = new(loc, 2);
+                    actions.Add(socialDistancingMandate);
+
+                    // Calculate amoount of budget allocated for investment
+                    double investmentBudget = budgetForLocation * 0.15;
+
+                    // Each of the following have been given a proportion of the 15% according to their criticality
+                    Furlough furlough = new((int)Math.Round((investmentBudget * 0.2), 0), loc);
+                    actions.Add(furlough);
+
+                    InformationPressRelease informationPressRelease = new((int)Math.Round((investmentBudget * 0.1), 0), loc);
+                    actions.Add(informationPressRelease);
+
+                    InvestInHealthServices investInHealthServices = new((int)Math.Round((investmentBudget * 0.3), 0));
+                    actions.Add(investInHealthServices);
+
+                    InvestInVaccine investInVaccine = new((int)Math.Round((investmentBudget * 0.3), 0));
+                    actions.Add(investInVaccine);
+
+                    Loan loan = new((int)Math.Round((investmentBudget * 0.1), 0));
+                    actions.Add(loan);
+
+                    break;
+                case ActionCostCalculator.ActionMode.Delete:
+
+                    // Using the action mode determine the level of the mask mandate
+                    MaskMandate maskMandateDelete = new(loc, 0);
+                    actions.Add(maskMandateDelete);
+
+                    // Make the movement and social distancing measures harsh
+                    MovementRestrictions movementRestrictionsDelete = new(loc, 0);
+                    actions.Add(movementRestrictionsDelete);
+
+                    SocialDistancingMandate socialDistancingMandateDelete = new(loc, 0);
+                    actions.Add(socialDistancingMandateDelete);
+
+                    // Calculate amoount of budget allocated for investment
+                    double investmentBudgetDelete = budgetForLocation * 0.25;
+
+                    // Each of the following have been given a proportion of the 25% according to their criticality
+                    Furlough furloughDelete = new((int)Math.Round((investmentBudgetDelete * 0.2), 0), loc);
+                    actions.Add(furloughDelete);
+
+                    InformationPressRelease informationPressReleaseDelete = new((int)Math.Round((investmentBudgetDelete * 0.1), 0), loc);
+                    actions.Add(informationPressReleaseDelete);
+
+                    InvestInHealthServices investInHealthServicesDelete = new((int)Math.Round((investmentBudgetDelete * 0.3), 0));
+                    actions.Add(investInHealthServicesDelete);
+
+                    InvestInVaccine investInVaccineDelete = new((int)Math.Round((investmentBudgetDelete * 0.3), 0));
+                    actions.Add(investInVaccineDelete);
+
+                    Loan loanDelete = new((int)Math.Round((investmentBudgetDelete * 0.3), 0));
+                    actions.Add(loanDelete);
+
+                    break;
+            }
+
+            HealthDrive healthDrive = new(loc);
+            actions.Add(healthDrive);
+
+            StayAtHome stayAtHome = new(loc);
+            actions.Add(stayAtHome);
+
+            return actions;
+        }
+        
     }
 }
