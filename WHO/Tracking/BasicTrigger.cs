@@ -28,7 +28,7 @@ namespace WHO.Tracking
 
         public int Timespan => this._timespan;
 
-        public Action<List<string>> ResultingAction => this._resultingAction;
+        public Action<List<string>?> ResultingAction => this._resultingAction;
 
         public (int, int) DepthRange => this._depthRange;
 

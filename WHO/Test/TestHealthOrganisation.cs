@@ -132,7 +132,7 @@ namespace WHO.Test
         {
             HealthOrganisation org = new(client: null);
             LocationTracker locationTracker = new("A1", null);
-            
+
             org.LocationTrackers.Add("A1", locationTracker);
             List<string> loc = new() { "A1" };
 

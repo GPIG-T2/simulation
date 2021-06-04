@@ -20,7 +20,7 @@ namespace WHO
         }
 
         public const float PressReleaseCost = 0.01f;
-        
+
         public const float BadTestCost = 5.5f;
         public const float GoodTestCost = 140f;
 
@@ -45,58 +45,58 @@ namespace WHO
             switch (action.GetType().Name)
             {
                 case nameof(InformationPressRelease):
-                    cost = CalculateCost((InformationPressRelease) action, mode);
+                    cost = CalculateCost((InformationPressRelease)action, mode);
                     break;
                 case nameof(TestAndIsolation):
-                    cost = CalculateCost((TestAndIsolation) action, mode);
+                    cost = CalculateCost((TestAndIsolation)action, mode);
                     break;
                 case nameof(StayAtHome):
-                    cost = CalculateCost((StayAtHome) action, mode);
+                    cost = CalculateCost((StayAtHome)action, mode);
                     break;
                 case nameof(CloseSchools):
-                    cost = CalculateCost((CloseSchools) action, mode);
+                    cost = CalculateCost((CloseSchools)action, mode);
                     break;
                 case nameof(CloseRecreationalLocations):
-                    cost = CalculateCost((CloseRecreationalLocations) action, mode);
+                    cost = CalculateCost((CloseRecreationalLocations)action, mode);
                     break;
                 case nameof(ShieldingProgram):
-                    cost = CalculateCost((ShieldingProgram) action, mode);
+                    cost = CalculateCost((ShieldingProgram)action, mode);
                     break;
                 case nameof(MovementRestrictions):
-                    cost = CalculateCost((MovementRestrictions) action, mode);
+                    cost = CalculateCost((MovementRestrictions)action, mode);
                     break;
                 case nameof(CloseBorders):
-                    cost = CalculateCost((CloseBorders) action, mode);
+                    cost = CalculateCost((CloseBorders)action, mode);
                     break;
                 case nameof(InvestInVaccine):
-                    cost = CalculateCost((InvestInVaccine) action, mode);
+                    cost = CalculateCost((InvestInVaccine)action, mode);
                     break;
                 case nameof(Furlough):
-                    cost = CalculateCost((Furlough) action, mode);
+                    cost = CalculateCost((Furlough)action, mode);
                     break;
                 case nameof(Loan):
-                    cost = CalculateCost((Loan) action, mode);
+                    cost = CalculateCost((Loan)action, mode);
                     break;
                 case nameof(MaskMandate):
-                    cost = CalculateCost((MaskMandate) action, mode);
+                    cost = CalculateCost((MaskMandate)action, mode);
                     break;
                 case nameof(HealthDrive):
-                    cost = CalculateCost((HealthDrive) action, mode);
+                    cost = CalculateCost((HealthDrive)action, mode);
                     break;
                 case nameof(InvestInHealthServices):
-                    cost = CalculateCost((InvestInHealthServices) action, mode);
+                    cost = CalculateCost((InvestInHealthServices)action, mode);
                     break;
                 case nameof(SocialDistancingMandate):
-                    cost = CalculateCost((SocialDistancingMandate) action, mode);
+                    cost = CalculateCost((SocialDistancingMandate)action, mode);
                     break;
                 case nameof(Curfew):
-                    cost = CalculateCost((Curfew) action, mode);
+                    cost = CalculateCost((Curfew)action, mode);
                     break;
             }
 
             return cost;
         }
-        
+
         public static float CalculateCost(InformationPressRelease pressRelease, ActionMode mode)
         {
             if (mode == ActionMode.Delete)

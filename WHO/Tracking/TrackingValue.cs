@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace WHO.Tracking
-{ 
+{
     /// <summary>
     /// These refer to the Parameters of the InfectionTotals so they can be accessed easier
     /// </summary>

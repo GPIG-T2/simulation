@@ -191,7 +191,7 @@ namespace WHO
             this.RunGlobalTriggerChecks();
         }
 
-        private void RunLocalTriggerChecks(LocationDefinition location, int depth = 0, string parent="")
+        private void RunLocalTriggerChecks(LocationDefinition location, int depth = 0, string parent = "")
         {
             // Loop through all the triggers and if they should be applied then apply them
             parent += location.Coord;
@@ -239,10 +239,7 @@ namespace WHO
 
         public async ValueTask DisposeAsync()
         {
-            if (this._client is WebSocket socket)
-            {
-                await socket.DisposeAsync();
-            }
+            await this._client.DisposeAsync();
         }
 
         private async Task ExecuteTasks()
@@ -266,7 +263,7 @@ namespace WHO
             }
         }
 
-        private void InitialiseLocationInformation(List<LocationDefinition> locations, string locationKey="")
+        private void InitialiseLocationInformation(List<LocationDefinition> locations, string locationKey = "")
         {
             // Creates the global tracker and then creates a tracker for each location
             this._locationTrackers[ALL_LOCATION_ID] = new LocationTracker(ALL_LOCATION_ID, null);
@@ -291,7 +288,7 @@ namespace WHO
             this._locationTrackers[ALL_LOCATION_ID].Track(this.GetTotalsForAll());
         }
 
-        private async Task GetLocationTrackingInformation(LocationDefinition location, string localLocationKey="")
+        private async Task GetLocationTrackingInformation(LocationDefinition location, string localLocationKey = "")
         {
             // Create the tracker and populate it with the inital information
             localLocationKey += location.Coord;
@@ -309,7 +306,7 @@ namespace WHO
         private InfectionTotals GetTotalsForAll()
         {
             // Sum over all the top level locations
-            InfectionTotals totals = new(new() {}, 0, 0, 0, 0, 0, 0, 0);
+            InfectionTotals totals = new(new() { }, 0, 0, 0, 0, 0, 0, 0);
             foreach (var location in this._simulationSettings.Locations)
             {
                 InfectionTotals? latest = this._locationTrackers[location.Coord].Latest;
@@ -333,23 +330,23 @@ namespace WHO
             int locationPopulation = this._locationTrackers[location].Latest?.GetTotalPeople() ?? 0;
 
             // Calcualte infection rate
-            decimal infectionRate = (asymptomaticInfectedInfectious + symptomaticInfected) / (decimal) locationPopulation;
+            decimal infectionRate = (asymptomaticInfectedInfectious + symptomaticInfected) / (decimal)locationPopulation;
 
             // Using the proportion of people who are infected calculate an appropriate budget for that location
             int totalInfections = this._locationTrackers[ALL_LOCATION_ID].Latest?.GetTotalPeople() ?? 0 - this._locationTrackers[ALL_LOCATION_ID].Latest?.GetParameterTotals(TrackingValue.Uninfected) ?? 0;
             int infectionsInArea = this._locationTrackers[location].Latest?.GetTotalPeople() ?? 0 - this._locationTrackers[location].Latest?.GetParameterTotals(TrackingValue.Uninfected) ?? 0;
 
-            decimal percentageOfInfections = (infectionsInArea / (decimal) totalInfections);
+            decimal percentageOfInfections = (infectionsInArea / (decimal)totalInfections);
 
             // Limit the amount of money spent each term to a third of the budget
-            budgetAvailable = (int) Math.Round((budgetAvailable / (decimal) 3), 0);
+            budgetAvailable = (int)Math.Round((budgetAvailable / (decimal)3), 0);
 
-            float budgetForLocation = (int) Math.Round((budgetAvailable * percentageOfInfections), 0);
+            float budgetForLocation = (int)Math.Round((budgetAvailable * percentageOfInfections), 0);
 
             // Get all WhoActions
             List<object> actions;
 
-            if (infectionRate > (decimal) threshold)
+            if (infectionRate > (decimal)threshold)
             {
                 actions = this.GetWhoActions(loc, ActionCostCalculator.ActionMode.Create, budgetForLocation);
             }
@@ -361,7 +358,7 @@ namespace WHO
             // Actions which are collectively all available given the budget
             List<object> actionsAvailable = new();
 
-            if (infectionRate > (decimal) threshold)
+            if (infectionRate > (decimal)threshold)
             {
                 foreach (var action in actions)
                 {
@@ -374,7 +371,7 @@ namespace WHO
                     }
                 }
             }
-            else if (infectionRate <= (decimal) (threshold * 0.75))
+            else if (infectionRate <= (decimal)(threshold * 0.75))
             {
                 foreach (var action in actions)
                 {
@@ -394,52 +391,52 @@ namespace WHO
                 switch (action.GetType().Name)
                 {
                     case nameof(InformationPressRelease):
-                        this._tasksToExecute.Add(new(this._currentActionId++, (InformationPressRelease) action));
+                        this._tasksToExecute.Add(new(this._currentActionId++, (InformationPressRelease)action));
                         break;
                     case nameof(TestAndIsolation):
-                        this._tasksToExecute.Add(new(this._currentActionId++, (TestAndIsolation) action));
+                        this._tasksToExecute.Add(new(this._currentActionId++, (TestAndIsolation)action));
                         break;
                     case nameof(StayAtHome):
-                        this._tasksToExecute.Add(new(this._currentActionId++, (StayAtHome) action));
+                        this._tasksToExecute.Add(new(this._currentActionId++, (StayAtHome)action));
                         break;
                     case nameof(CloseSchools):
-                        this._tasksToExecute.Add(new(this._currentActionId++, (CloseSchools) action));
+                        this._tasksToExecute.Add(new(this._currentActionId++, (CloseSchools)action));
                         break;
                     case nameof(CloseRecreationalLocations):
-                        this._tasksToExecute.Add(new(this._currentActionId++, (CloseRecreationalLocations) action));
+                        this._tasksToExecute.Add(new(this._currentActionId++, (CloseRecreationalLocations)action));
                         break;
                     case nameof(ShieldingProgram):
-                        this._tasksToExecute.Add(new(this._currentActionId++, (ShieldingProgram) action));
+                        this._tasksToExecute.Add(new(this._currentActionId++, (ShieldingProgram)action));
                         break;
                     case nameof(MovementRestrictions):
-                        this._tasksToExecute.Add(new(this._currentActionId++, (MovementRestrictions) action));
+                        this._tasksToExecute.Add(new(this._currentActionId++, (MovementRestrictions)action));
                         break;
                     case nameof(CloseBorders):
-                        this._tasksToExecute.Add(new(this._currentActionId++, (CloseBorders) action));
+                        this._tasksToExecute.Add(new(this._currentActionId++, (CloseBorders)action));
                         break;
                     case nameof(InvestInVaccine):
-                        this._tasksToExecute.Add(new(this._currentActionId++, (InvestInVaccine) action));
+                        this._tasksToExecute.Add(new(this._currentActionId++, (InvestInVaccine)action));
                         break;
                     case nameof(Furlough):
-                        this._tasksToExecute.Add(new(this._currentActionId++, (Furlough) action));
+                        this._tasksToExecute.Add(new(this._currentActionId++, (Furlough)action));
                         break;
                     case nameof(Loan):
-                        this._tasksToExecute.Add(new(this._currentActionId++, (Loan) action));
+                        this._tasksToExecute.Add(new(this._currentActionId++, (Loan)action));
                         break;
                     case nameof(MaskMandate):
-                        this._tasksToExecute.Add(new(this._currentActionId++, (MaskMandate) action));
+                        this._tasksToExecute.Add(new(this._currentActionId++, (MaskMandate)action));
                         break;
                     case nameof(HealthDrive):
-                        this._tasksToExecute.Add(new(this._currentActionId++, (HealthDrive) action));
+                        this._tasksToExecute.Add(new(this._currentActionId++, (HealthDrive)action));
                         break;
                     case nameof(InvestInHealthServices):
-                        this._tasksToExecute.Add(new(this._currentActionId++, (InvestInHealthServices) action));
+                        this._tasksToExecute.Add(new(this._currentActionId++, (InvestInHealthServices)action));
                         break;
                     case nameof(SocialDistancingMandate):
-                        this._tasksToExecute.Add(new(this._currentActionId++, (SocialDistancingMandate) action));
+                        this._tasksToExecute.Add(new(this._currentActionId++, (SocialDistancingMandate)action));
                         break;
                     case nameof(Curfew):
-                        this._tasksToExecute.Add(new(this._currentActionId++, (Curfew) action));
+                        this._tasksToExecute.Add(new(this._currentActionId++, (Curfew)action));
                         break;
                 }
             }
@@ -554,6 +551,6 @@ namespace WHO
 
             return actions;
         }
-        
+
     }
 }

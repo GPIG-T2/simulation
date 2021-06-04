@@ -13,7 +13,7 @@ namespace WHO.Test
 {
     public class TestTrigger
     {
-        
+
         [Fact]
         public void TestTriggerDepthCheck()
         {

@@ -31,7 +31,7 @@ namespace WHO.Test
 
             LocationStatus status = new(locationIn);
             WhoAction action = new(actionId, new MaskMandate(status.Location, 1));
-            
+
             status.AddAction(action);
 
             Assert.Equal(1, status.ActionCount);
@@ -51,7 +51,7 @@ namespace WHO.Test
             WhoAction maskAction = new(actionIdMask, new MaskMandate(status.Location, 1));
             WhoAction maskAction2 = new(actionIdMask2, new MaskMandate(status.Location, 2));
             WhoAction shieldAction = new(actionIdShield, new ShieldingProgram(status.Location));
-            
+
             status.AddAction(maskAction);
             status.AddAction(maskAction2);
             status.AddAction(shieldAction);

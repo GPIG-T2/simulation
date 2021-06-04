@@ -5,7 +5,7 @@ using Models;
 
 namespace Interface.Client
 {
-    public interface IClient
+    public interface IClient : IAsyncDisposable
     {
         Task<List<InfectionTotals>> GetInfoTotals(SearchRequest request);
         Task<List<ActorSearchResult>> GetInfoActors(SearchRequest request);
