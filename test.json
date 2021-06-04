@@ -1,0 +1,128 @@
+{
+  "virus": {
+    "infectivity": {
+      "underFive": 0,
+      "fiveToSeventeen": 0,
+      "eighteenToTwentyNine": 0,
+      "thirtyToThirtyNine": 0,
+      "fourtyToFourtyNine": 0,
+      "fiftyToSixtyFour": 0,
+      "sixtyFiveToSeventyFour": 0,
+      "seventyFiveToEightyFour": 0,
+      "overEightyFive": 0
+    },
+    "fatality": {
+      "underFive": 0,
+      "fiveToSeventeen": 0,
+      "eighteenToTwentyNine": 0,
+      "thirtyToThirtyNine": 0,
+      "fourtyToFourtyNine": 0,
+      "fiftyToSixtyFour": 0,
+      "sixtyFiveToSeventyFour": 0,
+      "seventyFiveToEightyFour": 0,
+      "overEightyFive": 0
+    },
+    "reinfectivity": {
+      "underFive": 0,
+      "fiveToSeventeen": 0,
+      "eighteenToTwentyNine": 0,
+      "thirtyToThirtyNine": 0,
+      "fourtyToFourtyNine": 0,
+      "fiftyToSixtyFour": 0,
+      "sixtyFiveToSeventyFour": 0,
+      "seventyFiveToEightyFour": 0,
+      "overEightyFive": 0
+    },
+    "symptomaticity": {
+      "underFive": 0,
+      "fiveToSeventeen": 0,
+      "eighteenToTwentyNine": 0,
+      "thirtyToThirtyNine": 0,
+      "fourtyToFourtyNine": 0,
+      "fiftyToSixtyFour": 0,
+      "sixtyFiveToSeventyFour": 0,
+      "seventyFiveToEightyFour": 0,
+      "overEightyFive": 0
+    },
+    "seriousRate": {
+      "underFive": 0,
+      "fiveToSeventeen": 0,
+      "eighteenToTwentyNine": 0,
+      "thirtyToThirtyNine": 0,
+      "fourtyToFourtyNine": 0,
+      "fiftyToSixtyFour": 0,
+      "sixtyFiveToSeventyFour": 0,
+      "seventyFiveToEightyFour": 0,
+      "overEightyFive": 0
+    }
+  },
+  "nodes": [
+    {
+      "population": 1,
+      "interactivity": {
+        "underFive": 0,
+        "fiveToSeventeen": 0,
+        "eighteenToTwentyNine": 0,
+        "thirtyToThirtyNine": 0,
+        "fourtyToFourtyNine": 0,
+        "fiftyToSixtyFour": 0,
+        "sixtyFiveToSeventyFour": 0,
+        "seventyFiveToEightyFour": 0,
+        "overEightyFive": 0
+      },
+      "name": "Test node A",
+      "position": { "x": 0, "y": 0 },
+      "demographics": {
+        "underFive": 0,
+        "fiveToSeventeen": 0,
+        "eighteenToTwentyNine": 0,
+        "thirtyToThirtyNine": 0,
+        "fourtyToFourtyNine": 0,
+        "fiftyToSixtyFour": 0,
+        "sixtyFiveToSeventyFour": 0,
+        "seventyFiveToEightyFour": 0,
+        "overEightyFive": 0
+      },
+      "gdp": 1.0,
+      "testingCapacity": 1
+    },
+    {
+      "population": 1,
+      "interactivity": {
+        "underFive": 0,
+        "fiveToSeventeen": 0,
+        "eighteenToTwentyNine": 0,
+        "thirtyToThirtyNine": 0,
+        "fourtyToFourtyNine": 0,
+        "fiftyToSixtyFour": 0,
+        "sixtyFiveToSeventyFour": 0,
+        "seventyFiveToEightyFour": 0,
+        "overEightyFive": 0
+      },
+      "name": "Test node B",
+      "position": { "x": 1, "y": 0 },
+      "demographics": {
+        "underFive": 0,
+        "fiveToSeventeen": 0,
+        "eighteenToTwentyNine": 0,
+        "thirtyToThirtyNine": 0,
+        "fourtyToFourtyNine": 0,
+        "fiftyToSixtyFour": 0,
+        "sixtyFiveToSeventyFour": 0,
+        "seventyFiveToEightyFour": 0,
+        "overEightyFive": 0
+      },
+      "gdp": 1.0,
+      "testingCapacity": 1
+    }
+  ],
+  "edges": [
+    {
+      "left": 0,
+      "right": 1,
+      "population": 1,
+      "interactivity": 1.0,
+      "distance": 1
+    }
+  ]
+}
