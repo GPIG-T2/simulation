@@ -1,12 +1,8 @@
-﻿using Models.Parameters;
-using Moq;
+﻿using System.Collections.Generic;
 using Interface.Client;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+using Models.Parameters;
+using Moq;
+using WHO.Extensions;
 using WHO.Tracking;
 using Xunit;
 
@@ -30,7 +26,7 @@ namespace WHO.Test
             }
             this._healthOrganisation = new(MockClient.Object);
             this._healthOrganisation.SetLocationTrackerFromTest(LocationTrackerInfo);
-            SetPopulation(string.Join("", TestLocation), PeopleAtTestLocation);
+            SetPopulation(TestLocation.ToKey(), PeopleAtTestLocation);
         }
 
         private static float GetPressReleaseCost()

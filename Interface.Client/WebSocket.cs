@@ -7,7 +7,7 @@ using Websocket.Client;
 
 namespace Interface.Client
 {
-    public class WebSocket : IClient
+    public class WebSocket : IClient, IAsyncDisposable
     {
         private readonly IWebsocketClient _client;
         private readonly Dictionary<int, TaskCompletionSource<Models.WebSocket.Response>> _messages

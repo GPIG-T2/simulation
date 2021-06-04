@@ -1,10 +1,5 @@
-﻿using Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
+using Models;
 using WHO.Extensions;
 using WHO.Tracking;
 using Xunit;
@@ -19,7 +14,7 @@ namespace WHO.Test
         {
             string location = "A1";
             LocationTracker tracker = new(location, null);
-            Assert.Equal(location, tracker.Location);
+            Assert.Equal(location, tracker.LocationKey);
         }
 
         [Fact]

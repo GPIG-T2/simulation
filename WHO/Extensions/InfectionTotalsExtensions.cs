@@ -1,17 +1,13 @@
-﻿using Models;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+using Models;
 using WHO.Tracking;
 
 namespace WHO.Extensions
 {
     public static class InfectionTotalsExtensions
     {
-
         public static int GetTotalPeople(this InfectionTotals totals)
         {
             return totals.AsymptomaticInfectedInfectious +
@@ -22,6 +18,7 @@ namespace WHO.Extensions
                 totals.Symptomatic +
                 totals.Uninfected;
         }
+
         public static int GetParameterTotals(this InfectionTotals totals, TrackingValue value)
         {
             Type myType = typeof(InfectionTotals);
@@ -57,6 +54,5 @@ namespace WHO.Extensions
             self.AsymptomaticInfectedInfectious == other.AsymptomaticInfectedInfectious;
 
         }
-
     }
 }

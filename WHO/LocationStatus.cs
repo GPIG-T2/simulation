@@ -1,21 +1,13 @@
-﻿using Models;
-using Models.Parameters;
-using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using Models;
+using WHO.Extensions;
 
 namespace WHO
 {
     public class LocationStatus
     {
-
         private readonly List<string> _location;
         private readonly Dictionary<int, WhoAction> _currentActions;
-
         private readonly string _locationKey;
 
         public string LocationKey => this._locationKey;
@@ -24,11 +16,11 @@ namespace WHO
 
         public int ActionCount => this._currentActions.Count;
 
-        public LocationStatus(string location)
+        public LocationStatus(List<string> location)
         {
             // Copy the location variable
-            this._location = new List<string>(WholeChunks(location, 2));
-            this._locationKey = location;
+            this._location = location;
+            this._locationKey = location.ToKey();
             this._currentActions = new();
         }
 
@@ -74,8 +66,5 @@ namespace WHO
                 yield return str.Substring(i, chunkSize);
             }
         }
-
-
-
     }
 }

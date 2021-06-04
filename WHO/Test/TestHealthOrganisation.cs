@@ -1,15 +1,13 @@
-﻿using Interface.Client;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestPlatform.Common;
+using Interface.Client;
 using Models;
-using Moq;
-using Xunit;
-using WHO.Tracking;
 using Models.Parameters;
+using Moq;
+using WHO.Tracking;
+using Xunit;
 
 namespace WHO.Test
 {

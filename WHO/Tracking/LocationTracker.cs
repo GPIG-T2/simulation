@@ -1,11 +1,6 @@
-﻿using Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+using Models;
 
 namespace WHO.Tracking
 {
@@ -13,18 +8,13 @@ namespace WHO.Tracking
     {
 
         private readonly List<InfectionTotals> _totals = new();
+        private readonly string _location;
+        private readonly LocationStatus? _status;
 
         public int Count { get { return this._totals.Count; } }
-
         public InfectionTotals? Latest => this.Count > 0 ? this._totals[this.Count - 1] : null;
-
-        private readonly string _location;
-
-        [AllowNull]
-        private readonly LocationStatus _status;
-
-        public string Location => this._location;
-        public LocationStatus Status => this._status;
+        public string LocationKey => this._location;
+        public LocationStatus? Status => this._status;
 
         public LocationTracker(string location, LocationStatus? status)
         {

@@ -1,18 +1,11 @@
-﻿using Models.Parameters;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using Models.Parameters;
 using WHO.Extensions;
 
 namespace WHO
 {
     public static class ActionCostCalculator
     {
-
         public enum ActionMode
         {
             Create,
@@ -29,16 +22,16 @@ namespace WHO
 
         private static int GetTotalPeople(List<string> location)
         {
-            return HealthOrganisation.Instance.LocationTrackers[string.Join("", location)].Latest?.GetTotalPeople() ?? -1;
+            return HealthOrganisation.Instance?.LocationTrackers[location.ToKey()].Latest?.GetTotalPeople() ?? -1;
         }
 
         private static float GetPressReleaseCost(List<string> location)
         {
-            var latestInformation = HealthOrganisation.Instance.LocationTrackers[string.Join("", location)].Latest;
+            var latestInformation = HealthOrganisation.Instance?.LocationTrackers[location.ToKey()].Latest;
             return latestInformation == null ? -1 : latestInformation.GetTotalPeople() * PressReleaseCost;
         }
 
-        public static float CalculateCost(Object action, ActionMode mode)
+        public static float CalculateCost(object action, ActionMode mode)
         {
             float cost = 0;
 

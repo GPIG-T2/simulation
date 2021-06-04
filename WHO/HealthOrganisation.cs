@@ -1,26 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Threading.Tasks;
-using Castle.Core.Internal;
+using Interface.Client;
 using Models;
 using Models.Parameters;
 using Serilog;
-using WHO.Tracking;
-using Interface.Client;
 using WHO.Extensions;
-using System.Linq;
-using Serilog.Debugging;
-using System.Runtime.CompilerServices;
+using WHO.Tracking;
 
 namespace WHO
 {
     public class HealthOrganisation : IAsyncDisposable
     {
 
-        public static HealthOrganisation Instance { get; private set; }
+        public static HealthOrganisation? Instance { get; private set; }
 
-        internal static void SetInstanceForTestingOnly(HealthOrganisation org)
+        internal static void SetInstanceForTestingOnly(HealthOrganisation? org)
         {
             Instance = org;
         }
@@ -30,8 +27,7 @@ namespace WHO
         /// </summary>
         internal const string ALL_LOCATION_ID = "_all";
 
-        [AllowNull]
-        private IClient _client;
+        private readonly IClient _client;
 
         private const int _statusPingDelayInMs = 100;
 
@@ -46,7 +42,7 @@ namespace WHO
         /// <summary>
         /// Keeps track of which actions have been applied to the locations as well as the location list\<string\> form
         /// </summary>
-        private Dictionary<string, LocationStatus> _locationStatuses = new();
+        private readonly Dictionary<string, LocationStatus> _locationStatuses = new();
 
         public Dictionary<string, LocationTracker> LocationTrackers => this._locationTrackers;
         public Dictionary<string, LocationStatus> LocationStatuses => this._locationStatuses;
@@ -61,7 +57,11 @@ namespace WHO
         /// </summary>
         private bool _running = false;
 
-        public bool Running { get { return this._running; } set { this._running = value; } }
+        public bool Running
+        {
+            get => this._running;
+            set => this._running = value;
+        }
 
         /// <summary>
         /// List of tasks to execute
@@ -121,7 +121,20 @@ namespace WHO
             // Example triggers
 
             // This trigger tries to calculate what the best actions are
-            ITrigger bestAction = new CustomTrigger(TrackingValue.SeriousInfection, p => p.CurrentParameterCount > 100, (loc) => this.CalculateBestAction(this._budget, loc), 7);
+            ITrigger bestAction = new CustomTrigger(
+                TrackingValue.SeriousInfection,
+                p => p.CurrentParameterCount > 100,
+                (loc) =>
+                {
+                    // If location is null, then most of the actions this handles
+                    // will not work, as they need a location.
+                    if (loc != null)
+                    {
+                        this.CalculateBestAction(this._budget, loc);
+                    }
+                },
+                7
+            );
             this._triggersForLocalLocations.Add(bestAction);
 
             ITrigger basicIncreaseOfInfections = new BasicTrigger(TrackingValue.SeriousInfection, TrackingFunction.GREATER_THAN, 1.2f, (_) => Console.WriteLine("Increase"), 7);
@@ -155,7 +168,6 @@ namespace WHO
 
             this._running = true;
             bool firstTurn = true;
-
 
             while (this._running)
             {
@@ -191,21 +203,23 @@ namespace WHO
             this.RunGlobalTriggerChecks();
         }
 
-        private void RunLocalTriggerChecks(LocationDefinition location, int depth = 0, string parent = "")
+        private void RunLocalTriggerChecks(LocationDefinition location, int depth = 0, List<string>? parent = null)
         {
             // Loop through all the triggers and if they should be applied then apply them
-            parent += location.Coord;
+            List<string> current = Generic.BuildLocation(parent, location.Coord);
+            string key = current.ToKey();
+
             foreach (var trigger in this._triggersForLocalLocations)
             {
                 if (ITrigger.IsValidDepth(depth, trigger.DepthRange))
                 {
-                    trigger.Apply(this._locationTrackers[parent]);
+                    trigger.Apply(this._locationTrackers[key]);
                 }
             }
             // Recurse for the sub locations
             if (location.SubLocations != null)
             {
-                location.SubLocations.ForEach((l) => this.RunLocalTriggerChecks(l, depth + 1, parent));
+                location.SubLocations.ForEach((l) => this.RunLocalTriggerChecks(l, depth + 1, current));
             }
         }
 
@@ -257,41 +271,42 @@ namespace WHO
                     var action = dict[result.Id];
                     if (action.Parameters?.Location != null)
                     {
-                        this._locationStatuses[string.Join("", action.Parameters.Location)].AddAction(dict[result.Id]);
+                        this._locationStatuses[action.Parameters.Location.ToKey()].AddAction(dict[result.Id]);
                     }
                 }
             }
         }
 
-        private void InitialiseLocationInformation(List<LocationDefinition> locations, string locationKey = "")
+        private void InitialiseLocationInformation(List<LocationDefinition> locations, List<string>? parent = null)
         {
             // Creates the global tracker and then creates a tracker for each location
             this._locationTrackers[ALL_LOCATION_ID] = new LocationTracker(ALL_LOCATION_ID, null);
             foreach (var location in locations)
             {
-                string localLocationKey = locationKey + location.Coord;
-                LocationStatus status;
-                this._locationStatuses.Add(localLocationKey, status = new LocationStatus(localLocationKey));
+                List<string> loc = Generic.BuildLocation(parent, location.Coord);
+                string localLocationKey = loc.ToKey();
+                LocationStatus status = new(loc);
+
+                this._locationStatuses.Add(localLocationKey, status);
                 this._locationTrackers.Add(localLocationKey, new LocationTracker(localLocationKey, status));
                 if (location.SubLocations != null)
                 {
-                    this.InitialiseLocationInformation(location.SubLocations, localLocationKey);
+                    this.InitialiseLocationInformation(location.SubLocations, loc);
                 }
             }
         }
 
         private async Task GetTrackingInformation()
         {
-            // Apparently this blocks even though Visual Studio claims it doesn't
-
-            Task.WaitAll(this._simulationSettings.Locations.Select(loc => this.GetLocationTrackingInformation(loc)).ToArray());
+            await Task.WhenAll(this._simulationSettings.Locations.Select(loc => this.GetLocationTrackingInformation(loc)).ToArray());
             this._locationTrackers[ALL_LOCATION_ID].Track(this.GetTotalsForAll());
         }
 
-        private async Task GetLocationTrackingInformation(LocationDefinition location, string localLocationKey = "")
+        private async Task GetLocationTrackingInformation(LocationDefinition location, List<string>? parent = null)
         {
             // Create the tracker and populate it with the inital information
-            localLocationKey += location.Coord;
+            var current = Generic.BuildLocation(parent, location.Coord);
+            string localLocationKey = current.ToKey();
             LocationTracker tracker = this._locationTrackers[localLocationKey];
             var trackingInformation = await this._client.GetInfoTotals(new SearchRequest(new() { this._locationStatuses[localLocationKey].Location }));
             tracker.Track(trackingInformation[0]);
@@ -299,7 +314,7 @@ namespace WHO
             // Recursively populate sub locations
             if (location.SubLocations != null)
             {
-                Task.WaitAll(location.SubLocations.Select(loc => this.GetLocationTrackingInformation(loc, localLocationKey)).ToArray());
+                Task.WaitAll(location.SubLocations.Select(loc => this.GetLocationTrackingInformation(loc, current)).ToArray());
             }
         }
 
@@ -321,7 +336,7 @@ namespace WHO
 
         public void CalculateBestAction(int budgetAvailable, List<string> loc, float threshold = 1.2f)
         {
-            string location = string.Join("", loc);
+            string location = loc.ToKey();
 
             // Calculate amount of people infected
             var asymptomaticInfectedInfectious = this._locationTrackers[location].Latest?.GetParameterTotals(TrackingValue.AsymptomaticInfectedInfectious) ?? 0;
@@ -367,7 +382,7 @@ namespace WHO
                     if (actionCost < budgetForLocation)
                     {
                         actionsAvailable.Add(action);
-                        budgetForLocation = budgetForLocation - actionCost;
+                        budgetForLocation -= actionCost;
                     }
                 }
             }
@@ -380,13 +395,13 @@ namespace WHO
                     if (actionCost < budgetForLocation)
                     {
                         actionsAvailable.Add(action);
-                        budgetForLocation = budgetForLocation - actionCost;
+                        budgetForLocation -= actionCost;
                     }
                 }
             }
 
             // Convert actions to WhoActions and add to tasks which need to be executed
-            foreach (Object action in actionsAvailable)
+            foreach (object action in actionsAvailable)
             {
                 switch (action.GetType().Name)
                 {
@@ -446,9 +461,8 @@ namespace WHO
         {
             List<object> actions = new();
 
-            string location = string.Join("", loc);
+            string location = loc.ToKey();
             int locationPopulation = this._locationTrackers[location].Latest?.GetTotalPeople() ?? 0;
-
 
             TestAndIsolation testAndIsolation = new(1, 14, (int)Math.Round((locationPopulation * 0.5), 0), loc, false);
             actions.Add(testAndIsolation);

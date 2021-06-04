@@ -1,11 +1,6 @@
-﻿using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-using Models;
-using Moq;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Models;
 using WHO.Tracking;
 using Xunit;
 
@@ -45,7 +40,7 @@ namespace WHO.Test
             TrackingValue parameter = TrackingValue.AsymptomaticInfectedInfectious;
             TrackingFunction comparisonFunction = TrackingFunction.GREATER_THAN;
             float threshold = 1.2f;
-            Action<List<string>> resultingAction = (_) => { };
+            Action<List<string>?> resultingAction = (_) => { };
             int timespan = 1;
             BasicTrigger trigger = new(parameter, comparisonFunction, threshold, resultingAction, timespan);
             Assert.Equal(parameter, trigger.Parameter);
@@ -62,7 +57,7 @@ namespace WHO.Test
             TrackingValue parameter = TrackingValue.AsymptomaticInfectedInfectious;
             TrackingFunction comparisonFunction = TrackingFunction.GREATER_THAN;
             float threshold = 1.2f;
-            Action<List<string>> resultingAction = (_) => { };
+            Action<List<string>?> resultingAction = (_) => { };
             int timespan = 1;
             (int, int) depthRange = (1, 4);
             BasicTrigger trigger = new(parameter, comparisonFunction, threshold, resultingAction, timespan, depthRange);
@@ -77,7 +72,7 @@ namespace WHO.Test
         [Fact]
         public void TestBasicApplySuccess1Day()
         {
-            LocationStatus status = new("A1");
+            LocationStatus status = new(new() { "A1" });
             LocationTracker tracker = new("A1", status);
             InfectionTotals totals1 = new(status.Location, 1, 1, 1, 1, 1, 1, 1);
             InfectionTotals totals2 = new(status.Location, 2, 0, 1, 1, 1, 1, 1);
@@ -96,7 +91,7 @@ namespace WHO.Test
         [Fact]
         public void TestBasicApplyFail1Day()
         {
-            LocationStatus status = new("A1");
+            LocationStatus status = new(new() { "A1" });
             LocationTracker tracker = new("A1", status);
             InfectionTotals totals1 = new(status.Location, 1, 1, 1, 1, 1, 1, 1);
             InfectionTotals totals2 = new(status.Location, 1, 1, 1, 1, 1, 1, 1);
@@ -115,7 +110,7 @@ namespace WHO.Test
         [Fact]
         public void TestBasicApplySuccess2Day()
         {
-            LocationStatus status = new("A1");
+            LocationStatus status = new(new() { "A1" });
             LocationTracker tracker = new("A1", status);
             InfectionTotals totals1 = new(status.Location, 2, 0, 1, 1, 1, 1, 1);
             InfectionTotals totals2 = new(status.Location, 2, 0, 1, 1, 1, 1, 1);
@@ -138,7 +133,7 @@ namespace WHO.Test
         [Fact]
         public void TestBasicApplyFail2Day()
         {
-            LocationStatus status = new("A1");
+            LocationStatus status = new(new() { "A1" });
             LocationTracker tracker = new("A1", status);
             InfectionTotals totals1 = new(status.Location, 1, 1, 1, 1, 1, 1, 1);
             InfectionTotals totals2 = new(status.Location, 1, 1, 1, 1, 1, 1, 1);
@@ -162,7 +157,7 @@ namespace WHO.Test
         [Fact]
         public void TestBasicApplyNotEnoughData()
         {
-            LocationStatus status = new("A1");
+            LocationStatus status = new(new() { "A1" });
             LocationTracker tracker = new("A1", status);
             InfectionTotals totals1 = new(status.Location, 2, 0, 1, 1, 1, 1, 1);
             InfectionTotals totals2 = new(status.Location, 2, 0, 1, 1, 1, 1, 1);
@@ -185,7 +180,7 @@ namespace WHO.Test
         {
             TrackingValue parameter = TrackingValue.AsymptomaticInfectedInfectious;
             int timespan = 1;
-            Action<List<string>> resultingAction = (_) => { };
+            Action<List<string>?> resultingAction = (_) => { };
             Func<CustomTrackingFunctionParameters, bool> comparisonFunction = (_) => true;
             CustomTrigger trigger = new(parameter, comparisonFunction, resultingAction, timespan);
             Assert.Equal(parameter, trigger.Parameter);
@@ -200,7 +195,7 @@ namespace WHO.Test
         {
             TrackingValue parameter = TrackingValue.AsymptomaticInfectedInfectious;
             int timespan = 1;
-            Action<List<string>> resultingAction = (_) => { };
+            Action<List<string>?> resultingAction = (_) => { };
             Func<CustomTrackingFunctionParameters, bool> comparisonFunction = (_) => true;
             (int, int) depthRange = (1, 4);
             CustomTrigger trigger = new(parameter, comparisonFunction, resultingAction, timespan, depthRange);
@@ -214,7 +209,7 @@ namespace WHO.Test
         [Fact]
         public void TestCustomApplySuccess1Day()
         {
-            LocationStatus status = new("A1");
+            LocationStatus status = new(new() { "A1" });
             LocationTracker tracker = new("A1", status);
             InfectionTotals totals1 = new(status.Location, 2, 1, 1, 1, 1, 1, 1);
             InfectionTotals totals2 = new(status.Location, 4, 0, 0, 1, 1, 1, 1);
@@ -232,7 +227,7 @@ namespace WHO.Test
         [Fact]
         public void TestCustomApplyFail1Day()
         {
-            LocationStatus status = new("A1");
+            LocationStatus status = new(new() { "A1" });
             LocationTracker tracker = new("A1", status);
             InfectionTotals totals1 = new(status.Location, 2, 1, 1, 1, 1, 1, 1);
             InfectionTotals totals2 = new(status.Location, 4, 0, 0, 1, 1, 1, 1);
@@ -250,7 +245,7 @@ namespace WHO.Test
         [Fact]
         public void TestCustomApplySuccess2Day()
         {
-            LocationStatus status = new("A1");
+            LocationStatus status = new(new() { "A1" });
             LocationTracker tracker = new("A1", status);
             InfectionTotals totals1 = new(status.Location, 2, 1, 1, 1, 1, 1, 1);
             InfectionTotals totals2 = new(status.Location, 2, 1, 1, 1, 1, 1, 1);
@@ -272,7 +267,7 @@ namespace WHO.Test
         [Fact]
         public void TestCustomApplyFail2Day()
         {
-            LocationStatus status = new("A1");
+            LocationStatus status = new(new() { "A1" });
             LocationTracker tracker = new("A1", status);
             InfectionTotals totals1 = new(status.Location, 2, 1, 1, 1, 1, 1, 1);
             InfectionTotals totals2 = new(status.Location, 2, 1, 1, 1, 1, 1, 1);
@@ -295,7 +290,7 @@ namespace WHO.Test
         [Fact]
         public void TestCustomApplyNotEnoughData()
         {
-            LocationStatus status = new("A1");
+            LocationStatus status = new(new() { "A1" });
             LocationTracker tracker = new("A1", status);
             InfectionTotals totals1 = new(status.Location, 2, 1, 1, 1, 1, 1, 1);
             InfectionTotals totals2 = new(status.Location, 2, 1, 1, 1, 1, 1, 1);

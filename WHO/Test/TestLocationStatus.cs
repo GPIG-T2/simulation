@@ -1,11 +1,8 @@
-﻿using Models;
+﻿using System.Collections.Generic;
+using Models;
 using Models.Parameters;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
+using WHO.Extensions;
 
 namespace WHO.Test
 {
@@ -15,21 +12,21 @@ namespace WHO.Test
         [Fact]
         public void TestConstructor()
         {
-            string locationIn = "A1B3";
-            List<string> expectedLocation = new() { "A1", "B3" };
-            LocationStatus status = new(locationIn);
-            Assert.Equal(locationIn, status.LocationKey);
-            Assert.Equal(expectedLocation, status.Location);
+            List<string> location = new() { "A1", "B3" };
+            string expectedKey = "A1,B3";
+            LocationStatus status = new(location);
+            Assert.Equal(expectedKey, status.LocationKey);
+            Assert.Equal(location, status.Location);
             Assert.Equal(0, status.ActionCount);
         }
 
         [Fact]
         public void TestAddAction()
         {
-            string locationIn = "A1";
+            List<string> location = new() { "A1" };
             int actionId = 99;
 
-            LocationStatus status = new(locationIn);
+            LocationStatus status = new(location);
             WhoAction action = new(actionId, new MaskMandate(status.Location, 1));
 
             status.AddAction(action);
@@ -41,12 +38,12 @@ namespace WHO.Test
         [Fact]
         public void TestRetrieveActionTypes()
         {
-            string locationIn = "A1";
+            List<string> location = new() { "A1", "B3" };
             int actionIdMask = 98;
             int actionIdMask2 = 99;
             int actionIdShield = 100;
 
-            LocationStatus status = new(locationIn);
+            LocationStatus status = new(location);
 
             WhoAction maskAction = new(actionIdMask, new MaskMandate(status.Location, 1));
             WhoAction maskAction2 = new(actionIdMask2, new MaskMandate(status.Location, 2));
@@ -72,9 +69,9 @@ namespace WHO.Test
         [Fact]
         public void TestRemoveAction()
         {
-            string locationIn = "A1";
+            List<string> location = new() { "A1" };
             int actionId = 99;
-            LocationStatus status = new(locationIn);
+            LocationStatus status = new(location);
             WhoAction action = new(actionId, new MaskMandate(status.Location, 1));
             status.AddAction(action);
             Assert.Equal(1, status.ActionCount);
@@ -85,9 +82,9 @@ namespace WHO.Test
         [Fact]
         public void TestGetActionSuccess()
         {
-            string locationIn = "A1";
+            List<string> location = new() { "A1" };
             int actionId = 99;
-            LocationStatus status = new(locationIn);
+            LocationStatus status = new(location);
             WhoAction action = new(actionId, new MaskMandate(status.Location, 1));
             status.AddAction(action);
             WhoAction? actionOut = status.GetAction(actionId);
@@ -98,9 +95,9 @@ namespace WHO.Test
         [Fact]
         public void TestGetActionFail()
         {
-            string locationIn = "A1";
+            List<string> location = new() { "A1" };
             int actionId = 99;
-            LocationStatus status = new(locationIn);
+            LocationStatus status = new(location);
             WhoAction? actionOut = status.GetAction(actionId);
             Assert.Null(actionOut);
         }

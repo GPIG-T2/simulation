@@ -1,10 +1,6 @@
-﻿using Models;
-using Serilog.Debugging;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Models;
 using WHO.Extensions;
 
 namespace WHO.Tracking
@@ -90,11 +86,10 @@ namespace WHO.Tracking
 
             if (evaluation)
             {
-                this.ResultingAction.Invoke(tracker?.Status?.Location);
+                this.ResultingAction.Invoke(tracker.Status?.Location);
             }
 
         }
-
 
         protected float GetPercentageForInfectionTotals(InfectionTotals totals)
         {
