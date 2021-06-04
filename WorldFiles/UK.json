@@ -883,6 +883,104 @@
 			"population": 112,
 			"interactivity": 5,
 			"distance": 492
+		},
+		{
+			"name": "Air NI <-> NE",
+			"left": 11,
+			"right": 0,
+			"population": 748,
+			"interactivity": 5,
+			"distance": 280
+		},
+		{
+			"name": "Air NI <-> NW",
+			"left": 11,
+			"right": 1,
+			"population": 3384,
+			"interactivity": 5,
+			"distance": 270
+		},
+		{
+			"name": "Air NI <-> YH",
+			"left": 11,
+			"right": 2,
+			"population": 500,
+			"interactivity": 5,
+			"distance": 300
+		},
+		{
+			"name": "Air NI <-> EM",
+			"left": 11,
+			"right": 3,
+			"population": 413,
+			"interactivity": 5,
+			"distance": 363
+		},
+		{
+			"name": "Air NI <-> WM",
+			"left": 11,
+			"right": 4,
+			"population": 1445,
+			"interactivity": 5,
+			"distance": 355
+		},
+		{
+			"name": "Air NI <-> LD",
+			"left": 11,
+			"right": 6,
+			"population": 6840,
+			"interactivity": 5,
+			"distance": 518
+		},
+		{
+			"name": "Air NI <-> SE",
+			"left": 11,
+			"right": 7,
+			"population": 351,
+			"interactivity": 5,
+			"distance": 511
+		},
+		{
+			"name": "Air NI <-> SW",
+			"left": 11,
+			"right": 8,
+			"population": 1168,
+			"interactivity": 5,
+			"distance": 414
+		},
+		{
+			"name": "Air NI <-> WL",
+			"left": 11,
+			"right": 9,
+			"population": 194,
+			"interactivity": 5,
+			"distance": 392
+		},
+		{
+			"name": "Air NI <-> SC",
+			"left": 11,
+			"right": 10,
+			"population": 2946,
+			"interactivity": 5,
+			"distance": 176
+		},
+		{
+			"name": "Sea NI <-> NW",
+			"left": 11,
+			"right": 1,
+			"population": 803,
+			"interactivity": 5,
+			"distance": 270
+		},
+		{
+			"name": "Sea NI <-> SC",
+			"left": 11,
+			"right": 10,
+			"population": 4795,
+			"interactivity": 5,
+			"distance": 176
 		}
+
+
 	]
 }
