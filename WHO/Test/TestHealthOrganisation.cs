@@ -177,7 +177,7 @@ namespace WHO.Test
 
             org.calculateBestAction(100000000, loc, 0);
 
-            Assert.Equal(15, org._tasksToExecute.Count());
+            Assert.Equal(15, org.TasksToExecute.Count());
         }
 
         [Fact]
@@ -198,7 +198,7 @@ namespace WHO.Test
 
             org.calculateBestAction(100000000, loc, 1);
 
-            Assert.Equal(15, org._tasksToExecute.Count());
+            Assert.Equal(15, org.TasksToExecute.Count());
         }
 
         [Fact]
@@ -219,7 +219,7 @@ namespace WHO.Test
 
             org.calculateBestAction(100, loc, 0);
 
-            Assert.Equal(4, org._tasksToExecute.Count());
+            Assert.Equal(4, org.TasksToExecute.Count());
         }
 
         [Fact]
@@ -240,7 +240,7 @@ namespace WHO.Test
 
             org.calculateBestAction(100, loc, 1);
 
-            Assert.Equal(8, org._tasksToExecute.Count());
+            Assert.Equal(8, org.TasksToExecute.Count());
         }
 
     }

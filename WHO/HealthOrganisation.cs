@@ -66,7 +66,7 @@ namespace WHO
         /// <summary>
         /// List of tasks to execute
         /// </summary>
-        public List<WhoAction> _tasksToExecute = new();
+        private readonly List<WhoAction> _tasksToExecute = new();
 
         public List<WhoAction> TasksToExecute => this._tasksToExecute;
 
