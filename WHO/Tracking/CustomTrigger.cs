@@ -17,7 +17,7 @@ namespace WHO.Tracking
     {
         private readonly TrackingValue _parameter;
         private readonly int _timespan;
-        private readonly Action<List<string>> _resultingAction;
+        private readonly Action<List<string>?> _resultingAction;
         private readonly (int, int) _depthRange;
         private readonly Func<CustomTrackingFunctionParameters, bool> _comparisonFunction;
 
@@ -25,13 +25,13 @@ namespace WHO.Tracking
 
         public int Timespan => this._timespan;
 
-        public Action<List<string>> ResultingAction => this._resultingAction;
+        public Action<List<string>?> ResultingAction => this._resultingAction;
 
         public (int, int) DepthRange => this._depthRange;
 
         public Func<CustomTrackingFunctionParameters, bool> ComparisonFunction => this._comparisonFunction;
 
-        public CustomTrigger(TrackingValue parameter, Func<CustomTrackingFunctionParameters, bool> comparisonFunction, Action<List<string>> resultingAction, int timespan, (int, int)? depthRange = null)
+        public CustomTrigger(TrackingValue parameter, Func<CustomTrackingFunctionParameters, bool> comparisonFunction, Action<List<string>?> resultingAction, int timespan, (int, int)? depthRange = null)
         {
             this._parameter = parameter;
             this._comparisonFunction = comparisonFunction;
@@ -84,7 +84,7 @@ namespace WHO.Tracking
 
             if (this.ComparisonFunction.Invoke(customParams))
             {
-                this.ResultingAction.Invoke(tracker.Status.Location);
+                this.ResultingAction.Invoke(tracker?.Status?.Location);
             }
 
         }
