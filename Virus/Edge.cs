@@ -22,7 +22,7 @@ namespace Virus
         private int _totalPopulation;
         private double _currentInteractivity;
 
-        public int Distance { get; } // the physical distance the edge traverses
+        public int Distance { get; } // the physical distance the edge traverses - measured in km
 
         public Edge(string name, Node left, Node right, int population, double interactivity, int distance)
         {
