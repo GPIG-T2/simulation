@@ -28,7 +28,7 @@ namespace WHO
         /// <summary>
         /// Constant for referring to the global tracker
         /// </summary>
-        private const string ALL_LOCATION_ID = "_all";
+        internal const string ALL_LOCATION_ID = "_all";
 
         [AllowNull]
         private IClient _client;
@@ -61,10 +61,14 @@ namespace WHO
         /// </summary>
         private bool _running = false;
 
+        public bool Running { get { return this._running; } set { this._running = value; } }
+
         /// <summary>
         /// List of tasks to execute
         /// </summary>
         private readonly List<WhoAction> _tasksToExecute = new();
+
+        public List<WhoAction> TasksToExecute => this._tasksToExecute;
 
         /// <summary>
         /// Local triggers on ran on each location and sub location in a depth first pattern
@@ -102,12 +106,19 @@ namespace WHO
             this._locationTrackers = tracker;
         }
 
+        public void AddLocalTrigger(ITrigger trigger)
+        {
+            this._triggersForLocalLocations.Add(trigger);
+        }
+
+        public void AddGlobalTrigger(ITrigger trigger)
+        {
+            this._triggersForGlobal.Add(trigger);
+        }
+
         public void CreateTriggers()
         {
             // Example triggers
-            ITrigger deployVaccines = new CustomTrigger(TrackingValue.SeriousInfection, p => p.CurrentParameterCount > 100, (loc) => this.StartTestAndIsolation(0, 0, 0, loc, false), 7);
-            this._triggersForGlobal.Add(deployVaccines);
-
             ITrigger basicIncreaseOfInfections = new BasicTrigger(TrackingValue.SeriousInfection, TrackingFunction.GREATER_THAN, 1.2f, (_) => Console.WriteLine("Increase"), 7);
             ITrigger complexIncreaseOfInfections = new CustomTrigger(TrackingValue.SeriousInfection, p => p.CurrentParameterCount > 1000 && p.Change > 1.2f, (_) => Console.WriteLine("Custom Increase"), 7);
             this._triggersForLocalLocations.Add(basicIncreaseOfInfections);
@@ -163,7 +174,7 @@ namespace WHO
                     await this.ExecuteTasks();
                     this._tasksToExecute.Clear();
                 }
-                await (this._client as WebSocket).EndTurn();
+                await this._client.EndTurn();
             }
 
         }
@@ -175,20 +186,21 @@ namespace WHO
             this.RunGlobalTriggerChecks();
         }
 
-        private void RunLocalTriggerChecks(LocationDefinition location, int depth = 0)
+        private void RunLocalTriggerChecks(LocationDefinition location, int depth = 0, string parent="")
         {
             // Loop through all the triggers and if they should be applied then apply them
+            parent += location.Coord;
             foreach (var trigger in this._triggersForLocalLocations)
             {
                 if (ITrigger.IsValidDepth(depth, trigger.DepthRange))
                 {
-                    trigger.Apply(this._locationTrackers[location.Coord]);
+                    trigger.Apply(this._locationTrackers[parent]);
                 }
             }
             // Recurse for the sub locations
             if (location.SubLocations != null)
             {
-                location.SubLocations.ForEach((l) => this.RunLocalTriggerChecks(l, depth + 1));
+                location.SubLocations.ForEach((l) => this.RunLocalTriggerChecks(l, depth + 1, parent));
             }
         }
 
@@ -269,6 +281,7 @@ namespace WHO
         private async Task GetTrackingInformation()
         {
             // Apparently this blocks even though Visual Studio claims it doesn't
+
             Task.WaitAll(this._simulationSettings.Locations.Select(loc => this.GetLocationTrackingInformation(loc)).ToArray());
             this._locationTrackers[ALL_LOCATION_ID].Track(this.GetTotalsForAll());
         }
@@ -302,14 +315,6 @@ namespace WHO
                 totals.Add(latest);
             }
             return totals;
-        }
-
-        private void StartTestAndIsolation(int testQuality, int quarantinePeriod, int quantity, List<string> location, bool symptomaticOnly)
-        {
-            // Example for how we can create an action and send it. It gets added to the list of tasks which are executed at the end of the turn.
-            TestAndIsolation testAndIsolation = new(testQuality, quarantinePeriod, quantity, location, symptomaticOnly);
-            WhoAction testAction = new(this._currentActionId++, testAndIsolation);
-            this._tasksToExecute.Add(testAction);
         }
 
     }
