@@ -121,7 +121,7 @@ namespace WHO
             // Example triggers
 
             // This trigger tries to calculate what the best actions are
-            ITrigger bestAction = new CustomTrigger(TrackingValue.SeriousInfection, p => p.CurrentParameterCount > 100, (loc) => this.calculateBestAction(this._budget, loc), 7);
+            ITrigger bestAction = new CustomTrigger(TrackingValue.SeriousInfection, p => p.CurrentParameterCount > 100, (loc) => this.CalculateBestAction(this._budget, loc), 7);
             this._triggersForLocalLocations.Add(bestAction);
 
             ITrigger basicIncreaseOfInfections = new BasicTrigger(TrackingValue.SeriousInfection, TrackingFunction.GREATER_THAN, 1.2f, (_) => Console.WriteLine("Increase"), 7);
@@ -322,22 +322,22 @@ namespace WHO
             return totals;
         }
 
-        public void calculateBestAction(int budgetAvailable, List<string> loc, float threshold = 1.2f)
+        public void CalculateBestAction(int budgetAvailable, List<string> loc, float threshold = 1.2f)
         {
             string location = string.Join("", loc);
 
             // Calculate amount of people infected
-            var asymptomaticInfectedInfectious = this._locationTrackers[location].Latest.GetParameterTotals(TrackingValue.AsymptomaticInfectedInfectious);
-            var symptomaticInfected = this._locationTrackers[location].Latest.GetParameterTotals(TrackingValue.Symptomatic);
+            var asymptomaticInfectedInfectious = this._locationTrackers[location].Latest?.GetParameterTotals(TrackingValue.AsymptomaticInfectedInfectious) ?? 0;
+            var symptomaticInfected = this._locationTrackers[location].Latest?.GetParameterTotals(TrackingValue.Symptomatic) ?? 0;
 
-            int locationPopulation = this._locationTrackers[location].Latest.GetTotalPeople();
+            int locationPopulation = this._locationTrackers[location].Latest?.GetTotalPeople() ?? 0;
 
             // Calcualte infection rate
             decimal infectionRate = (asymptomaticInfectedInfectious + symptomaticInfected) / (decimal) locationPopulation;
 
             // Using the proportion of people who are infected calculate an appropriate budget for that location
-            int totalInfections = this._locationTrackers[ALL_LOCATION_ID].Latest.GetTotalPeople() - this._locationTrackers[ALL_LOCATION_ID].Latest.GetParameterTotals(TrackingValue.Uninfected);
-            int infectionsInArea = this._locationTrackers[location].Latest.GetTotalPeople() - this._locationTrackers[location].Latest.GetParameterTotals(TrackingValue.Uninfected);
+            int totalInfections = this._locationTrackers[ALL_LOCATION_ID].Latest?.GetTotalPeople() ?? 0 - this._locationTrackers[ALL_LOCATION_ID].Latest?.GetParameterTotals(TrackingValue.Uninfected) ?? 0;
+            int infectionsInArea = this._locationTrackers[location].Latest?.GetTotalPeople() ?? 0 - this._locationTrackers[location].Latest?.GetParameterTotals(TrackingValue.Uninfected) ?? 0;
 
             decimal percentageOfInfections = (infectionsInArea / (decimal) totalInfections);
 
@@ -347,23 +347,23 @@ namespace WHO
             float budgetForLocation = (int) Math.Round((budgetAvailable * percentageOfInfections), 0);
 
             // Get all WhoActions
-            List<Object> actions;
+            List<object> actions;
 
             if (infectionRate > (decimal) threshold)
             {
-                actions = getWhoActions(loc, ActionCostCalculator.ActionMode.Create, budgetForLocation);
+                actions = this.GetWhoActions(loc, ActionCostCalculator.ActionMode.Create, budgetForLocation);
             }
             else
             {
-                actions = getWhoActions(loc, ActionCostCalculator.ActionMode.Delete, budgetForLocation);
+                actions = this.GetWhoActions(loc, ActionCostCalculator.ActionMode.Delete, budgetForLocation);
             }
 
             // Actions which are collectively all available given the budget
-            List<Object> actionsAvailable = new List<Object>();
+            List<object> actionsAvailable = new();
 
             if (infectionRate > (decimal) threshold)
             {
-                foreach (Object action in actions)
+                foreach (var action in actions)
                 {
                     float actionCost = ActionCostCalculator.CalculateCost(action, ActionCostCalculator.ActionMode.Create);
 
@@ -376,7 +376,7 @@ namespace WHO
             }
             else if (infectionRate <= (decimal) (threshold * 0.75))
             {
-                foreach (Object action in actions)
+                foreach (var action in actions)
                 {
                     float actionCost = ActionCostCalculator.CalculateCost(action, ActionCostCalculator.ActionMode.Delete);
 
@@ -445,12 +445,12 @@ namespace WHO
             }
         }
 
-        public List<Object> getWhoActions(List<string> loc, ActionCostCalculator.ActionMode mode, float budgetForLocation)
+        public List<object> GetWhoActions(List<string> loc, ActionCostCalculator.ActionMode mode, float budgetForLocation)
         {
-            List<Object> actions = new List<Object>();
+            List<object> actions = new();
 
             string location = string.Join("", loc);
-            int locationPopulation = this._locationTrackers[location].Latest.GetTotalPeople();
+            int locationPopulation = this._locationTrackers[location].Latest?.GetTotalPeople() ?? 0;
 
 
             TestAndIsolation testAndIsolation = new(1, 14, (int)Math.Round((locationPopulation * 0.5), 0), loc, false);
@@ -495,6 +495,9 @@ namespace WHO
                     InformationPressRelease informationPressRelease = new((int)Math.Round((investmentBudget * 0.1), 0), loc);
                     actions.Add(informationPressRelease);
 
+                    ShieldingProgram shieldingProgram = new(loc);
+                    actions.Add(shieldingProgram);
+
                     InvestInHealthServices investInHealthServices = new((int)Math.Round((investmentBudget * 0.3), 0));
                     actions.Add(investInHealthServices);
 
@@ -527,6 +530,9 @@ namespace WHO
 
                     InformationPressRelease informationPressReleaseDelete = new((int)Math.Round((investmentBudgetDelete * 0.1), 0), loc);
                     actions.Add(informationPressReleaseDelete);
+
+                    ShieldingProgram shieldingProgramDelete = new(loc);
+                    actions.Add(shieldingProgramDelete);
 
                     InvestInHealthServices investInHealthServicesDelete = new((int)Math.Round((investmentBudgetDelete * 0.3), 0));
                     actions.Add(investInHealthServicesDelete);

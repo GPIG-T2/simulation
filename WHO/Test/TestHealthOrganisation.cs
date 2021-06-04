@@ -134,13 +134,12 @@ namespace WHO.Test
             LocationTracker locationTracker = new("A1", null);
             
             org.LocationTrackers.Add("A1", locationTracker);
-            List<string> loc = new List<string>();
-            loc.Add("A1");
+            List<string> loc = new() { "A1" };
 
             locationTracker.Track(new(loc, 100, 10, 10, 10, 10, 10, 20));
 
-            List<Object> actions = org.getWhoActions(loc, ActionCostCalculator.ActionMode.Create, 100000000);
-            Assert.Equal(15, actions.Count());
+            List<Object> actions = org.GetWhoActions(loc, ActionCostCalculator.ActionMode.Create, 100000000);
+            Assert.Equal(16, actions.Count);
         }
 
         [Fact]
@@ -150,13 +149,12 @@ namespace WHO.Test
             LocationTracker locationTracker = new("A1", null);
 
             org.LocationTrackers.Add("A1", locationTracker);
-            List<string> loc = new List<string>();
-            loc.Add("A1");
+            List<string> loc = new() { "A1" };
 
             locationTracker.Track(new(loc, 100, 10, 10, 10, 10, 10, 20));
 
-            List<Object> actions = org.getWhoActions(loc, ActionCostCalculator.ActionMode.Delete, 100000000);
-            Assert.Equal(15, actions.Count());
+            List<Object> actions = org.GetWhoActions(loc, ActionCostCalculator.ActionMode.Delete, 100000000);
+            Assert.Equal(16, actions.Count);
         }
 
         [Fact]
@@ -164,20 +162,19 @@ namespace WHO.Test
         {
             HealthOrganisation org = new(client: null);
             LocationTracker locationTrackerA1 = new("A1", null);
-            LocationTracker locationTrackerAll = new("_all", null);
+            LocationTracker locationTrackerAll = new(HealthOrganisation.ALL_LOCATION_ID, null);
 
             org.LocationTrackers.Add("A1", locationTrackerA1);
-            org.LocationTrackers.Add("_all", locationTrackerAll);
+            org.LocationTrackers.Add(HealthOrganisation.ALL_LOCATION_ID, locationTrackerAll);
 
-            List<string> loc = new List<string>();
-            loc.Add("A1");
+            List<string> loc = new() { "A1" };
 
             locationTrackerA1.Track(new(loc, 100, 10, 10, 10, 10, 10, 20));
             locationTrackerAll.Track(new(loc, 1000, 100, 100, 100, 100, 100, 200));
 
-            org.calculateBestAction(100000000, loc, 0);
+            org.CalculateBestAction(100000000, loc, 0);
 
-            Assert.Equal(15, org.TasksToExecute.Count());
+            Assert.Equal(16, org.TasksToExecute.Count);
         }
 
         [Fact]
@@ -185,20 +182,20 @@ namespace WHO.Test
         {
             HealthOrganisation org = new(client: null);
             LocationTracker locationTrackerA1 = new("A1", null);
-            LocationTracker locationTrackerAll = new("_all", null);
+            LocationTracker locationTrackerAll = new(HealthOrganisation.ALL_LOCATION_ID, null);
 
             org.LocationTrackers.Add("A1", locationTrackerA1);
-            org.LocationTrackers.Add("_all", locationTrackerAll);
+            org.LocationTrackers.Add(HealthOrganisation.ALL_LOCATION_ID, locationTrackerAll);
 
-            List<string> loc = new List<string>();
+            List<string> loc = new();
             loc.Add("A1");
 
             locationTrackerA1.Track(new(loc, 100, 10, 10, 10, 10, 10, 20));
             locationTrackerAll.Track(new(loc, 1000, 100, 100, 100, 100, 100, 200));
 
-            org.calculateBestAction(100000000, loc, 1);
+            org.CalculateBestAction(100000000, loc, 1);
 
-            Assert.Equal(15, org.TasksToExecute.Count());
+            Assert.Equal(16, org.TasksToExecute.Count);
         }
 
         [Fact]
@@ -206,20 +203,19 @@ namespace WHO.Test
         {
             HealthOrganisation org = new(client: null);
             LocationTracker locationTrackerA1 = new("A1", null);
-            LocationTracker locationTrackerAll = new("_all", null);
+            LocationTracker locationTrackerAll = new(HealthOrganisation.ALL_LOCATION_ID, null);
 
             org.LocationTrackers.Add("A1", locationTrackerA1);
-            org.LocationTrackers.Add("_all", locationTrackerAll);
+            org.LocationTrackers.Add(HealthOrganisation.ALL_LOCATION_ID, locationTrackerAll);
 
-            List<string> loc = new List<string>();
-            loc.Add("A1");
+            List<string> loc = new() { "A1" };
 
             locationTrackerA1.Track(new(loc, 100, 10, 10, 10, 10, 10, 20));
             locationTrackerAll.Track(new(loc, 1000, 100, 100, 100, 100, 100, 200));
 
-            org.calculateBestAction(100, loc, 0);
+            org.CalculateBestAction(100, loc, 0);
 
-            Assert.Equal(4, org.TasksToExecute.Count());
+            Assert.Equal(4, org.TasksToExecute.Count);
         }
 
         [Fact]
@@ -227,20 +223,19 @@ namespace WHO.Test
         {
             HealthOrganisation org = new(client: null);
             LocationTracker locationTrackerA1 = new("A1", null);
-            LocationTracker locationTrackerAll = new("_all", null);
+            LocationTracker locationTrackerAll = new(HealthOrganisation.ALL_LOCATION_ID, null);
 
             org.LocationTrackers.Add("A1", locationTrackerA1);
-            org.LocationTrackers.Add("_all", locationTrackerAll);
+            org.LocationTrackers.Add(HealthOrganisation.ALL_LOCATION_ID, locationTrackerAll);
 
-            List<string> loc = new List<string>();
-            loc.Add("A1");
+            List<string> loc = new() { "A1" };
 
             locationTrackerA1.Track(new(loc, 100, 10, 10, 10, 10, 10, 20));
             locationTrackerAll.Track(new(loc, 1000, 100, 100, 100, 100, 100, 200));
 
-            org.calculateBestAction(100, loc, 1);
+            org.CalculateBestAction(100, loc, 1);
 
-            Assert.Equal(8, org.TasksToExecute.Count());
+            Assert.Equal(8, org.TasksToExecute.Count);
         }
 
     }
