@@ -119,8 +119,18 @@ namespace Virus
 
         public async Task Loop()
         {
+            List<List<InfectionTotals>> totals = new(_totalDays);
+            totals.Add(this.Snapshot());
+
             Log.Information("Ready to start simulation");
             await this._startWait.WaitAsync();
+
+            {
+                using var _ = await this._lock.Aquire();
+
+                // Infect a random person to start with.
+                this._world.StartInfection();
+            }
 
             while (this._world.Day < _totalDays)
             {
@@ -130,6 +140,8 @@ namespace Virus
                     // Perform a tick.
                     Log.Information("Processing update...");
                     this._world.Update();
+
+                    totals.Add(this.Snapshot());
                 }
 
                 // Wait until it is our turn again.
@@ -137,11 +149,14 @@ namespace Virus
                 this._status.IsWhoTurn = true;
                 await this._turnWait.WaitAsync();
             }
+
+            Directory.CreateDirectory("tmp");
+            await File.WriteAllTextAsync("tmp/dump.json", Json.Serialize(totals));
         }
 
         public async Task<List<ActionResult>> ApplyActions(List<WhoAction> actions)
         {
-            if (this._status.IsWhoTurn)
+            if (!this._status.IsWhoTurn)
             {
                 throw new Exceptions.TooEarlyException();
             }
@@ -328,5 +343,7 @@ namespace Virus
                     break;
             }
         }
+
+        private List<InfectionTotals> Snapshot() => this._world.Nodes.Select(n => n.Totals.Clone()).ToList();
     }
 }

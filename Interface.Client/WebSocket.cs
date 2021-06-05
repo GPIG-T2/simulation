@@ -91,10 +91,20 @@ namespace Interface.Client
             var response = await source.Task;
             if (response.Status != 200)
             {
-                throw new Exception($"Failed request with {response.Message}");
+                throw new Exception($"Failed request: {response.Message}");
             }
 
-            var data = Json.Deserialize<TResponse>(response.Message);
+            TResponse? data;
+            try
+            {
+                data = Json.Deserialize<TResponse>(response.Message);
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Deserialisation failed, reason: {Message}", ex.Message);
+                throw;
+            }
+
             if (data == null)
             {
                 throw new Exception("Failed to deserialise response");

@@ -252,16 +252,17 @@ namespace WHO
             // Request the status every _statusPingDelayInMs milliseconds until it is the who turn and return the budget
             do
             {
-                var status = await this._client.GetStatus();
-                if (status.IsWhoTurn)
-                {
-                    return this._budget + status.Budget;
-                }
                 await Task.Delay(_statusPingDelayInMs);
 
                 if (!this._running)
                 {
                     throw new TaskCanceledException();
+                }
+
+                var status = await this._client.GetStatus();
+                if (status.IsWhoTurn)
+                {
+                    return this._budget + status.Budget;
                 }
             }
             while (true);

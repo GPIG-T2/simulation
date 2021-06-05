@@ -77,6 +77,11 @@ namespace Models
             this.RecoveredImmune = recoveredImmune;
         }
 
+        public InfectionTotals Clone() =>
+            new(this.Location, this.Uninfected, this.AsymptomaticInfectedNotInfectious,
+                this.AsymptomaticInfectedInfectious, this.Symptomatic,
+                this.SeriousInfection, this.Dead, this.RecoveredImmune);
+
         /// <summary>
         /// Get the string presentation of the object
         /// </summary>

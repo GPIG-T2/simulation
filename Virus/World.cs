@@ -81,6 +81,12 @@ namespace Virus
             }
         }
 
+        public void StartInfection()
+        {
+            var i = new Random().Next(this._nodes.Length);
+            this._nodes[i].Infect(1);
+        }
+
         /// <summary>
         /// Update goes through all edges to produce infections to add nodes.
         /// Each node and edge is updated individually.

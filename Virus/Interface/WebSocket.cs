@@ -125,11 +125,13 @@ namespace Virus.Interface
                 }
                 catch (Exceptions.BaseException ex)
                 {
+                    Serilog.Log.Error("Exception occured: {Message}", ex.Message);
                     response.Status = ex.Code;
                     response.Message = ex.Message;
                 }
                 catch (Exception ex)
                 {
+                    Serilog.Log.Error("Unhandled exception occured: {Message}", ex.Message);
                     response.Status = 500;
                     response.Message = ex.Message;
                 }
