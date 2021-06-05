@@ -39,7 +39,7 @@ const infectionKeys = new Set([
   "seriousInfection",
 ]);
 
-const data: Totals[][] = JSON.parse(await Deno.readTextFile("dump.json"));
+const data: Totals[][] = JSON.parse(await Deno.readTextFile("tmp/dump.json"));
 
 const lines = data
   .map((snap) => {
@@ -76,4 +76,4 @@ const lines = data
   })
   .join("\n");
 
-await Deno.writeTextFile("run.csv", lines);
+await Deno.writeTextFile("tmp/run.csv", lines);
