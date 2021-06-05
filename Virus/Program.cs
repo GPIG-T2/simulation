@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Models;
 using Models.Parameters;
+using Serilog;
 
 namespace Virus
 {
@@ -15,15 +16,46 @@ namespace Virus
 
         public static async Task<int> Main(string[] args)
         {
+            try
+            {
+                Log.Logger = new LoggerConfiguration()
+                    .WriteTo.Console()
+                    .CreateLogger();
+
+                var data = LoadWorld(args);
+                if (data == null)
+                {
+                    return 1;
+                }
+
+                var world = (World)data;
+                Log.Information("Loaded world");
+
+                using var program = new Program(world, data.Map);
+
+                program.Start();
+                await program.Loop();
+
+                return 0;
+            }
+            finally
+            {
+                Log.CloseAndFlush();
+            }
+        }
+
+        private static Serialization.WorldData? LoadWorld(string[] args)
+        {
             string path;
             if (args.Length < 1)
             {
-                Console.Write("World file: ");
+                Console.Write($"{Directory.GetCurrentDirectory()}> World file: ");
                 string? result = Console.ReadLine();
 
                 if (result == null)
                 {
-                    return 1;
+                    Log.Error("Failed to get response");
+                    return null;
                 }
 
                 path = result;
@@ -35,8 +67,8 @@ namespace Virus
 
             if (!File.Exists(path))
             {
-                Console.WriteLine($"File at '{path}' not found");
-                return 1;
+                Log.Fatal($"File at '{path}' not found");
+                return null;
             }
 
             string json = File.ReadAllText(path);
@@ -44,19 +76,11 @@ namespace Virus
 
             if (data == null)
             {
-                Console.WriteLine("Failed to load world");
-                return 1;
+                Log.Fatal("Failed to load world");
+                return null;
             }
 
-            var world = (World)data;
-            Console.WriteLine("Loaded world");
-
-            using var program = new Program(world, data.Map);
-
-            program.Start();
-            await program.Loop();
-
-            return 0;
+            return data;
         }
 
         private readonly Interface.IServer _server = new Interface.WebSocket();
@@ -94,6 +118,7 @@ namespace Virus
 
         public async Task Loop()
         {
+            Log.Information("Ready to start simulation");
             await this._startWait.WaitAsync();
 
             while (this._world.Day < _totalDays)
@@ -102,12 +127,12 @@ namespace Virus
                     using var _ = await this._lock.Aquire();
 
                     // Perform a tick.
-                    Console.WriteLine("Processing update...");
+                    Log.Information("Processing update...");
                     this._world.Update();
                 }
 
                 // Wait until it is our turn again.
-                Console.WriteLine("Waiting for WHO...");
+                Log.Information("Waiting for WHO...");
                 this._status.IsWhoTurn = true;
                 await this._turnWait.WaitAsync();
             }

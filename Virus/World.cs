@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Serilog;
 
 namespace Virus
 {
@@ -368,7 +369,7 @@ namespace Virus
                     cost += HighLevelMaskCost * this._nodes[i].TotalPopulation;
                     break;
                 default:
-                    Console.WriteLine("Invalid Mask Mandate option");
+                    Log.Error("Invalid Mask Mandate option");
                     break;
             }
             return cost;
@@ -394,7 +395,7 @@ namespace Virus
                     this._nodes[i].CancelMaskMandate(true, HighLevelMask);
                     break;
                 default:
-                    Console.WriteLine("Invalid Mask Mandate option");
+                    Log.Error("Invalid Mask Mandate option");
                     break;
             }
         }

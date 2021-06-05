@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Serilog;
 
 namespace WHO
 {
@@ -17,8 +18,19 @@ namespace WHO
 
         async static Task Main(string[] args)
         {
-            await using HealthOrganisation org = new(_uri);
-            await org.Run();
+            try
+            {
+                Log.Logger = new LoggerConfiguration()
+                    .WriteTo.Console()
+                    .CreateLogger();
+
+                await using HealthOrganisation org = new(_uri);
+                await org.Run();
+            }
+            finally
+            {
+                Log.CloseAndFlush();
+            }
         }
     }
 }

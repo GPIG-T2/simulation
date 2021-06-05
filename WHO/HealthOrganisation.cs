@@ -137,8 +137,8 @@ namespace WHO
             );
             this._triggersForLocalLocations.Add(bestAction);
 
-            ITrigger basicIncreaseOfInfections = new BasicTrigger(TrackingValue.SeriousInfection, TrackingFunction.GREATER_THAN, 1.2f, (_) => Console.WriteLine("Increase"), 7);
-            ITrigger complexIncreaseOfInfections = new CustomTrigger(TrackingValue.SeriousInfection, p => p.CurrentParameterCount > 1000 && p.Change > 1.2f, (_) => Console.WriteLine("Custom Increase"), 7);
+            ITrigger basicIncreaseOfInfections = new BasicTrigger(TrackingValue.SeriousInfection, TrackingFunction.GREATER_THAN, 1.2f, (_) => Log.Information("Increase"), 7);
+            ITrigger complexIncreaseOfInfections = new CustomTrigger(TrackingValue.SeriousInfection, p => p.CurrentParameterCount > 1000 && p.Change > 1.2f, (_) => Log.Information("Custom Increase"), 7);
             this._triggersForLocalLocations.Add(basicIncreaseOfInfections);
             this._triggersForLocalLocations.Add(complexIncreaseOfInfections);
         }
@@ -160,6 +160,7 @@ namespace WHO
 
         public async Task Run()
         {
+            Log.Information("Beginning run");
             if (this._running)
             {
                 throw new InvalidOperationException("Health Organisation is already running");

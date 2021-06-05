@@ -53,7 +53,7 @@ namespace Virus.Interface
                 // Check invariants.
                 if (!e.IsText)
                 {
-                    Console.Error.WriteLine("ERROR: WebSocket message is not text");
+                    Serilog.Log.Error("ERROR: WebSocket message is not text");
                     return;
                 }
 
@@ -61,7 +61,7 @@ namespace Virus.Interface
                 var request = Json.Deserialize<Request>(e.Data);
                 if (request == null)
                 {
-                    Console.Error.WriteLine("ERROR: Failed to parse message");
+                    Serilog.Log.Error("ERROR: Failed to parse message");
                     return;
                 }
 
@@ -96,12 +96,12 @@ namespace Virus.Interface
                             switch (request.Method)
                             {
                                 case HttpMethod.GET:
-                                    request.Message = Json.Serialize(
+                                    response.Message = Json.Serialize(
                                         await this._handler.GetStatus()
                                     );
                                     break;
                                 case HttpMethod.POST:
-                                    request.Message = Json.Serialize(
+                                    response.Message = Json.Serialize(
                                         await this._handler.EndTurn()
                                     );
                                     break;
