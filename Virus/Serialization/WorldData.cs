@@ -35,7 +35,7 @@ namespace Virus.Serialization
 
             foreach ((EdgeData edge, int i) in data.Edges.Select((e, i) => (e, i)))
             {
-                edges[i] = new Edge(nodes[edge.Left], nodes[edge.Right], edge.Population, edge.Interactivity, edge.Distance);
+                edges[i] = new Edge(edge.Name, nodes[edge.Left], nodes[edge.Right], edge.Population, edge.Interactivity, edge.Distance);
             }
 
             return new World(nodes, edges, data.Virus);

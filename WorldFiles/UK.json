@@ -1,0 +1,987 @@
+{
+	"map": 0,
+	"virus": {
+		"infectivity": {
+			"underFive": 0.01,
+			"fiveToSeventeen": 0.02,
+			"eighteenToTwentyNine": 0.04,
+			"thirtyToThirtyNine": 0.04,
+			"fourtyToFourtyNine": 0.04,
+			"fiftyToSixtyFour": 0.04,
+			"sixtyFiveToSeventyFour": 0.02,
+			"seventyFiveToEightyFour": 0.02,
+			"overEightyFive": 0.04
+		},
+		"fatality": {
+			"underFive": 0.00001,
+			"fiveToSeventeen": 0.00001,
+			"eighteenToTwentyNine": 0.0001,
+			"thirtyToThirtyNine": 0.00045,
+			"fourtyToFourtyNine": 0.00130,
+			"fiftyToSixtyFour": 0.0044,
+			"sixtyFiveToSeventyFour": 0.0130,
+			"seventyFiveToEightyFour": 0.0320,
+			"overEightyFive": 0.087
+		},
+		"reinfectivity": {
+			"underFive": 0.001,
+			"fiveToSeventeen": 0.001,
+			"eighteenToTwentyNine": 0.001,
+			"thirtyToThirtyNine": 0.001,
+			"fourtyToFourtyNine": 0.001,
+			"fiftyToSixtyFour": 0.001,
+			"sixtyFiveToSeventyFour": 0.001,
+			"seventyFiveToEightyFour": 0.001,
+			"overEightyFive": 0.001
+		},
+		"symptomaticity": {
+			"underFive": 0.5,
+			"fiveToSeventeen": 0.5,
+			"eighteenToTwentyNine": 0.5,
+			"thirtyToThirtyNine": 0.5,
+			"fourtyToFourtyNine": 0.5,
+			"fiftyToSixtyFour": 0.5,
+			"sixtyFiveToSeventyFour": 0.5,
+			"seventyFiveToEightyFour": 0.5,
+			"overEightyFive": 0.5
+		},
+		"seriousRate": {
+			"underFive": 0.02,
+			"fiveToSeventeen": 0.01,
+			"eighteenToTwentyNine": 0.06,
+			"thirtyToThirtyNine": 0.1,
+			"fourtyToFourtyNine": 0.15,
+			"fiftyToSixtyFour": 0.25,
+			"sixtyFiveToSeventyFour": 0.4,
+			"seventyFiveToEightyFour": 0.65,
+			"overEightyFive": 0.95
+		}
+	},
+	"nodes": [
+		{
+			"population": 2669941,
+			"interactivity": {
+				"underFive": 5,
+				"fiveToSeventeen": 5,
+				"eighteenToTwentyNine": 5,
+				"thirtyToThirtyNine": 5,
+				"fourtyToFourtyNine": 5,
+				"fiftyToSixtyFour": 5,
+				"sixtyFiveToSeventyFour": 5,
+				"seventyFiveToEightyFour": 5,
+				"overEightyFive": 5
+			},
+			"name": "North East England",
+			"position": {
+				"x": 0,
+				"y": 0
+			},
+			"demographics": {
+				"underFive": 0.05,
+				"fiveToSeventeen": 0.15,
+				"eighteenToTwentyNine": 0.16,
+				"thirtyToThirtyNine": 0.12,
+				"fourtyToFourtyNine": 0.12,
+				"fiftyToSixtyFour": 0.20,
+				"sixtyFiveToSeventyFour": 0.11,
+				"seventyFiveToEightyFour": 0.07,
+				"overEightyFive": 0.02
+			},
+			"gdp": 62644,
+			"testingCapacity": 14507
+		},
+		{
+			"population": 7341196,
+			"interactivity": {
+				"underFive": 5,
+				"fiveToSeventeen": 5,
+				"eighteenToTwentyNine": 5,
+				"thirtyToThirtyNine": 5,
+				"fourtyToFourtyNine": 5,
+				"fiftyToSixtyFour": 5,
+				"sixtyFiveToSeventyFour": 5,
+				"seventyFiveToEightyFour": 5,
+				"overEightyFive": 5
+			},
+			"name": "North West England",
+			"position": {
+				"x": 0,
+				"y": 0
+			},
+			"demographics": {
+				"underFive": 0.06,
+				"fiveToSeventeen": 0.15,
+				"eighteenToTwentyNine": 0.16,
+				"thirtyToThirtyNine": 0.13,
+				"fourtyToFourtyNine": 0.12,
+				"fiftyToSixtyFour": 0.20,
+				"sixtyFiveToSeventyFour": 0.10,
+				"seventyFiveToEightyFour": 0.06,
+				"overEightyFive": 0.02
+			},
+			"gdp": 207452,
+			"testingCapacity": 44051
+		},
+		{
+			"population": 5502967,
+			"interactivity": {
+				"underFive": 5,
+				"fiveToSeventeen": 5,
+				"eighteenToTwentyNine": 5,
+				"thirtyToThirtyNine": 5,
+				"fourtyToFourtyNine": 5,
+				"fiftyToSixtyFour": 5,
+				"sixtyFiveToSeventyFour": 5,
+				"seventyFiveToEightyFour": 5,
+				"overEightyFive": 5
+			},
+			"name": "Yorkshire and The Humber",
+			"position": {
+				"x": 0,
+				"y": 0
+			},
+			"demographics": {
+				"underFive": 0.06,
+				"fiveToSeventeen": 0.16,
+				"eighteenToTwentyNine": 0.16,
+				"thirtyToThirtyNine": 0.13,
+				"fourtyToFourtyNine": 0.12,
+				"fiftyToSixtyFour": 0.19,
+				"sixtyFiveToSeventyFour": 0.10,
+				"seventyFiveToEightyFour": 0.06,
+				"overEightyFive": 0.02
+			},
+			"gdp": 141698,
+			"testingCapacity": 25917
+		},
+		{
+			"population": 4835928,
+			"interactivity": {
+				"underFive": 5,
+				"fiveToSeventeen": 5,
+				"eighteenToTwentyNine": 5,
+				"thirtyToThirtyNine": 5,
+				"fourtyToFourtyNine": 5,
+				"fiftyToSixtyFour": 5,
+				"sixtyFiveToSeventyFour": 5,
+				"seventyFiveToEightyFour": 5,
+				"overEightyFive": 5
+			},
+			"name": "East Midlands",
+			"position": {
+				"x": 0,
+				"y": 0
+			},
+			"demographics": {
+				"underFive": 0.06,
+				"fiveToSeventeen": 0.15,
+				"eighteenToTwentyNine": 0.16,
+				"thirtyToThirtyNine": 0.12,
+				"fourtyToFourtyNine": 0.12,
+				"fiftyToSixtyFour": 0.20,
+				"sixtyFiveToSeventyFour": 0.10,
+				"seventyFiveToEightyFour": 0.06,
+				"overEightyFive": 0.03
+			},
+			"gdp": 124647,
+			"testingCapacity": 26320
+		},
+		{
+			"population": 5934037,
+			"interactivity": {
+				"underFive": 5,
+				"fiveToSeventeen": 5,
+				"eighteenToTwentyNine": 5,
+				"thirtyToThirtyNine": 5,
+				"fourtyToFourtyNine": 5,
+				"fiftyToSixtyFour": 5,
+				"sixtyFiveToSeventyFour": 5,
+				"seventyFiveToEightyFour": 5,
+				"overEightyFive": 5
+			},
+			"name": "West Midlands",
+			"position": {
+				"x": 0,
+				"y": 0
+			},
+			"demographics": {
+				"underFive": 0.06,
+				"fiveToSeventeen": 0.16,
+				"eighteenToTwentyNine": 0.16,
+				"thirtyToThirtyNine": 0.13,
+				"fourtyToFourtyNine": 0.12,
+				"fiftyToSixtyFour": 0.19,
+				"sixtyFiveToSeventyFour": 0.10,
+				"seventyFiveToEightyFour": 0.06,
+				"overEightyFive": 0.02
+			},
+			"gdp": 159832,
+			"testingCapacity": 35042
+		},
+		{
+			"population": 6236072,
+			"interactivity": {
+				"underFive": 5,
+				"fiveToSeventeen": 5,
+				"eighteenToTwentyNine": 5,
+				"thirtyToThirtyNine": 5,
+				"fourtyToFourtyNine": 5,
+				"fiftyToSixtyFour": 5,
+				"sixtyFiveToSeventyFour": 5,
+				"seventyFiveToEightyFour": 5,
+				"overEightyFive": 5
+			},
+			"name": "East of England",
+			"position": {
+				"x": 0,
+				"y": 0
+			},
+			"demographics": {
+				"underFive": 0.06,
+				"fiveToSeventeen": 0.16,
+				"eighteenToTwentyNine": 0.13,
+				"thirtyToThirtyNine": 0.13,
+				"fourtyToFourtyNine": 0.13,
+				"fiftyToSixtyFour": 0.19,
+				"sixtyFiveToSeventyFour": 0.11,
+				"seventyFiveToEightyFour": 0.06,
+				"overEightyFive": 0.03
+			},
+			"gdp": 186462,
+			"testingCapacity": 50452
+		},
+		{
+			"population": 8961989,
+			"interactivity": {
+				"underFive": 5,
+				"fiveToSeventeen": 5,
+				"eighteenToTwentyNine": 5,
+				"thirtyToThirtyNine": 5,
+				"fourtyToFourtyNine": 5,
+				"fiftyToSixtyFour": 5,
+				"sixtyFiveToSeventyFour": 5,
+				"seventyFiveToEightyFour": 5,
+				"overEightyFive": 5
+			},
+			"name": "London",
+			"position": {
+				"x": 0,
+				"y": 0
+			},
+			"demographics": {
+				"underFive": 0.07,
+				"fiveToSeventeen": 0.16,
+				"eighteenToTwentyNine": 0.17,
+				"thirtyToThirtyNine": 0.18,
+				"fourtyToFourtyNine": 0.14,
+				"fiftyToSixtyFour": 0.16,
+				"sixtyFiveToSeventyFour": 0.06,
+				"seventyFiveToEightyFour": 0.04,
+				"overEightyFive": 0.02
+			},
+			"gdp": 487154,
+			"testingCapacity": 70542
+		},
+		{
+			"population": 9180135,
+			"interactivity": {
+				"underFive": 5,
+				"fiveToSeventeen": 5,
+				"eighteenToTwentyNine": 5,
+				"thirtyToThirtyNine": 5,
+				"fourtyToFourtyNine": 5,
+				"fiftyToSixtyFour": 5,
+				"sixtyFiveToSeventyFour": 5,
+				"seventyFiveToEightyFour": 5,
+				"overEightyFive": 5
+			},
+			"name": "South East England",
+			"position": {
+				"x": 0,
+				"y": 0
+			},
+			"demographics": {
+				"underFive": 0.06,
+				"fiveToSeventeen": 0.16,
+				"eighteenToTwentyNine": 0.14,
+				"thirtyToThirtyNine": 0.12,
+				"fourtyToFourtyNine": 0.13,
+				"fiftyToSixtyFour": 0.20,
+				"sixtyFiveToSeventyFour": 0.10,
+				"seventyFiveToEightyFour": 0.06,
+				"overEightyFive": 0.03
+			},
+			"gdp": 311300,
+			"testingCapacity": 63398
+		},
+		{
+			"population": 5624696,
+			"interactivity": {
+				"underFive": 5,
+				"fiveToSeventeen": 5,
+				"eighteenToTwentyNine": 5,
+				"thirtyToThirtyNine": 5,
+				"fourtyToFourtyNine": 5,
+				"fiftyToSixtyFour": 5,
+				"sixtyFiveToSeventyFour": 5,
+				"seventyFiveToEightyFour": 5,
+				"overEightyFive": 5
+			},
+			"name": "South West England",
+			"position": {
+				"x": 0,
+				"y": 0
+			},
+			"demographics": {
+				"underFive": 0.05,
+				"fiveToSeventeen": 0.15,
+				"eighteenToTwentyNine": 0.14,
+				"thirtyToThirtyNine": 0.12,
+				"fourtyToFourtyNine": 0.12,
+				"fiftyToSixtyFour": 0.20,
+				"sixtyFiveToSeventyFour": 0.12,
+				"seventyFiveToEightyFour": 0.07,
+				"overEightyFive": 0.03
+			},
+			"gdp": 158084,
+			"testingCapacity": 34048
+		},
+		{
+			"population": 3152879,
+			"interactivity": {
+				"underFive": 5,
+				"fiveToSeventeen": 5,
+				"eighteenToTwentyNine": 5,
+				"thirtyToThirtyNine": 5,
+				"fourtyToFourtyNine": 5,
+				"fiftyToSixtyFour": 5,
+				"sixtyFiveToSeventyFour": 5,
+				"seventyFiveToEightyFour": 5,
+				"overEightyFive": 5
+			},
+			"name": "Wales",
+			"position": {
+				"x": 0,
+				"y": 0
+			},
+			"demographics": {
+				"underFive": 0.05,
+				"fiveToSeventeen": 0.15,
+				"eighteenToTwentyNine": 0.15,
+				"thirtyToThirtyNine": 0.12,
+				"fourtyToFourtyNine": 0.12,
+				"fiftyToSixtyFour": 0.20,
+				"sixtyFiveToSeventyFour": 0.11,
+				"seventyFiveToEightyFour": 0.07,
+				"overEightyFive": 0.03
+			},
+			"gdp": 74906,
+			"testingCapacity": 65065
+		},
+		{
+			"population": 5463300,
+			"interactivity": {
+				"underFive": 5,
+				"fiveToSeventeen": 5,
+				"eighteenToTwentyNine": 5,
+				"thirtyToThirtyNine": 5,
+				"fourtyToFourtyNine": 5,
+				"fiftyToSixtyFour": 5,
+				"sixtyFiveToSeventyFour": 5,
+				"seventyFiveToEightyFour": 5,
+				"overEightyFive": 5
+			},
+			"name": "Scotland",
+			"position": {
+				"x": 0,
+				"y": 0
+			},
+			"demographics": {
+				"underFive": 0.05,
+				"fiveToSeventeen": 0.14,
+				"eighteenToTwentyNine": 0.16,
+				"thirtyToThirtyNine": 0.13,
+				"fourtyToFourtyNine": 0.12,
+				"fiftyToSixtyFour": 0.21,
+				"sixtyFiveToSeventyFour": 0.11,
+				"seventyFiveToEightyFour": 0.06,
+				"overEightyFive": 0.02
+			},
+			"gdp": 161295,
+			"testingCapacity": 35576
+		},
+		{
+			"population": 1893667,
+			"interactivity": {
+				"underFive": 5,
+				"fiveToSeventeen": 5,
+				"eighteenToTwentyNine": 5,
+				"thirtyToThirtyNine": 5,
+				"fourtyToFourtyNine": 5,
+				"fiftyToSixtyFour": 5,
+				"sixtyFiveToSeventyFour": 5,
+				"seventyFiveToEightyFour": 5,
+				"overEightyFive": 5
+			},
+			"name": "Northern Ireland",
+			"position": {
+				"x": 0,
+				"y": 0
+			},
+			"demographics": {
+				"underFive": 0.06,
+				"fiveToSeventeen": 0.17,
+				"eighteenToTwentyNine": 0.15,
+				"thirtyToThirtyNine": 0.13,
+				"fourtyToFourtyNine": 0.13,
+				"fiftyToSixtyFour": 0.19,
+				"sixtyFiveToSeventyFour": 0.09,
+				"seventyFiveToEightyFour": 0.06,
+				"overEightyFive": 0.02
+			},
+			"gdp": 48887,
+			"testingCapacity": 20613
+		}
+		
+	],
+	"edges": [
+		{
+			"name": "Rail: NE <-> NW",
+			"left": 0,
+			"right": 1,
+			"population": 3517,
+			"interactivity": 5,
+			"distance": 171
+		},
+		{
+			"name": "Rail: NE <-> YH",
+			"left": 0,
+			"right": 2,
+			"population": 8748,
+			"interactivity": 5,
+			"distance": 131
+		},
+		{
+			"name": "Rail: NE <-> EM",
+			"left": 0,
+			"right": 3,
+			"population": 589,
+			"interactivity": 5,
+			"distance": 227
+		},
+		{
+			"name": "Rail NE <-> WM",
+			"left": 0,
+			"right": 4,
+			"population": 658,
+			"interactivity": 5,
+			"distance": 278
+		},
+		{
+			"name": "Rail NE <-> EE",
+			"left": 0,
+			"right": 5,
+			"population": 921,
+			"interactivity": 5,
+			"distance": 412
+		},
+		{
+			"name": "Rail NE <-> LD",
+			"left": 0,
+			"right": 6,
+			"population": 6630,
+			"interactivity": 5,
+			"distance": 398
+		},
+		{
+			"name": "Rail NE <-> SE",
+			"left": 0,
+			"right": 7,
+			"population": 732,
+			"interactivity": 5,
+			"distance": 453
+		},
+		{
+			"name": "Rail NE <-> SW",
+			"left": 0,
+			"right": 8,
+			"population": 255,
+			"interactivity": 5,
+			"distance": 397
+		},
+		{
+			"name": "Rail NE <-> WL",
+			"left": 0,
+			"right": 9,
+			"population": 71,
+			"interactivity": 5,
+			"distance": 401
+		},
+		{
+			"name": "Rail NE <-> SC",
+			"left": 0,
+			"right": 10,
+			"population": 5526,
+			"interactivity": 5,
+			"distance": 194
+		},
+		{
+			"name": "Rail NW <-> YH",
+			"left": 1,
+			"right": 2,
+			"population": 28115,
+			"interactivity": 5,
+			"distance": 58
+		},
+		{
+			"name": "Rail NW <-> EM",
+			"left": 1,
+			"right": 3,
+			"population": 9789,
+			"interactivity": 5,
+			"distance": 94
+		},
+		{
+			"name": "Rail NW <-> WM",
+			"left": 1,
+			"right": 4,
+			"population": 15978,
+			"interactivity": 5,
+			"distance": 114
+		},
+		{
+			"name": "Rail NW <-> EE",
+			"left": 1,
+			"right": 5,
+			"population": 2016,
+			"interactivity": 5,
+			"distance": 294
+		},
+		{
+			"name": "Rail NW <-> LD",
+			"left": 1,
+			"right": 6,
+			"population": 30641,
+			"interactivity": 5,
+			"distance": 262
+		},
+		{
+			"name": "Rail NW <-> SE",
+			"left": 1,
+			"right": 7,
+			"population": 4608,
+			"interactivity": 5,
+			"distance": 373
+		},
+		{
+			"name": "Rail NW <-> SW",
+			"left": 1,
+			"right": 8,
+			"population": 1814,
+			"interactivity": 5,
+			"distance": 226
+		},
+		{
+			"name": "Rail NW <-> WL",
+			"left": 1,
+			"right": 9,
+			"population": 5263,
+			"interactivity": 5,
+			"distance": 231
+		},
+		{
+			"name": "Rail NW <-> SC",
+			"left": 1,
+			"right": 10,
+			"population": 7923,
+			"interactivity": 5,
+			"distance": 295
+		},
+		{
+			"name": "Rail YH <-> EM",
+			"left": 2,
+			"right": 3,
+			"population": 11822,
+			"interactivity": 5,
+			"distance": 98
+		},
+		{
+			"name": "Rail YH <-> WM",
+			"left": 2,
+			"right": 4,
+			"population": 2737,
+			"interactivity": 5,
+			"distance": 148
+		},
+		{
+			"name": "Rail YH <-> EE",
+			"left": 2,
+			"right": 5,
+			"population": 2715,
+			"interactivity": 5,
+			"distance": 293
+		},
+		{
+			"name": "Rail YH <-> LD",
+			"left": 2,
+			"right": 6,
+			"population": 19879,
+			"interactivity": 5,
+			"distance": 272
+		},
+		{
+			"name": "Rail YH <-> SE",
+			"left": 2,
+			"right": 7,
+			"population": 2000,
+			"interactivity": 5,
+			"distance": 321
+		},
+		{
+			"name": "Rail YH <-> SW",
+			"left": 2,
+			"right": 8,
+			"population": 1033,
+			"interactivity": 5,
+			"distance": 270
+		},
+		{
+			"name": "Rail YH <-> WL",
+			"left": 2,
+			"right": 9,
+			"population": 367,
+			"interactivity": 5,
+			"distance": 280
+		},
+		{
+			"name": "Rail YH <-> SC",
+			"left": 2,
+			"right": 10,
+			"population": 2742,
+			"interactivity": 5,
+			"distance": 288
+		},
+		{
+			"name": "Rail EM <-> WM",
+			"left": 3,
+			"right": 4,
+			"population": 13660,
+			"interactivity": 5,
+			"distance": 72
+		},
+		{
+			"name": "Rail EM <-> EE",
+			"left": 3,
+			"right": 5,
+			"population": 4786,
+			"interactivity": 5,
+			"distance": 202
+		},
+		{
+			"name": "Rail EM <-> LD",
+			"left": 3,
+			"right": 6,
+			"population": 24863,
+			"interactivity": 5,
+			"distance": 175
+		},
+		{
+			"name": "Rail EM <-> SE",
+			"left": 3,
+			"right": 7,
+			"population": 3350,
+			"interactivity": 5,
+			"distance": 228
+		},
+		{
+			"name": "Rail EM <-> SW",
+			"left": 3,
+			"right": 8,
+			"population": 896,
+			"interactivity": 5,
+			"distance": 193
+		},
+		{
+			"name": "Rail EM <-> WL",
+			"left": 3,
+			"right": 9,
+			"population": 348,
+			"interactivity": 5,
+			"distance": 214
+		},
+		{
+			"name": "Rail EM <-> SC",
+			"left": 3,
+			"right": 10,
+			"population": 608,
+			"interactivity": 5,
+			"distance": 380
+		},
+		{
+			"name": "Rail WM <-> EE",
+			"left": 4,
+			"right": 5,
+			"population": 2622,
+			"interactivity": 5,
+			"distance": 207
+		},
+		{
+			"name": "Rail WM <-> LD",
+			"left": 4,
+			"right": 6,
+			"population": 37671,
+			"interactivity": 5,
+			"distance": 162
+		},
+		{
+			"name": "Rail WM <-> SE",
+			"left": 4,
+			"right": 7,
+			"population": 9707,
+			"interactivity": 5,
+			"distance": 179
+		},
+		{
+			"name": "Rail WM <-> SW",
+			"left": 4,
+			"right": 8,
+			"population": 5323,
+			"interactivity": 5,
+			"distance": 124
+		},
+		{
+			"name": "Rail WM <-> WL",
+			"left": 4,
+			"right": 9,
+			"population": 3608,
+			"interactivity": 5,
+			"distance": 141
+		},
+		{
+			"name": "Rail WM <-> SC",
+			"left": 4,
+			"right": 10,
+			"population": 1151,
+			"interactivity": 5,
+			"distance": 406
+		},
+		{
+			"name": "Rail EE <-> LD",
+			"left": 5,
+			"right": 6,
+			"population": 390432,
+			"interactivity": 5,
+			"distance": 58
+		},
+		{
+			"name": "Rail EE <-> SE",
+			"left": 5,
+			"right": 7,
+			"population": 10734,
+			"interactivity": 5,
+			"distance": 163
+		},
+		{
+			"name": "Rail EE <-> SW",
+			"left": 5,
+			"right": 8,
+			"population": 1559,
+			"interactivity": 5,
+			"distance": 229
+		},
+		{
+			"name": "Rail EE <-> WL",
+			"left": 5,
+			"right": 9,
+			"population": 364,
+			"interactivity": 5,
+			"distance": 269
+		},
+		{
+			"name": "Rail EE <-> SC",
+			"left": 5,
+			"right": 10,
+			"population": 789,
+			"interactivity": 5,
+			"distance": 580
+		},
+		{
+			"name": "Rail LD <-> SE",
+			"left": 6,
+			"right": 7,
+			"population": 555515,
+			"interactivity": 5,
+			"distance": 111
+		},
+		{
+			"name": "Rail LD <-> SW",
+			"left": 6,
+			"right": 8,
+			"population": 32458,
+			"interactivity": 5,
+			"distance": 171
+		},
+		{
+			"name": "Rail LD <-> WL",
+			"left": 6,
+			"right": 9,
+			"population": 5901,
+			"interactivity": 5,
+			"distance": 211
+		},
+		{
+			"name": "Rail LD <-> SC",
+			"left": 6,
+			"right": 10,
+			"population": 7025,
+			"interactivity": 5,
+			"distance": 555
+		},
+		{
+			"name": "Rail SE <-> SW",
+			"left": 7,
+			"right": 8,
+			"population": 18482,
+			"interactivity": 5,
+			"distance": 103
+		},
+		{
+			"name": "Rail SE <-> WL",
+			"left": 7,
+			"right": 9,
+			"population": 1581,
+			"interactivity": 5,
+			"distance": 139
+		},
+		{
+			"name": "Rail SE <-> SC",
+			"left": 7,
+			"right": 10,
+			"population": 748,
+			"interactivity": 5,
+			"distance": 582
+		},
+		{
+			"name": "Rail SW <-> WL",
+			"left": 8,
+			"right": 9,
+			"population": 8162,
+			"interactivity": 5,
+			"distance": 40
+		},
+		{
+			"name": "Rail SW <-> SC",
+			"left": 8,
+			"right": 9,
+			"population": 203,
+			"interactivity": 5,
+			"distance": 502
+		},
+		{
+			"name": "Rail WL <-> SC",
+			"left": 9,
+			"right": 10,
+			"population": 112,
+			"interactivity": 5,
+			"distance": 492
+		},
+		{
+			"name": "Air NI <-> NE",
+			"left": 11,
+			"right": 0,
+			"population": 748,
+			"interactivity": 5,
+			"distance": 280
+		},
+		{
+			"name": "Air NI <-> NW",
+			"left": 11,
+			"right": 1,
+			"population": 3384,
+			"interactivity": 5,
+			"distance": 270
+		},
+		{
+			"name": "Air NI <-> YH",
+			"left": 11,
+			"right": 2,
+			"population": 500,
+			"interactivity": 5,
+			"distance": 300
+		},
+		{
+			"name": "Air NI <-> EM",
+			"left": 11,
+			"right": 3,
+			"population": 413,
+			"interactivity": 5,
+			"distance": 363
+		},
+		{
+			"name": "Air NI <-> WM",
+			"left": 11,
+			"right": 4,
+			"population": 1445,
+			"interactivity": 5,
+			"distance": 355
+		},
+		{
+			"name": "Air NI <-> LD",
+			"left": 11,
+			"right": 6,
+			"population": 6840,
+			"interactivity": 5,
+			"distance": 518
+		},
+		{
+			"name": "Air NI <-> SE",
+			"left": 11,
+			"right": 7,
+			"population": 351,
+			"interactivity": 5,
+			"distance": 511
+		},
+		{
+			"name": "Air NI <-> SW",
+			"left": 11,
+			"right": 8,
+			"population": 1168,
+			"interactivity": 5,
+			"distance": 414
+		},
+		{
+			"name": "Air NI <-> WL",
+			"left": 11,
+			"right": 9,
+			"population": 194,
+			"interactivity": 5,
+			"distance": 392
+		},
+		{
+			"name": "Air NI <-> SC",
+			"left": 11,
+			"right": 10,
+			"population": 2946,
+			"interactivity": 5,
+			"distance": 176
+		},
+		{
+			"name": "Sea NI <-> NW",
+			"left": 11,
+			"right": 1,
+			"population": 803,
+			"interactivity": 5,
+			"distance": 270
+		},
+		{
+			"name": "Sea NI <-> SC",
+			"left": 11,
+			"right": 10,
+			"population": 4795,
+			"interactivity": 5,
+			"distance": 176
+		}
+
+
+	]
+}
