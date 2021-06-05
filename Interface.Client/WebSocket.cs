@@ -16,11 +16,14 @@ namespace Interface.Client
 
         private int _id = 0;
 
+        public event Action? Closed;
+
         public WebSocket(string uri)
         {
-            _client = new WebsocketClient(new Uri(uri));
-            _client.MessageReceived.Subscribe(msg => this.HandleMessage(msg));
-            _client.Start();
+            this._client = new WebsocketClient(new Uri(uri));
+            this._client.MessageReceived.Subscribe(this.HandleMessage);
+            this._client.DisconnectionHappened.Subscribe(this.Disconnected);
+            this._client.Start();
         }
 
         public Task<List<InfectionTotals>> GetInfoTotals(SearchRequest request) =>
@@ -131,6 +134,12 @@ namespace Interface.Client
             }
 
             source.SetResult(response);
+        }
+
+        private void Disconnected(DisconnectionInfo info)
+        {
+            Log.Information("WebSocket closed: {Info}", info.CloseStatusDescription);
+            this.Closed?.Invoke();
         }
 
         public async ValueTask DisposeAsync()

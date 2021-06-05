@@ -99,6 +99,7 @@ namespace WHO
             }
             Instance = this;
             this._client = client;
+            this._client.Closed += this.Stop;
         }
 
         public void SetLocationTrackerFromTest(Dictionary<string, LocationTracker> tracker)
@@ -170,31 +171,40 @@ namespace WHO
             this._running = true;
             bool firstTurn = true;
 
-            while (this._running)
+            try
             {
-                this._budget = await this.WaitForOurTurn();
-                if (firstTurn)
+                while (this._running)
                 {
-                    // First turn we won't be able to see any trends to just 
-                    firstTurn = false;
-                    await this.PopulateInitialInformation();
-                }
-                else
-                {
-                    // Get the latest tracking information and run the triggers
-                    await this.GetTrackingInformation();
-                    this.RunTriggerChecks();
-                }
+                    Log.Information("Waiting for our turn...");
+                    this._budget = await this.WaitForOurTurn();
+                    if (firstTurn)
+                    {
+                        // First turn we won't be able to see any trends to just 
+                        firstTurn = false;
+                        await this.PopulateInitialInformation();
+                        Log.Information("First-time setup complete");
+                    }
+                    else
+                    {
+                        // Get the latest tracking information and run the triggers
+                        await this.GetTrackingInformation();
+                        this.RunTriggerChecks();
+                        Log.Information("Updated to latest tracking data");
+                    }
 
-                // Executes all tasks that were queued
-                if (this._tasksToExecute.Count > 0)
-                {
-                    await this.ExecuteTasks();
-                    this._tasksToExecute.Clear();
+                    // Executes all tasks that were queued
+                    if (this._tasksToExecute.Count > 0)
+                    {
+                        await this.ExecuteTasks();
+                        Log.Information("Executed {Count} tasks", this._tasksToExecute.Count);
+                        this._tasksToExecute.Clear();
+                    }
+
+                    await this._client.EndTurn();
+                    Log.Information("Ended our turn");
                 }
-                await this._client.EndTurn();
             }
-
+            catch (TaskCanceledException) { }
         }
 
         private void RunTriggerChecks()
@@ -248,6 +258,11 @@ namespace WHO
                     return this._budget + status.Budget;
                 }
                 await Task.Delay(_statusPingDelayInMs);
+
+                if (!this._running)
+                {
+                    throw new TaskCanceledException();
+                }
             }
             while (true);
         }
