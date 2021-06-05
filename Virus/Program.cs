@@ -85,6 +85,7 @@ namespace Virus
 
         private readonly Interface.IServer _server = new Interface.WebSocket();
         private readonly World _world;
+        private readonly Dictionary<int, WhoAction> _storedActions = new();
         private readonly Lock _lock = new();
 
         private readonly SemaphoreSlim _startWait = new(0);
@@ -146,7 +147,7 @@ namespace Virus
             }
 
             using var _ = await this._lock.Aquire();
-            var results = new List<ActionResult>();
+            var results = new List<ActionResult>(actions.Count);
 
             foreach (var action in actions)
             {
@@ -157,10 +158,23 @@ namespace Virus
                     switch (action.Mode)
                     {
                         case "create":
+                            if (this._storedActions.ContainsKey(action.Id))
+                            {
+                                throw new Exceptions.BadRequestException($"Action with ID {action.Id} already exists");
+                            }
+
                             this.HandleAction(action, true);
+                            this._storedActions[action.Id] = action;
                             break;
                         case "delete":
-                            // TODO: pull action from storage
+                            if (!this._storedActions.ContainsKey(action.Id))
+                            {
+                                throw new Exceptions.BadRequestException($"Action with ID {action.Id} does not exist");
+                            }
+
+                            var prev = this._storedActions[action.Id];
+                            this.HandleAction(prev, false);
+                            this._storedActions.Remove(action.Id);
                             break;
                         default:
                             throw new Exceptions.BadRequestException("Mode has to be either 'create' or 'delete'");
@@ -176,6 +190,8 @@ namespace Virus
                     result.Code = 500;
                     result.Message = ex.Message;
                 }
+
+                results.Add(result);
             }
 
             return results;
