@@ -7,7 +7,7 @@ namespace Interface.Client
 {
     public interface IClient : IAsyncDisposable
     {
-        event Action Closed;
+        event Action? Closed;
 
         Task<List<InfectionTotals>> GetInfoTotals(SearchRequest request);
         Task<List<ActorSearchResult>> GetInfoActors(SearchRequest request);

@@ -52,7 +52,7 @@ namespace WHO.Test
             tracker.Track(totals2);
             InfectionTotals change = tracker.GetChange(0, 1);
             Assert.Equal(difference.Location, change.Location);
-            Assert.True(difference.IsEqualTo(change));
+            Assert.True(difference.Equals(change));
         }
 
         [Fact]
@@ -95,7 +95,7 @@ namespace WHO.Test
             tracker.Track(totals2);
             tracker.Track(totals3);
             InfectionTotals sumOut = tracker.GetSum(0, 2);
-            Assert.True(sumOut.IsEqualTo(expectedSum));
+            Assert.True(sumOut.Equals(expectedSum));
         }
 
         [Fact]

@@ -1,6 +1,8 @@
 using System;
 using System.Text;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace Models
 {
@@ -8,7 +10,7 @@ namespace Models
     /// <summary>
     /// Provides the number of people in each infection state in a given location.
     /// </summary>
-    public class InfectionTotals
+    public class InfectionTotals : IEquatable<InfectionTotals>
     {
         /// <summary>
         /// Gets or Sets Location
@@ -57,6 +59,12 @@ namespace Models
         /// <value>Number of people who have contracted the virus, but have fully recovered and are not able to spread it or re-contract it.</value>
         public int RecoveredImmune { get; set; }
 
+        [JsonIgnore]
+        public bool IsInfected => this.AsymptomaticInfectedNotInfectious > 0
+            || this.AsymptomaticInfectedInfectious > 0
+            || this.Symptomatic > 0
+            || this.SeriousInfection > 0;
+
         public InfectionTotals(
             List<string> location,
             int uninfected,
@@ -77,10 +85,54 @@ namespace Models
             this.RecoveredImmune = recoveredImmune;
         }
 
+        public int GetTotalPeople()
+        {
+            return this.AsymptomaticInfectedInfectious +
+                this.AsymptomaticInfectedNotInfectious +
+                this.Dead +
+                this.RecoveredImmune +
+                this.SeriousInfection +
+                this.Symptomatic +
+                this.Uninfected;
+        }
+
+        public InfectionTotals Add(InfectionTotals other)
+        {
+            this.Uninfected += other.Uninfected;
+            this.AsymptomaticInfectedInfectious += other.AsymptomaticInfectedInfectious;
+            this.AsymptomaticInfectedNotInfectious += other.AsymptomaticInfectedNotInfectious;
+            this.Symptomatic += other.Symptomatic;
+            this.SeriousInfection += other.SeriousInfection;
+            this.Dead += other.Dead;
+            this.RecoveredImmune += other.RecoveredImmune;
+
+            return this;
+        }
+
+        public bool Equals(InfectionTotals? other)
+        {
+            if (other == null)
+            {
+                return false;
+            }
+
+            return Enumerable.SequenceEqual(this.Location, other.Location) &&
+                this.SeriousInfection == other.SeriousInfection &&
+                this.Symptomatic == other.Symptomatic &&
+                this.Uninfected == other.Uninfected &&
+                this.Dead == other.Dead &&
+                this.AsymptomaticInfectedNotInfectious == other.AsymptomaticInfectedNotInfectious &&
+                this.AsymptomaticInfectedInfectious == other.AsymptomaticInfectedInfectious;
+
+        }
+
         public InfectionTotals Clone() =>
             new(this.Location, this.Uninfected, this.AsymptomaticInfectedNotInfectious,
                 this.AsymptomaticInfectedInfectious, this.Symptomatic,
                 this.SeriousInfection, this.Dead, this.RecoveredImmune);
+
+        public static InfectionTotals operator +(InfectionTotals left, InfectionTotals right)
+            => left.Clone().Add(right);
 
         /// <summary>
         /// Get the string presentation of the object

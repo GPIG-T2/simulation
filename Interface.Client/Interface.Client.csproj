@@ -15,24 +15,24 @@
 	</ItemGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 		<CustomCommands>
-			<CustomCommands>
-				<Command>
-					<type>AfterBuild</type>
-					<command>python3 copy_dll.py "${ProjectDir}/bin/Debug/netstandard2.0" "${SolutionDir}/Visualisation/Assets/Libraries"</command>
-					<workingdir>${SolutionDir}</workingdir>
-				</Command>
-			</CustomCommands>
+		  <CustomCommands>
+		    <Command>
+		      <type>AfterBuild</type>
+		      <command>python3 copy_dll.py "${ProjectDir}/bin/Debug/netstandard2.0" "${SolutionDir}/Visualisation/Assets/Libraries"</command>
+		      <workingdir>${SolutionDir}</workingdir>
+		    </Command>
+		  </CustomCommands>
 		</CustomCommands>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
 		<CustomCommands>
-			<CustomCommands>
-				<Command>
-					<type>AfterBuild</type>
-					<command>python3 copy_dll.py "${ProjectDir}/bin/Release/netstandard2.0" "${SolutionDir}/Visualisation/Assets/Libraries"</command>
-					<workingdir>${SolutionDir}</workingdir>
-				</Command>
-			</CustomCommands>
+		  <CustomCommands>
+		    <Command>
+		      <type>AfterBuild</type>
+		      <command>python3 copy_dll.py "${ProjectDir}/bin/Release/netstandard2.0" "${SolutionDir}/Visualisation/Assets/Libraries"</command>
+		      <workingdir>${SolutionDir}</workingdir>
+		    </Command>
+		  </CustomCommands>
 		</CustomCommands>
 	</PropertyGroup>
 </Project>
