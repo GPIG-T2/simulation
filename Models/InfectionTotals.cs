@@ -12,6 +12,8 @@ namespace Models
     /// </summary>
     public class InfectionTotals : IEquatable<InfectionTotals>
     {
+        public static InfectionTotals Empty() => new(new(), 0, 0, 0, 0, 0, 0, 0);
+
         /// <summary>
         /// Gets or Sets Location
         /// </summary>
