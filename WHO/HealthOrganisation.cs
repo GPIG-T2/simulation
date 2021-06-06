@@ -50,7 +50,7 @@ namespace WHO
         /// <summary>
         /// The budget for the current turn
         /// </summary>
-        private int _budget = 0;
+        private long _budget = 0;
 
         /// <summary>
         /// Keeps track of if the client is running, set to false to end the program
@@ -247,7 +247,7 @@ namespace WHO
             }
         }
 
-        private async Task<int> WaitForOurTurn()
+        private async Task<long> WaitForOurTurn()
         {
             // Request the status every _statusPingDelayInMs milliseconds until it is the who turn and return the budget
             do
@@ -351,7 +351,7 @@ namespace WHO
             return totals;
         }
 
-        public void CalculateBestAction(int budgetAvailable, List<string> loc, float threshold = 1.2f)
+        public void CalculateBestAction(long budgetAvailable, List<string> loc, double threshold = 1.2f)
         {
             string location = loc.ToKey();
 
@@ -359,21 +359,21 @@ namespace WHO
             var asymptomaticInfectedInfectious = this._locationTrackers[location].Latest?.GetParameterTotals(TrackingValue.AsymptomaticInfectedInfectious) ?? 0;
             var symptomaticInfected = this._locationTrackers[location].Latest?.GetParameterTotals(TrackingValue.Symptomatic) ?? 0;
 
-            int locationPopulation = this._locationTrackers[location].Latest?.GetTotalPeople() ?? 0;
+            long locationPopulation = this._locationTrackers[location].Latest?.GetTotalPeople() ?? 0;
 
             // Calcualte infection rate
             decimal infectionRate = (asymptomaticInfectedInfectious + symptomaticInfected) / (decimal)locationPopulation;
 
             // Using the proportion of people who are infected calculate an appropriate budget for that location
-            int totalInfections = this._locationTrackers[ALL_LOCATION_ID].Latest?.GetTotalPeople() ?? 0 - this._locationTrackers[ALL_LOCATION_ID].Latest?.GetParameterTotals(TrackingValue.Uninfected) ?? 0;
-            int infectionsInArea = this._locationTrackers[location].Latest?.GetTotalPeople() ?? 0 - this._locationTrackers[location].Latest?.GetParameterTotals(TrackingValue.Uninfected) ?? 0;
+            long totalInfections = this._locationTrackers[ALL_LOCATION_ID].Latest?.GetTotalPeople() ?? 0 - this._locationTrackers[ALL_LOCATION_ID].Latest?.GetParameterTotals(TrackingValue.Uninfected) ?? 0;
+            long infectionsInArea = this._locationTrackers[location].Latest?.GetTotalPeople() ?? 0 - this._locationTrackers[location].Latest?.GetParameterTotals(TrackingValue.Uninfected) ?? 0;
 
             decimal percentageOfInfections = (infectionsInArea / (decimal)totalInfections);
 
             // Limit the amount of money spent each term to a third of the budget
             budgetAvailable = (int)Math.Round((budgetAvailable / (decimal)3), 0);
 
-            float budgetForLocation = (int)Math.Round((budgetAvailable * percentageOfInfections), 0);
+            double budgetForLocation = (int)Math.Round((budgetAvailable * percentageOfInfections), 0);
 
             // Get all WhoActions
             List<object> actions;
@@ -394,7 +394,7 @@ namespace WHO
             {
                 foreach (var action in actions)
                 {
-                    float actionCost = ActionCostCalculator.CalculateCost(action, ActionCostCalculator.ActionMode.Create);
+                    double actionCost = ActionCostCalculator.CalculateCost(action, ActionCostCalculator.ActionMode.Create);
 
                     if (actionCost < budgetForLocation)
                     {
@@ -407,7 +407,7 @@ namespace WHO
             {
                 foreach (var action in actions)
                 {
-                    float actionCost = ActionCostCalculator.CalculateCost(action, ActionCostCalculator.ActionMode.Delete);
+                    double actionCost = ActionCostCalculator.CalculateCost(action, ActionCostCalculator.ActionMode.Delete);
 
                     if (actionCost < budgetForLocation)
                     {
@@ -474,12 +474,12 @@ namespace WHO
             }
         }
 
-        public List<object> GetWhoActions(List<string> loc, ActionCostCalculator.ActionMode mode, float budgetForLocation)
+        public List<object> GetWhoActions(List<string> loc, ActionCostCalculator.ActionMode mode, double budgetForLocation)
         {
             List<object> actions = new();
 
             string location = loc.ToKey();
-            int locationPopulation = this._locationTrackers[location].Latest?.GetTotalPeople() ?? 0;
+            long locationPopulation = this._locationTrackers[location].Latest?.GetTotalPeople() ?? 0;
 
             TestAndIsolation testAndIsolation = new(1, 14, (int)Math.Round((locationPopulation * 0.5), 0), loc, false);
             actions.Add(testAndIsolation);

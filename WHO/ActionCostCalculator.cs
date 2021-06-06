@@ -12,28 +12,28 @@ namespace WHO
             Delete
         }
 
-        public const float PressReleaseCost = 0.01f;
+        public const double PressReleaseCost = 0.01f;
 
-        public const float BadTestCost = 5.5f;
-        public const float GoodTestCost = 140f;
+        public const double BadTestCost = 5.5f;
+        public const double GoodTestCost = 140f;
 
         public const int LowLevelMaskCost = 1;
         public const int HighLevelMaskCost = 15;
 
-        private static int GetTotalPeople(List<string> location)
+        private static long GetTotalPeople(List<string> location)
         {
             return HealthOrganisation.Instance?.LocationTrackers[location.ToKey()].Latest?.GetTotalPeople() ?? -1;
         }
 
-        private static float GetPressReleaseCost(List<string> location)
+        private static double GetPressReleaseCost(List<string> location)
         {
             var latestInformation = HealthOrganisation.Instance?.LocationTrackers[location.ToKey()].Latest;
             return latestInformation == null ? -1 : latestInformation.GetTotalPeople() * PressReleaseCost;
         }
 
-        public static float CalculateCost(object action, ActionMode mode)
+        public static double CalculateCost(object action, ActionMode mode)
         {
-            float cost = 0;
+            double cost = 0;
 
             switch (action.GetType().Name)
             {
@@ -90,7 +90,7 @@ namespace WHO
             return cost;
         }
 
-        public static float CalculateCost(InformationPressRelease pressRelease, ActionMode mode)
+        public static double CalculateCost(InformationPressRelease pressRelease, ActionMode mode)
         {
             if (mode == ActionMode.Delete)
             {
@@ -101,7 +101,7 @@ namespace WHO
             return GetPressReleaseCost(location);
         }
 
-        public static float CalculateCost(TestAndIsolation testAndIsolation, ActionMode mode)
+        public static double CalculateCost(TestAndIsolation testAndIsolation, ActionMode mode)
         {
             return mode == ActionMode.Delete ? 0 : testAndIsolation.TestQuality switch
             {
@@ -111,61 +111,61 @@ namespace WHO
             };
         }
 
-        public static float CalculateCost(StayAtHome stayAtHome, ActionMode _)
+        public static double CalculateCost(StayAtHome stayAtHome, ActionMode _)
         {
             return GetPressReleaseCost(stayAtHome.Location);
         }
 
-        public static float CalculateCost(CloseSchools closeSchools, ActionMode _)
+        public static double CalculateCost(CloseSchools closeSchools, ActionMode _)
         {
             return GetPressReleaseCost(closeSchools.Location);
         }
 
-        public static float CalculateCost(CloseRecreationalLocations closeRecreationalLocations, ActionMode _)
+        public static double CalculateCost(CloseRecreationalLocations closeRecreationalLocations, ActionMode _)
         {
             return GetPressReleaseCost(closeRecreationalLocations.Location);
         }
 
-        public static float CalculateCost(ShieldingProgram shieldingProgram, ActionMode _)
+        public static double CalculateCost(ShieldingProgram shieldingProgram, ActionMode _)
         {
             return GetPressReleaseCost(shieldingProgram.Location);
         }
 
-        public static float CalculateCost(MovementRestrictions movementRestrictions, ActionMode _)
+        public static double CalculateCost(MovementRestrictions movementRestrictions, ActionMode _)
         {
             return GetPressReleaseCost(movementRestrictions.Location);
         }
 
-        public static float CalculateCost(CloseBorders closeBorders, ActionMode _)
+        public static double CalculateCost(CloseBorders closeBorders, ActionMode _)
         {
             return GetPressReleaseCost(closeBorders.Location);
         }
 
-        public static float CalculateCost(InvestInVaccine investInVaccine, ActionMode mode)
+        public static double CalculateCost(InvestInVaccine investInVaccine, ActionMode mode)
         {
             return mode == ActionMode.Delete ? -1 : investInVaccine.AmountInvested;
         }
 
-        public static float CalculateCost(Furlough furlough, ActionMode _)
+        public static double CalculateCost(Furlough furlough, ActionMode _)
         {
             return GetPressReleaseCost(furlough.Location);
         }
 
-        public static float CalculateCost(Loan _, ActionMode mode)
+        public static double CalculateCost(Loan _, ActionMode mode)
         {
             return mode == ActionMode.Delete ? -1 : 0;
         }
 
-        public static float CalculateCost(MaskMandate maskMandate, ActionMode mode)
+        public static double CalculateCost(MaskMandate maskMandate, ActionMode mode)
         {
-            float pressReleaseCost = GetPressReleaseCost(maskMandate.Location);
+            double pressReleaseCost = GetPressReleaseCost(maskMandate.Location);
 
             if (mode == ActionMode.Delete)
             {
                 return pressReleaseCost;
             }
 
-            int population = GetTotalPeople(maskMandate.Location);
+            long population = GetTotalPeople(maskMandate.Location);
             return maskMandate.MaskProvisionLevel switch
             {
                 0 => 0,
@@ -175,22 +175,22 @@ namespace WHO
             };
         }
 
-        public static float CalculateCost(HealthDrive healthDrive, ActionMode _)
+        public static double CalculateCost(HealthDrive healthDrive, ActionMode _)
         {
             return GetPressReleaseCost(healthDrive.Location);
         }
 
-        public static float CalculateCost(InvestInHealthServices investInHealthServices, ActionMode mode)
+        public static double CalculateCost(InvestInHealthServices investInHealthServices, ActionMode mode)
         {
             return mode == ActionMode.Delete ? 0 : investInHealthServices.AmountInvested;
         }
 
-        public static float CalculateCost(SocialDistancingMandate socialDistancingMandate, ActionMode _)
+        public static double CalculateCost(SocialDistancingMandate socialDistancingMandate, ActionMode _)
         {
             return GetPressReleaseCost(socialDistancingMandate.Location);
         }
 
-        public static float CalculateCost(Curfew curfew, ActionMode _)
+        public static double CalculateCost(Curfew curfew, ActionMode _)
         {
             return GetPressReleaseCost(curfew.Location);
         }

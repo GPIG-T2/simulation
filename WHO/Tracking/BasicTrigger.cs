@@ -18,7 +18,7 @@ namespace WHO.Tracking
         private readonly Action<List<string>?> _resultingAction;
         private readonly (int, int) _depthRange;
         private readonly TrackingFunction _comparisonFunction;
-        private readonly float _threshold;
+        private readonly double _threshold;
 
         public TrackingValue Parameter => this._parameter;
 
@@ -30,9 +30,9 @@ namespace WHO.Tracking
 
         public TrackingFunction ComparisonFunction => this._comparisonFunction;
 
-        public float Threshold => this._threshold;
+        public double Threshold => this._threshold;
 
-        public BasicTrigger(TrackingValue parameter, TrackingFunction comparisonFunction, float threshold, Action<List<string>?> resultingAction, int timespan, (int, int)? depthRange = null)
+        public BasicTrigger(TrackingValue parameter, TrackingFunction comparisonFunction, double threshold, Action<List<string>?> resultingAction, int timespan, (int, int)? depthRange = null)
         {
             this._parameter = parameter;
             this._comparisonFunction = comparisonFunction;
@@ -69,10 +69,10 @@ namespace WHO.Tracking
                 previous = tracker.GetSum(previousEarliestTimestamp, previousLatestTimestamp);
             }
 
-            float currentPercentage = this.GetPercentageForInfectionTotals(current);
-            float previousPercentage = this.GetPercentageForInfectionTotals(previous);
+            double currentPercentage = this.GetPercentageForInfectionTotals(current);
+            double previousPercentage = this.GetPercentageForInfectionTotals(previous);
 
-            float change = currentPercentage / previousPercentage;
+            double change = currentPercentage / previousPercentage;
             bool evaluation = false;
             switch (this.ComparisonFunction)
             {
@@ -91,13 +91,13 @@ namespace WHO.Tracking
 
         }
 
-        protected float GetPercentageForInfectionTotals(InfectionTotals totals)
+        protected double GetPercentageForInfectionTotals(InfectionTotals totals)
         {
-            int total = totals.GetTotalPeople();
+            long total = totals.GetTotalPeople();
 
-            int parameter = totals.GetParameterTotals(this.Parameter);
+            long parameter = totals.GetParameterTotals(this.Parameter);
 
-            return (float)parameter / total;
+            return (double)parameter / total;
         }
 
     }

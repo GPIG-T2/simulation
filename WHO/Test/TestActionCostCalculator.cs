@@ -29,7 +29,7 @@ namespace WHO.Test
             SetPopulation(TestLocation.ToKey(), PeopleAtTestLocation);
         }
 
-        private static float GetPressReleaseCost()
+        private static double GetPressReleaseCost()
         {
             return PeopleAtTestLocation * ActionCostCalculator.PressReleaseCost;
         }
@@ -140,7 +140,7 @@ namespace WHO.Test
         [Fact]
         public void TestMaskMandate()
         {
-            float prc = GetPressReleaseCost();
+            double prc = GetPressReleaseCost();
             MaskMandate mask0 = new(TestLocation, 0);
             MaskMandate mask1 = new(TestLocation, 1);
             MaskMandate mask2 = new(TestLocation, 2);
