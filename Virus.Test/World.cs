@@ -9,15 +9,12 @@ using Xunit;
 
 namespace Virus.Test
 {
-    public class TestWorld : IDisposable
+    public class TestWorld : IClassFixture<Runner>, IDisposable
     {
-        public const string Base = "../../../..";
-        public const string WorldUkPath = Base + "/WorldFiles/UK.json";
-        public const string OutputDir = Base + "/tmp";
-        public const string OutputDump = OutputDir + "/uk.json";
-        public const string OutputDumpNode = OutputDir + "/uk_nodes.json";
-        public const string OutputCsv = OutputDir + "/uk.csv";
-        public const string OutputCsvNode = OutputDir + "/uk_node_{0}.csv";
+        public const string Uk = "UK";
+        public const string Europe = "Europe";
+        public const string Earth = "Earth";
+
         public const int DaysCount = 400;
 
         public TestWorld()
@@ -32,11 +29,19 @@ namespace Virus.Test
             Log.CloseAndFlush();
         }
 
-        [Fact]
-        public async Task TestUncontrolledWorld()
+        public static IEnumerable<object[]> Worlds()
         {
-            var data = Program.LoadWorld(new[] { WorldUkPath });
-            var world = (World)data;
+            yield return new[] { new OutputPaths(Uk) };
+            yield return new[] { new OutputPaths(Europe) };
+            yield return new[] { new OutputPaths(Earth) };
+        }
+
+        [Theory]
+        [MemberData(nameof(Worlds))]
+        public async Task TestUncontrolledWorld(OutputPaths paths)
+        {
+            var data = Program.LoadWorld(new[] { paths.World });
+            var world = (World)data!;
 
             List<List<InfectionTotals>> totals = new(DaysCount);
             List<int> nodesInfected = new(DaysCount);
@@ -55,14 +60,14 @@ namespace Virus.Test
                 nodesInfected.Add(snapshot.Where(t => t.IsInfected).Count());
             }
 
-            Directory.CreateDirectory(OutputDir);
-            await File.WriteAllTextAsync(OutputDump, Json.Serialize(totals));
+            Directory.CreateDirectory(paths.Dir);
+            await File.WriteAllTextAsync(paths.Dump, Json.Serialize(totals));
 
             var lines = nodesInfected
                 .Zip(totals.Select(ts =>
                     ts.Aggregate(InfectionTotals.Empty(), (p, c) => p.Add(c))))
                 .Select((z) => $"{z.First},{z.Second.ToCsvLine()}");
-            await File.WriteAllLinesAsync(OutputCsv, lines);
+            await File.WriteAllLinesAsync(paths.Csv, lines);
 
             List<List<InfectionTotals>> nodes = totals[0].Select(_ => new List<InfectionTotals>()).ToList();
             foreach (var ts in totals)
@@ -73,8 +78,10 @@ namespace Virus.Test
                 }
             }
 
-            await Task.WhenAll(nodes.Select((ts, i) => File.WriteAllLinesAsync(string.Format(OutputCsvNode, i), ts.Select(t => t.ToCsvLine()))));
-            await File.WriteAllTextAsync(OutputDumpNode, Json.Serialize(nodes));
+            await Task.WhenAll(nodes.Select((ts, i) => File.WriteAllLinesAsync(paths.CsvNode(i), ts.Select(t => t.ToCsvLine()))));
+            await File.WriteAllTextAsync(paths.DumpNode, Json.Serialize(nodes));
+
+            Console.WriteLine($"Generated all data for {paths.World}");
         }
     }
 }

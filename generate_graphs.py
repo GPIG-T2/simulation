@@ -9,77 +9,83 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 TMP_DIR = Path("tmp").resolve()
-UK_DATA = TMP_DIR.joinpath("uk.csv")
-UK_PNG = TMP_DIR.joinpath("uk.png")
-UK_NODE_DATA_FMT = "uk_node_{0}.csv"
-UK_NODE_PNG = TMP_DIR.joinpath("uk_nodes.png")
 
 
-def load_json(path: Path):
+def load_node_count(path: Path):
     with open(path, "r") as fp:
-        return json.load(fp)
+        return len(json.load(fp)["nodes"])
 
 
-UK_WORLD_JSON = Path("WorldFiles/UK.json")
-WORLD = load_json(UK_WORLD_JSON)
-UK_NODE_COUNT = len(WORLD["nodes"])
-UK_NODES = []
+class Plotter:
+    def __init__(self, world: str):
+        self.world = Path("WorldFiles/{0}.json".format(world))
 
-for i in range(UK_NODE_COUNT):
-    UK_NODES.append(TMP_DIR.joinpath(UK_NODE_DATA_FMT.format(i)))
+        self.base = TMP_DIR.joinpath(world)
+        self.csv = self.base.joinpath("agg.csv")
+        self.png = self.base.joinpath("agg.png")
 
+        self.node_count = load_node_count(self.world)
+        self.png_nodes = self.base.joinpath("nodes.png")
 
-def plot_node_data(data: np.ndarray, ax: plt.Axes, title_end: Union[str, None] = None):
-    uninf = data[:, 0]
-    asymp_not_inf = data[:, 1]
-    asymp_inf = data[:, 2]
-    symp = data[:, 3]
-    serious = data[:, 4]
-    dead = data[:, 5]
-    recovered = data[:, 6]
+    def csv_node(self, i: int) -> Path:
+        return self.base.joinpath("node_{0}.csv".format(i))
 
-    ax.title.set_text("Infection States" +
-                      (title_end if title_end != None else ""))
-    ax.plot(uninf, label="Uninfected")
-    ax.plot(asymp_not_inf, label="Asymptomatic Not Infectious")
-    ax.plot(asymp_inf, label="Asymptomatic Infectious")
-    ax.plot(symp, label="Symptomatic")
-    ax.plot(serious, label="Serious Infection")
-    ax.plot(dead, label="Dead")
-    ax.plot(recovered, label="Recovered")
-    ax.legend()
+    def plot(self):
+        self.plot_agg()
+        self.plot_nodes()
 
+    def plot_agg(self):
+        data: np.ndarray = np.genfromtxt(self.csv, delimiter=",")
 
-def plot_agg():
-    data: np.ndarray = np.genfromtxt(UK_DATA, delimiter=",")
+        nodes = data[:, 0]
+        inf_data = data[:, 1:]
 
-    nodes = data[:, 0]
-    inf_data = data[:, 1:]
+        _, (ax1, ax2) = plt.subplots(2, 1, figsize=(15, 10))
 
-    _, (ax1, ax2) = plt.subplots(2, 1, figsize=(15, 10))
+        self.plot_node_data(inf_data, ax1)
 
-    plot_node_data(inf_data, ax1)
+        ax2.title.set_text("Infected Nodes")
+        ax2.plot(nodes, label="Nodes")
+        ax2.legend()
 
-    ax2.title.set_text("Infected Nodes")
-    ax2.plot(nodes, label="Nodes")
-    ax2.legend()
+        plt.tight_layout()
+        plt.savefig(self.png, dpi=175)
+        print("> {0}".format(self.png))
 
-    plt.tight_layout()
-    plt.savefig(UK_PNG, dpi=175)
+    def plot_nodes(self):
+        sqr = math.sqrt(self.node_count)
+        width, height = math.floor(sqr), math.ceil(sqr + 0.5)
 
+        _, axs = plt.subplots(height, width, figsize=(15 * width, 5 * height))
+        axs = axs.flatten()
 
-def plot_nodes():
-    width, height = UK_NODE_COUNT // 4, math.ceil(float(UK_NODE_COUNT) / 3)
+        for i in range(self.node_count):
+            data: np.ndarray = np.genfromtxt(self.csv_node(i), delimiter=",")
+            self.plot_node_data(data, axs[i], " For Node {}".format(i))
 
-    _, axs = plt.subplots(height, width, figsize=(15 * width, 5 * height))
-    axs = axs.flatten()
+        plt.tight_layout()
+        plt.savefig(self.png_nodes, dpi=175)
+        print("> {0}".format(self.png_nodes))
 
-    for i in range(UK_NODE_COUNT):
-        data: np.ndarray = np.genfromtxt(UK_NODES[i], delimiter=",")
-        plot_node_data(data, axs[i], " For Node {}".format(i))
+    def plot_node_data(self, data: np.ndarray, ax: plt.Axes, title_end: Union[str, None] = None):
+        uninf = data[:, 0]
+        asymp_not_inf = data[:, 1]
+        asymp_inf = data[:, 2]
+        symp = data[:, 3]
+        serious = data[:, 4]
+        dead = data[:, 5]
+        recovered = data[:, 6]
 
-    plt.tight_layout()
-    plt.savefig(UK_NODE_PNG, dpi=175)
+        ax.title.set_text("Infection States" +
+                          (title_end if title_end != None else ""))
+        ax.plot(uninf, label="Uninfected")
+        ax.plot(asymp_not_inf, label="Asymptomatic Not Infectious")
+        ax.plot(asymp_inf, label="Asymptomatic Infectious")
+        ax.plot(symp, label="Symptomatic")
+        ax.plot(serious, label="Serious Infection")
+        ax.plot(dead, label="Dead")
+        ax.plot(recovered, label="Recovered")
+        ax.legend()
 
 
 def main():
@@ -88,8 +94,11 @@ def main():
     plt.rc('ytick', labelsize=10)
     plt.rc('legend', fontsize=10)
 
-    plot_agg()
-    plot_nodes()
+    for plotter in [Plotter("UK"), Plotter("Europe"), Plotter("Earth")]:
+        plotter.plot()
+        print("Graphs for {0} generated".format(plotter.base))
+
+    print("Generated all graphs")
 
     return 0
 

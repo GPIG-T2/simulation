@@ -15,5 +15,8 @@ namespace Virus.Test
                     t.AsymptomaticInfectedNotInfectious, t.AsymptomaticInfectedInfectious,
                     t.Symptomatic, t.SeriousInfection, t.Dead, t.RecoveredImmune
                 );
+
+        public static string Format(this string format, params object?[] args)
+            => string.Format(format, args);
     }
 }
