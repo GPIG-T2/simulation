@@ -15,6 +15,7 @@ namespace Virus.Test
         public const string WorldUkPath = Base + "/WorldFiles/UK.json";
         public const string OutputDir = Base + "/tmp";
         public const string OutputDump = OutputDir + "/uk.json";
+        public const string OutputDumpNode = OutputDir + "/uk_nodes.json";
         public const string OutputCsv = OutputDir + "/uk.csv";
         public const string OutputCsvNode = OutputDir + "/uk_node_{0}.csv";
         public const int DaysCount = 400;
@@ -73,6 +74,7 @@ namespace Virus.Test
             }
 
             await Task.WhenAll(nodes.Select((ts, i) => File.WriteAllLinesAsync(string.Format(OutputCsvNode, i), ts.Select(t => t.ToCsvLine()))));
+            await File.WriteAllTextAsync(OutputDumpNode, Json.Serialize(nodes));
         }
     }
 }
