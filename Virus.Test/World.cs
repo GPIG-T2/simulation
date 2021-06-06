@@ -14,7 +14,9 @@ namespace Virus.Test
         public const string Base = "../../../..";
         public const string WorldUkPath = Base + "/WorldFiles/UK.json";
         public const string OutputDir = Base + "/tmp";
-        public const string OutputDump = OutputDir + "/uk.csv";
+        public const string OutputDump = OutputDir + "/uk.json";
+        public const string OutputCsv = OutputDir + "/uk.csv";
+        public const string OutputCsvNode = OutputDir + "/uk_node_{0}.csv";
         public const int DaysCount = 400;
 
         public TestWorld()
@@ -57,17 +59,20 @@ namespace Virus.Test
 
             var lines = nodesInfected
                 .Zip(totals.Select(ts =>
-                    ts.Aggregate(new InfectionTotals(new(), 0, 0, 0, 0, 0, 0, 0), (p, c) => p.Add(c))))
-                .Select((z) =>
+                    ts.Aggregate(InfectionTotals.Empty(), (p, c) => p.Add(c))))
+                .Select((z) => $"{z.First},{z.Second.ToCsvLine()}");
+            await File.WriteAllLinesAsync(OutputCsv, lines);
+
+            List<List<InfectionTotals>> nodes = totals[0].Select(_ => new List<InfectionTotals>()).ToList();
+            foreach (var ts in totals)
+            {
+                foreach (var (t, i) in ts.Select((t, i) => (t, i)))
                 {
-                    var (n, t) = z;
-                    return string.Format(
-                        "{0},{1},{2},{3},{4},{5},{6},{7}", n, t.Uninfected,
-                        t.AsymptomaticInfectedNotInfectious, t.AsymptomaticInfectedInfectious,
-                        t.Symptomatic, t.SeriousInfection, t.Dead, t.RecoveredImmune
-                    );
-                });
-            await File.WriteAllLinesAsync(OutputDump, lines);
+                    nodes[i].Add(t);
+                }
+            }
+
+            await Task.WhenAll(nodes.Select((ts, i) => File.WriteAllLinesAsync(string.Format(OutputCsvNode, i), ts.Select(t => t.ToCsvLine()))));
         }
     }
 }
