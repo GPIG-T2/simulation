@@ -260,6 +260,18 @@ namespace WHO
                 }
 
                 var status = await this._client.GetStatus();
+
+                if (status.Budget == -1)
+                {
+                    if (status.IsWhoTurn)
+                    {
+                        await this._client.EndTurn();
+                    }
+
+                    this.Stop();
+                    throw new TaskCanceledException();
+                }
+
                 if (status.IsWhoTurn)
                 {
                     return this._budget + status.Budget;
@@ -371,9 +383,9 @@ namespace WHO
             decimal percentageOfInfections = (infectionsInArea / (decimal)totalInfections);
 
             // Limit the amount of money spent each term to a third of the budget
-            budgetAvailable = (int)Math.Round((budgetAvailable / (decimal)3), 0);
+            budgetAvailable = (long)Math.Round((budgetAvailable / (decimal)3), 0);
 
-            double budgetForLocation = (int)Math.Round((budgetAvailable * percentageOfInfections), 0);
+            double budgetForLocation = (long)Math.Round((budgetAvailable * percentageOfInfections), 0);
 
             // Get all WhoActions
             List<object> actions;
@@ -481,7 +493,7 @@ namespace WHO
             string location = loc.ToKey();
             long locationPopulation = this._locationTrackers[location].Latest?.GetTotalPeople() ?? 0;
 
-            TestAndIsolation testAndIsolation = new(1, 14, (int)Math.Round((locationPopulation * 0.5), 0), loc, false);
+            TestAndIsolation testAndIsolation = new(1, 14, (long)Math.Round((locationPopulation * 0.5), 0), loc, false);
             actions.Add(testAndIsolation);
 
             CloseBorders closeBorders = new(loc);

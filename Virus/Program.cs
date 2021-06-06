@@ -95,6 +95,8 @@ namespace Virus
         private readonly SimulationSettings _settings;
         private readonly SimulationStatus _status = new(false, 0, 0);
 
+        public bool Running => this._world.Day < _totalDays;
+
         public Program(World world, SimulationSettings.SelectedMap map)
         {
             this._world = world;
@@ -129,7 +131,7 @@ namespace Virus
                 this._world.StartInfection();
             }
 
-            while (this._world.Day < _totalDays)
+            while (this.Running)
             {
                 {
                     using var _ = await this._lock.Aquire();
@@ -144,6 +146,9 @@ namespace Virus
                 this._status.IsWhoTurn = true;
                 await this._turnWait.WaitAsync();
             }
+
+            // Wait for the WHO to pick up the final shutdown message.
+            Log.Information("Finished simulation");
         }
 
         public async Task<List<ActionResult>> ApplyActions(List<WhoAction> actions)
@@ -253,7 +258,14 @@ namespace Virus
                 this._started = true;
             }
 
-            this._status.Budget = (long)Math.Floor(this._world.Budget);
+            if (this.Running)
+            {
+                this._status.Budget = (long)Math.Floor(this._world.Budget);
+            }
+            else
+            {
+                this._status.Budget = -1;
+            }
 
             return this._status;
         }
