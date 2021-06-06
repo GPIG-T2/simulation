@@ -55,12 +55,12 @@ namespace Virus
             // TODO: Replace with a proper statistical measure on how many infectious people there would be from a subset of the population
             // TODO: Maybe not indclude serious?
             int n1Inf = (int)Math.Floor(n1Pop
-                * ((double)(this.Left.Totals.AsymptomaticInfectedInfectious
+                * Extensions.Sigmoid(2.7,10,(double)(this.Left.Totals.AsymptomaticInfectedInfectious
                     + this.Left.Totals.Symptomatic
                     + this.Left.Totals.SeriousInfection)
                 / this.Left.TotalPopulation));
             int n2Inf = (int)Math.Floor(n2Pop
-                * ((double)(this.Right.Totals.AsymptomaticInfectedInfectious
+                * Extensions.Sigmoid(2.7,10, (double)(this.Right.Totals.AsymptomaticInfectedInfectious
                     + this.Right.Totals.Symptomatic
                     + this.Right.Totals.SeriousInfection)
                 / this.Right.TotalPopulation));
