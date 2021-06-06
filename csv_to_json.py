@@ -33,7 +33,7 @@ worldDict = {}
 mapNum = input("Enter world number: ")
 inCSV = input("Enter csv: ")
 
-worldDict["map"] = mapNum
+worldDict["map"] = int(mapNum)
 worldDict["virus"] = {
 	"infectivity": {
 		"underFive": 0.01,
@@ -100,7 +100,7 @@ with open(inCSV,'r') as read_obj:
     header = next(csv_reader)
     for row in csv_reader:
         node = {}
-        node["population"] = row[2]
+        node["population"] = int(row[2])
         node["interactivity"] = {
 				"underFive": 10,
 				"fiveToSeventeen": 10,
@@ -115,18 +115,18 @@ with open(inCSV,'r') as read_obj:
         node["name"] = row[1]
         node["position"] = {"x": 0, "y": 0}
         node["demographics"] ={
-                                "underFive": row[3],
-				"fiveToSeventeen": row[4],
-				"eighteenToTwentyNine": row[5],
-				"thirtyToThirtyNine": row[6],
-				"fourtyToFourtyNine": row[7],
-				"fiftyToSixtyFour": row[8],
-				"sixtyFiveToSeventyFour": row[9],
-				"seventyFiveToEightyFour": row[10],
-				"overEightyFive": row[11]
+                                "underFive": float(row[3]),
+				"fiveToSeventeen": float(row[4]),
+				"eighteenToTwentyNine": float(row[5]),
+				"thirtyToThirtyNine": float(row[6]),
+				"fourtyToFourtyNine": float(row[7]),
+				"fiftyToSixtyFour": float(row[8]),
+				"sixtyFiveToSeventyFour": float(row[9]),
+				"seventyFiveToEightyFour": float(row[10]),
+				"overEightyFive": float(row[11])
                                 }
-        node["gdp"] = row[12]
-        node["testingCapacity"] = row[13]
+        node["gdp"] = int(row[12])
+        node["testingCapacity"] = int(row[13])
         edgeData.append((row[1],int(row[14]),latToFloat(row[15]),latToFloat(row[16])))
         globalPassengers += int(row[14])
         nodes.append(node)
@@ -150,7 +150,7 @@ worldDict["edges"] = edges
 jsonFile = input("Enter json file name: ")
 jsonFile = "WorldFiles/" + jsonFile + ".json"
 with open(jsonFile,"w") as write_obj:
-    write_obj.write(json.dumps(worldDict))
+    json.dump(worldDict, write_obj)
 
 
 
