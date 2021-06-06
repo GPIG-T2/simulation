@@ -13,20 +13,20 @@ namespace Models
         /// The total number of tests performed.
         /// </summary>
         /// <value>The total number of tests performed.</value>
-        public int Total { get; set; }
+        public long Total { get; set; }
 
         /// <summary>
         /// The number of positive test results.
         /// </summary>
         /// <value>The number of positive test results.</value>
-        public int Positive { get; set; }
+        public long Positive { get; set; }
 
         /// <summary>
         /// The location that was asked for.
         /// </summary>
         public List<string> Location { get; set; }
 
-        public TestResults(int total, int positive, List<string> location)
+        public TestResults(long total, long positive, List<string> location)
         {
             this.Total = total;
             this.Positive = positive;

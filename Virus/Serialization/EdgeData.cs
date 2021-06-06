@@ -7,14 +7,14 @@ namespace Virus.Serialization
         public string Name { get; set; }
         public int Left { get; set; }
         public int Right { get; set; }
-        public int Population { get; set; }
+        public long Population { get; set; }
         public double Interactivity { get; set; }
         public int Distance { get; set; }
 
         public EdgeData(string name,
             int left,
             int right,
-            int population,
+            long population,
             double interactivity,
             int distance)
         {

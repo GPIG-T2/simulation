@@ -93,14 +93,14 @@ namespace Virus
         /// </summary>
         public void Update()
         {
-            int[] edgeInfections = new int[this._nodes.Length];
+            long[] edgeInfections = new long[this._nodes.Length];
             Array.Clear(edgeInfections, 0, edgeInfections.Length);
             this._budgetIncrease = 0;
 
             // Goes through all edges and increases the number of new infections to add to the node.
             foreach (Edge e in this._edges)
             {
-                (int left, int right) = e.Update(this._virus);
+                (long left, long right) = e.Update(this._virus);
                 edgeInfections[e.Left.Index] += left;
                 edgeInfections[e.Right.Index] += right;
             }
@@ -313,7 +313,7 @@ namespace Virus
             this._nodes[i].FurloughScheme(p.AmountInvested);
 
             // TODO: rework cost calculations elsewhere
-            int cost = p.AmountInvested * this._nodes[i].TotalPopulation; //currently overestimates
+            long cost = (long)p.AmountInvested * this._nodes[i].TotalPopulation; //currently overestimates
             this.Budget -= cost;
             return cost;
         }
@@ -325,7 +325,7 @@ namespace Virus
         {
             int i = p.Location.ToNodeIndex();
             this._nodes.Get(p.Location).CancelFurloughScheme(p.AmountInvested);
-            this.Budget += p.AmountInvested * this._nodes[i].TotalPopulation;
+            this.Budget += (long)p.AmountInvested * this._nodes[i].TotalPopulation;
         }
 
         /// <summary>

@@ -58,13 +58,5 @@ namespace WHO
             }
             return actions;
         }
-
-        static IEnumerable<string> WholeChunks(string str, int chunkSize)
-        {
-            for (int i = 0; i < str.Length; i += chunkSize)
-            {
-                yield return str.Substring(i, chunkSize);
-            }
-        }
     }
 }

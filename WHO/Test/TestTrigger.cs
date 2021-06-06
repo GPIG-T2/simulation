@@ -39,7 +39,7 @@ namespace WHO.Test
         {
             TrackingValue parameter = TrackingValue.AsymptomaticInfectedInfectious;
             TrackingFunction comparisonFunction = TrackingFunction.GREATER_THAN;
-            float threshold = 1.2f;
+            double threshold = 1.2f;
             Action<List<string>?> resultingAction = (_) => { };
             int timespan = 1;
             BasicTrigger trigger = new(parameter, comparisonFunction, threshold, resultingAction, timespan);
@@ -56,7 +56,7 @@ namespace WHO.Test
         {
             TrackingValue parameter = TrackingValue.AsymptomaticInfectedInfectious;
             TrackingFunction comparisonFunction = TrackingFunction.GREATER_THAN;
-            float threshold = 1.2f;
+            double threshold = 1.2f;
             Action<List<string>?> resultingAction = (_) => { };
             int timespan = 1;
             (int, int) depthRange = (1, 4);
@@ -80,7 +80,7 @@ namespace WHO.Test
             tracker.Track(totals2);
             TrackingValue parameter = TrackingValue.Uninfected;
             TrackingFunction comparisonFunction = TrackingFunction.GREATER_THAN;
-            float threshold = 1.9f;
+            double threshold = 1.9f;
             int timespan = 0;
             bool functionCalled = false;
             BasicTrigger trigger = new(parameter, comparisonFunction, threshold, (_) => functionCalled = true, timespan);
@@ -99,7 +99,7 @@ namespace WHO.Test
             tracker.Track(totals2);
             TrackingValue parameter = TrackingValue.Uninfected;
             TrackingFunction comparisonFunction = TrackingFunction.GREATER_THAN;
-            float threshold = 1f;
+            double threshold = 1f;
             int timespan = 0;
             bool functionCalled = false;
             BasicTrigger trigger = new(parameter, comparisonFunction, threshold, (_) => functionCalled = true, timespan);
@@ -122,7 +122,7 @@ namespace WHO.Test
             tracker.Track(totals4);
             TrackingValue parameter = TrackingValue.Uninfected;
             TrackingFunction comparisonFunction = TrackingFunction.LESS_THAN;
-            float threshold = 0.6f;
+            double threshold = 0.6f;
             int timespan = 1;
             bool functionCalled = false;
             BasicTrigger trigger = new(parameter, comparisonFunction, threshold, (_) => functionCalled = true, timespan);
@@ -145,7 +145,7 @@ namespace WHO.Test
             tracker.Track(totals4);
             TrackingValue parameter = TrackingValue.Uninfected;
             TrackingFunction comparisonFunction = TrackingFunction.LESS_THAN;
-            float threshold = 0.6f;
+            double threshold = 0.6f;
             int timespan = 1;
             bool functionCalled = false;
             BasicTrigger trigger = new(parameter, comparisonFunction, threshold, (_) => functionCalled = true, timespan);
@@ -167,7 +167,7 @@ namespace WHO.Test
             tracker.Track(totals3);
             TrackingValue parameter = TrackingValue.Uninfected;
             TrackingFunction comparisonFunction = TrackingFunction.LESS_THAN;
-            float threshold = 0.6f;
+            double threshold = 0.6f;
             int timespan = 1;
             bool functionCalled = false;
             BasicTrigger trigger = new(parameter, comparisonFunction, threshold, (_) => functionCalled = true, timespan);

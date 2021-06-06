@@ -25,7 +25,7 @@ namespace Models.Parameters
         public int? AgeThreshold { get; set; }
         public int? TestQuality { get; set; }
         public int? QuarantinePeriod { get; set; }
-        public int? Quantity { get; set; }
+        public long? Quantity { get; set; }
         public bool? SymptomaticOnly { get; set; }
 
         internal ParamsContainer(string actionName)

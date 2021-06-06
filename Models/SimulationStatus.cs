@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Text;
 using System.Collections.Generic;
 
@@ -25,7 +25,7 @@ namespace Models
         /// The total budget the WHO has for the current turn. This can only be considered valid when `isWhoTurn` is `true`.
         /// </summary>
         /// <value>The total budget the WHO has for the current turn. This can only be considered valid when `isWhoTurn` is `true`.</value>
-        public int Budget { get; set; }
+        public long Budget { get; set; }
 
         public SimulationStatus(bool isWhoTurn, int turnCount, int budget)
         {

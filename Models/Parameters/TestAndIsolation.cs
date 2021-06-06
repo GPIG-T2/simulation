@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Text;
 using System.Collections.Generic;
 
@@ -28,7 +28,7 @@ namespace Models.Parameters
         /// The quantity of tests requested.
         /// </summary>
         /// <value>The quantity of tests requested.</value>
-        public int Quantity { get; set; }
+        public long Quantity { get; set; }
 
         /// <summary>
         /// Gets or Sets Location
@@ -44,7 +44,7 @@ namespace Models.Parameters
         public TestAndIsolation(
             int testQuality,
             int quarantinePeriod,
-            int quantity,
+            long quantity,
             List<string> location,
             bool symptomaticOnly)
         {

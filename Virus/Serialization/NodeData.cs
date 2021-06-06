@@ -4,21 +4,21 @@ namespace Virus.Serialization
 {
     public class NodeData
     {
-        public int Population { get; set; }
+        public long Population { get; set; }
         public Demographics Interactivity { get; set; }
         public string Name { get; set; }
         public Models.Coordinate Position { get; set; }
         public Demographics Demographics { get; set; }
-        public double Gdp { get; set; }
-        public int TestingCapacity { get; set; }
+        public long Gdp { get; set; }
+        public long TestingCapacity { get; set; }
 
-        public NodeData(int population,
+        public NodeData(long population,
             Demographics interactivity,
             string name,
             Models.Coordinate position,
             Demographics demographics,
-            double gdp,
-            int testingCapacity)
+            long gdp,
+            long testingCapacity)
         {
             this.Population = population;
             this.Interactivity = interactivity;

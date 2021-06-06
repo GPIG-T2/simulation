@@ -23,43 +23,43 @@ namespace Models
         /// Number of people who have never come into contact with the virus.
         /// </summary>
         /// <value>Number of people who have never come into contact with the virus.</value>
-        public int Uninfected { get; set; }
+        public long Uninfected { get; set; }
 
         /// <summary>
         /// Number of people who have contracted the virus, but are not showing symptoms, nor are capable of spreading it.
         /// </summary>
         /// <value>Number of people who have contracted the virus, but are not showing symptoms, nor are capable of spreading it.</value>
-        public int AsymptomaticInfectedNotInfectious { get; set; }
+        public long AsymptomaticInfectedNotInfectious { get; set; }
 
         /// <summary>
         /// Number of people who have contracted the virus, are not showing symptoms, but are able to spread it to others.
         /// </summary>
         /// <value>Number of people who have contracted the virus, are not showing symptoms, but are able to spread it to others.</value>
-        public int AsymptomaticInfectedInfectious { get; set; }
+        public long AsymptomaticInfectedInfectious { get; set; }
 
         /// <summary>
         /// Number of people who have contracted the virus and are showing symptoms of it. They can also spread it to others.
         /// </summary>
         /// <value>Number of people who have contracted the virus and are showing symptoms of it. They can also spread it to others.</value>
-        public int Symptomatic { get; set; }
+        public long Symptomatic { get; set; }
 
         /// <summary>
         /// Number of people who have been hospitalised due to the virus.
         /// </summary>
         /// <value>Number of people who have been hospitalised due to the virus.</value>
-        public int SeriousInfection { get; set; }
+        public long SeriousInfection { get; set; }
 
         /// <summary>
         /// Number of people who have died due to the virus.
         /// </summary>
         /// <value>Number of people who have died due to the virus.</value>
-        public int Dead { get; set; }
+        public long Dead { get; set; }
 
         /// <summary>
         /// Number of people who have contracted the virus, but have fully recovered and are not able to spread it or re-contract it.
         /// </summary>
         /// <value>Number of people who have contracted the virus, but have fully recovered and are not able to spread it or re-contract it.</value>
-        public int RecoveredImmune { get; set; }
+        public long RecoveredImmune { get; set; }
 
         [JsonIgnore]
         public bool IsInfected => this.AsymptomaticInfectedNotInfectious > 0
@@ -69,13 +69,13 @@ namespace Models
 
         public InfectionTotals(
             List<string> location,
-            int uninfected,
-            int asymptomaticInfectedNotInfectious,
-            int asymptomaticInfectedInfectious,
-            int symptomatic,
-            int seriousInfection,
-            int dead,
-            int recoveredImmune)
+            long uninfected,
+            long asymptomaticInfectedNotInfectious,
+            long asymptomaticInfectedInfectious,
+            long symptomatic,
+            long seriousInfection,
+            long dead,
+            long recoveredImmune)
         {
             this.Location = location;
             this.Uninfected = uninfected;
@@ -87,7 +87,7 @@ namespace Models
             this.RecoveredImmune = recoveredImmune;
         }
 
-        public int GetTotalPeople()
+        public long GetTotalPeople()
         {
             return this.AsymptomaticInfectedInfectious +
                 this.AsymptomaticInfectedNotInfectious +

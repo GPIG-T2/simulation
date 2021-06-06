@@ -64,11 +64,11 @@ namespace WHO.Tracking
                 previous = tracker.GetSum(previousEarliestTimestamp, previousLatestTimestamp);
             }
 
-            int currParameterCount = current.GetParameterTotals(this.Parameter);
-            int prevParameterCount = previous.GetParameterTotals(this.Parameter);
-            int currTotal = current.GetTotalPeople();
-            int prevTotal = previous.GetTotalPeople();
-            float change = ((float)currParameterCount / currTotal) / ((float)prevParameterCount / prevTotal);
+            long currParameterCount = current.GetParameterTotals(this.Parameter);
+            long prevParameterCount = previous.GetParameterTotals(this.Parameter);
+            long currTotal = current.GetTotalPeople();
+            long prevTotal = previous.GetTotalPeople();
+            double change = ((double)currParameterCount / currTotal) / ((double)prevParameterCount / prevTotal);
 
             CustomTrackingFunctionParameters customParams = new()
             {
@@ -95,22 +95,22 @@ namespace WHO.Tracking
         /// <summary>
         /// The total amount of people that match the parameter of the trigger in the current period
         /// </summary>
-        public int CurrentParameterCount;
+        public long CurrentParameterCount;
         /// <summary>
         /// The total number of people in the are for that time span in the current period
         /// </summary>
-        public int CurrentTotalPopulation;
+        public long CurrentTotalPopulation;
         /// <summary>
         /// The total amount of people that match the parameter of the trigger in the last period
         /// </summary>
-        public int PreviousParameterCount;
+        public long PreviousParameterCount;
         /// <summary>
         /// The total number of people in the are for that time span in the previous period
         /// </summary>
-        public int PreviousTotalPopulation;
+        public long PreviousTotalPopulation;
         /// <summary>
         /// The change calculated as (curr_count/curr_total) / (prev_count/prev_total)
         /// </summary>
-        public float Change;
+        public double Change;
     }
 }

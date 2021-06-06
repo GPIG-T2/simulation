@@ -253,7 +253,7 @@ namespace Virus
                 this._started = true;
             }
 
-            this._status.Budget = (int)Math.Floor(this._world.Budget);
+            this._status.Budget = (long)Math.Floor(this._world.Budget);
 
             return this._status;
         }
