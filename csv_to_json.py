@@ -136,14 +136,15 @@ worldDict["nodes"] = nodes
 edges = []
 for i,e in enumerate(edgeData):
     for j in range(i+1,len(edgeData)):
-        edge = {}
-        edge["name"] = e[0] + "<->" + edgeData[j][0]
-        edge["left"] = i
-        edge["right"] = j
-        edge["population"] = int((e[1] * (edgeData[j][1]/globalPassengers))/365.25)
-        edge["interactivity"] = 2.5
-        edge["distance"] = getDist(e[1],e[2],edgeData[j][1],edgeData[j][2])
-        edges.append(edge)
+        if (int((e[1] * (edgeData[j][1]/globalPassengers))/365.25) != 0):
+            edge = {}
+            edge["name"] = e[0] + "<->" + edgeData[j][0]
+            edge["left"] = i
+            edge["right"] = j
+            edge["population"] = int((e[1] * (edgeData[j][1]/globalPassengers))/365.25)
+            edge["interactivity"] = 2.5
+            edge["distance"] = getDist(e[1],e[2],edgeData[j][1],edgeData[j][2])
+            edges.append(edge)
 
 worldDict["edges"] = edges
 
