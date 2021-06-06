@@ -11,9 +11,9 @@ import numpy as np
 TMP_DIR = Path("tmp").resolve()
 
 
-def load_node_count(path: Path):
+def load_node_names(path: Path):
     with open(path, "r") as fp:
-        return len(json.load(fp)["nodes"])
+        return list(map(lambda n: n["name"], json.load(fp)["nodes"]))
 
 
 class Plotter:
@@ -24,7 +24,7 @@ class Plotter:
         self.csv = self.base.joinpath("agg.csv")
         self.png = self.base.joinpath("agg.png")
 
-        self.node_count = load_node_count(self.world)
+        self.node_names = load_node_names(self.world)
         self.png_nodes = self.base.joinpath("nodes.png")
 
     def csv_node(self, i: int) -> Path:
@@ -53,15 +53,15 @@ class Plotter:
         print("> {0}".format(self.png))
 
     def plot_nodes(self):
-        sqr = math.sqrt(self.node_count)
+        sqr = math.sqrt(len(self.node_names))
         width, height = math.floor(sqr), math.ceil(sqr + 0.5)
 
         _, axs = plt.subplots(height, width, figsize=(15 * width, 5 * height))
         axs = axs.flatten()
 
-        for i in range(self.node_count):
+        for i, name in enumerate(self.node_names):
             data: np.ndarray = np.genfromtxt(self.csv_node(i), delimiter=",")
-            self.plot_node_data(data, axs[i], " For Node {}".format(i))
+            self.plot_node_data(data, axs[i], " for {}".format(name))
 
         plt.tight_layout()
         plt.savefig(self.png_nodes, dpi=175)
