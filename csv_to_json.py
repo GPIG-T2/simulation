@@ -142,7 +142,7 @@ for i,e in enumerate(edgeData):
             edge["left"] = i
             edge["right"] = j
             edge["population"] = int((e[1] * (edgeData[j][1]/globalPassengers))/365.25)
-            edge["interactivity"] = 2.5
+            edge["interactivity"] = 10
             edge["distance"] = getDist(e[1],e[2],edgeData[j][1],edgeData[j][2])
             edges.append(edge)
 

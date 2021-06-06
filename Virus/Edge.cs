@@ -54,16 +54,35 @@ namespace Virus
             // determining how many infectious people come from each node - the population from the node * the proportion of people in the node who are infectious
             // TODO: Replace with a proper statistical measure on how many infectious people there would be from a subset of the population
             // TODO: Maybe not indclude serious?
-            long n1Inf = (long)Math.Floor(n1Pop
-                * Extensions.Sigmoid(2.7, 10, (double)(this.Left.Totals.AsymptomaticInfectedInfectious
+            double n1Infec = (n1Pop
+                * ((double)(this.Left.Totals.AsymptomaticInfectedInfectious
                     + this.Left.Totals.Symptomatic
                     + this.Left.Totals.SeriousInfection)
                 / this.Left.TotalPopulation));
-            long n2Inf = (long)Math.Floor(n2Pop
-                * Extensions.Sigmoid(2.7, 10, (double)(this.Right.Totals.AsymptomaticInfectedInfectious
+
+            long n1Inf = (long)Math.Floor(n1Infec);
+            
+            double n2Infec = (n2Pop
+                * ((double)(this.Right.Totals.AsymptomaticInfectedInfectious
                     + this.Right.Totals.Symptomatic
                     + this.Right.Totals.SeriousInfection)
                 / this.Right.TotalPopulation));
+            long n2Inf = (long)Math.Floor(n2Infec);
+
+            n1Infec -= n1Inf;
+            n2Infec -= n2Inf;
+
+            var chance = this._random.NextDouble();
+            if (n1Infec > chance)
+            {
+                n1Inf++;
+            }
+            chance = this._random.NextDouble();
+            if (n2Infec > chance)
+            {
+                n2Inf++;
+            }
+
 
             // determines how many recovered come from each node - same as above
             // TODO: Replace with proper statsitical measure on how many recovered people there would be from a subset of the population
@@ -86,7 +105,7 @@ namespace Virus
             // the infectiousness is the number of people infected + the chance of 1 more
             long infected = (long)Math.Floor(infectiousness);
             infectiousness -= infected;
-            var chance = this._random.NextDouble();
+            chance = this._random.NextDouble();
             if (infectiousness > chance)
             {
                 infected += 1;
