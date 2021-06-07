@@ -73,8 +73,8 @@
 			},
 			"name": "North East England",
 			"position": {
-				"x": 0,
-				"y": 0
+				"x": -1.66,
+				"y": 55.01
 			},
 			"demographics": {
 				"underFive": 0.05,
@@ -105,8 +105,8 @@
 			},
 			"name": "North West England",
 			"position": {
-				"x": 0,
-				"y": 0
+				"x": -2.25,
+				"y": 53.48
 			},
 			"demographics": {
 				"underFive": 0.06,
@@ -137,8 +137,8 @@
 			},
 			"name": "Yorkshire and The Humber",
 			"position": {
-				"x": 0,
-				"y": 0
+				"x": -1.55,
+				"y": 53.80
 			},
 			"demographics": {
 				"underFive": 0.06,
@@ -169,8 +169,8 @@
 			},
 			"name": "East Midlands",
 			"position": {
-				"x": 0,
-				"y": 0
+				"x": -1.15,
+				"y": 52.95
 			},
 			"demographics": {
 				"underFive": 0.06,
@@ -201,8 +201,8 @@
 			},
 			"name": "West Midlands",
 			"position": {
-				"x": 0,
-				"y": 0
+				"x": -1.90,
+				"y": 52.48
 			},
 			"demographics": {
 				"underFive": 0.06,
@@ -233,8 +233,8 @@
 			},
 			"name": "East of England",
 			"position": {
-				"x": 0,
-				"y": 0
+				"x": 0.71,
+				"y": 51.54
 			},
 			"demographics": {
 				"underFive": 0.06,
@@ -265,8 +265,8 @@
 			},
 			"name": "London",
 			"position": {
-				"x": 0,
-				"y": 0
+				"x": -0.13,
+				"y": 51.51
 			},
 			"demographics": {
 				"underFive": 0.07,
@@ -297,8 +297,8 @@
 			},
 			"name": "South East England",
 			"position": {
-				"x": 0,
-				"y": 0
+				"x": -1.40,
+				"y": 50.90
 			},
 			"demographics": {
 				"underFive": 0.06,
@@ -329,8 +329,8 @@
 			},
 			"name": "South West England",
 			"position": {
-				"x": 0,
-				"y": 0
+				"x": -2.59,
+				"y": 51.45
 			},
 			"demographics": {
 				"underFive": 0.05,
@@ -361,8 +361,8 @@
 			},
 			"name": "Wales",
 			"position": {
-				"x": 0,
-				"y": 0
+				"x": -3.18,
+				"y": 51.48
 			},
 			"demographics": {
 				"underFive": 0.05,
@@ -393,8 +393,8 @@
 			},
 			"name": "Scotland",
 			"position": {
-				"x": 0,
-				"y": 0
+				"x": -4.25,
+				"y": 55.86
 			},
 			"demographics": {
 				"underFive": 0.05,
@@ -425,8 +425,8 @@
 			},
 			"name": "Northern Ireland",
 			"position": {
-				"x": 0,
-				"y": 0
+				"x": -5.93,
+				"y": 54.60
 			},
 			"demographics": {
 				"underFive": 0.06,
