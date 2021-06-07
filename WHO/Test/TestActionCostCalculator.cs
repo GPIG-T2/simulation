@@ -45,7 +45,7 @@ namespace WHO.Test
         public void TestInformationPressRelease()
         {
             InformationPressRelease action = new(0, TestLocation);
-            Assert.Equal(PeopleAtTestLocation * 0.01f, ActionCostCalculator.CalculateCost(action, ActionCostCalculator.ActionMode.Create));
+            Assert.Equal(PeopleAtTestLocation * 0.01d, ActionCostCalculator.CalculateCost(action, ActionCostCalculator.ActionMode.Create));
             Assert.Equal(-1, ActionCostCalculator.CalculateCost(action, ActionCostCalculator.ActionMode.Delete));
         }
 

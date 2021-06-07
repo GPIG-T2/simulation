@@ -26,7 +26,8 @@ namespace WHO.Test
         [Fact]
         public void TestConstructor()
         {
-            HealthOrganisation org = new(client: null);
+            Mock<IClient> mockClient = new();
+            HealthOrganisation org = new(mockClient.Object);
             Assert.Equal(org, HealthOrganisation.Instance);
             Assert.Throws<InvalidOperationException>(() => new HealthOrganisation(client: null));
         }
@@ -79,8 +80,8 @@ namespace WHO.Test
             healthOrgMock.Object.AddLocalTrigger(new CustomTrigger(TrackingValue.Uninfected, (p) => p.CurrentParameterCount == 3, (l) => healthOrgMock.Object.TasksToExecute.Add(new WhoAction(0, new CloseSchools(l))), 0));
             clientMock.Setup(c => c.ApplyActions(It.Is<List<WhoAction>>(a => a[0].Id == 0 && Enumerable.SequenceEqual(a[0].Parameters.Location, new List<string>() { "A1", "B2" }) && a[0].Mode == "create"))).Returns(Task.FromResult<List<ActionResult>>(new() { new ActionResult(0, 200, "") })).Verifiable();
             await healthOrgMock.Object.Run();
-            Assert.Equal(1, healthOrgMock.Object.LocationStatuses["A1B2"].ActionCount);
-            Assert.Single(healthOrgMock.Object.LocationStatuses["A1B2"].GetActionsOfType(CloseSchools.ActionName));
+            Assert.Equal(1, healthOrgMock.Object.LocationStatuses["A1,B2"].ActionCount);
+            Assert.Single(healthOrgMock.Object.LocationStatuses["A1,B2"].GetActionsOfType(CloseSchools.ActionName));
             clientMock.VerifyAll();
         }
 
@@ -121,14 +122,15 @@ namespace WHO.Test
             healthOrgMock.Object.AddLocalTrigger(new CustomTrigger(TrackingValue.Uninfected, (p) => p.CurrentParameterCount == 3, (l) => healthOrgMock.Object.TasksToExecute.Add(new WhoAction(0, new CloseSchools(l))), 0));
             clientMock.Setup(c => c.ApplyActions(It.Is<List<WhoAction>>(a => a[0].Id == 0 && Enumerable.SequenceEqual(a[0].Parameters.Location, new List<string>() { "A1", "B2" }) && a[0].Mode == "create"))).Returns(Task.FromResult<List<ActionResult>>(new() { new ActionResult(0, 502, "") })).Verifiable();
             await healthOrgMock.Object.Run();
-            Assert.Equal(0, healthOrgMock.Object.LocationStatuses["A1B2"].ActionCount);
+            Assert.Equal(0, healthOrgMock.Object.LocationStatuses["A1,B2"].ActionCount);
             clientMock.VerifyAll();
         }
 
         [Fact]
         public void TestGetWhoActionWhenCreatingRestrictions()
         {
-            HealthOrganisation org = new(client: null);
+            Mock<IClient> mockClient = new();
+            HealthOrganisation org = new(mockClient.Object);
             LocationTracker locationTracker = new("A1", null);
 
             org.LocationTrackers.Add("A1", locationTracker);
@@ -143,7 +145,8 @@ namespace WHO.Test
         [Fact]
         public void TestGetWhoActionWhenDeletingRestrictions()
         {
-            HealthOrganisation org = new(client: null);
+            Mock<IClient> mockClient = new();
+            HealthOrganisation org = new(mockClient.Object);
             LocationTracker locationTracker = new("A1", null);
 
             org.LocationTrackers.Add("A1", locationTracker);
@@ -158,7 +161,8 @@ namespace WHO.Test
         [Fact]
         public void TestCalculateBestActionWhenInfectionRateIsGreaterThanThresholdAndThereIsAnUnlimitedAmountOfMoney()
         {
-            HealthOrganisation org = new(client: null);
+            Mock<IClient> mockClient = new();
+            HealthOrganisation org = new(mockClient.Object);
             LocationTracker locationTrackerA1 = new("A1", null);
             LocationTracker locationTrackerAll = new(HealthOrganisation.ALL_LOCATION_ID, null);
 
@@ -178,7 +182,8 @@ namespace WHO.Test
         [Fact]
         public void TestCalculateBestActionWhenInfectionRateIsLessThanThresholdAndThereIsAnUnlimitedAmountOfMoney()
         {
-            HealthOrganisation org = new(client: null);
+            Mock<IClient> mockClient = new();
+            HealthOrganisation org = new(mockClient.Object);
             LocationTracker locationTrackerA1 = new("A1", null);
             LocationTracker locationTrackerAll = new(HealthOrganisation.ALL_LOCATION_ID, null);
 
@@ -199,7 +204,8 @@ namespace WHO.Test
         [Fact]
         public void TestCalculateBestActionWhenInfectionRateIsGreaterThanThresholdAndThereIsALimitedAmountOfMoney()
         {
-            HealthOrganisation org = new(client: null);
+            Mock<IClient> mockClient = new();
+            HealthOrganisation org = new(mockClient.Object);
             LocationTracker locationTrackerA1 = new("A1", null);
             LocationTracker locationTrackerAll = new(HealthOrganisation.ALL_LOCATION_ID, null);
 
@@ -219,7 +225,8 @@ namespace WHO.Test
         [Fact]
         public void TestCalculateBestActionWhenInfectionRateIsLessThanThresholdAndThereIsALimitedAmountOfMoney()
         {
-            HealthOrganisation org = new(client: null);
+            Mock<IClient> mockClient = new();
+            HealthOrganisation org = new(mockClient.Object);
             LocationTracker locationTrackerA1 = new("A1", null);
             LocationTracker locationTrackerAll = new(HealthOrganisation.ALL_LOCATION_ID, null);
 
