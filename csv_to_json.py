@@ -102,15 +102,15 @@ with open(inCSV,'r') as read_obj:
         node = {}
         node["population"] = int(row[2])
         node["interactivity"] = {
-				"underFive": 10,
-				"fiveToSeventeen": 10,
-				"eighteenToTwentyNine": 10,
-				"thirtyToThirtyNine": 10,
-				"fourtyToFourtyNine": 10,
-				"fiftyToSixtyFour": 10,
-				"sixtyFiveToSeventyFour": 10,
-				"seventyFiveToEightyFour": 10,
-				"overEightyFive": 10
+				"underFive": float(row[17]),
+				"fiveToSeventeen": float(row[17]),
+				"eighteenToTwentyNine": float(row[17]),
+				"thirtyToThirtyNine": float(row[17]),
+				"fourtyToFourtyNine": float(row[17]),
+				"fiftyToSixtyFour": float(row[17]),
+				"sixtyFiveToSeventyFour": float(row[17]),
+				"seventyFiveToEightyFour": float(row[17]),
+				"overEightyFive": float(row[17])
                                 }
         node["name"] = row[1]
         node["position"] = {"x": 0, "y": 0}

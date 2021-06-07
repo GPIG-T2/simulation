@@ -61,15 +61,15 @@
 		{
 			"population": 2669941,
 			"interactivity": {
-				"underFive": 10,
-				"fiveToSeventeen": 10,
-				"eighteenToTwentyNine": 10,
-				"thirtyToThirtyNine": 10,
-				"fourtyToFourtyNine": 10,
-				"fiftyToSixtyFour": 10,
-				"sixtyFiveToSeventyFour": 10,
-				"seventyFiveToEightyFour": 10,
-				"overEightyFive": 10
+				"underFive": 8.545,
+				"fiveToSeventeen": 8.545,
+				"eighteenToTwentyNine": 8.545,
+				"thirtyToThirtyNine": 8.545,
+				"fourtyToFourtyNine": 8.545,
+				"fiftyToSixtyFour": 8.545,
+				"sixtyFiveToSeventyFour": 8.545,
+				"seventyFiveToEightyFour": 8.545,
+				"overEightyFive": 8.545
 			},
 			"name": "North East England",
 			"position": {
@@ -93,15 +93,15 @@
 		{
 			"population": 7341196,
 			"interactivity": {
-				"underFive": 10,
-				"fiveToSeventeen": 10,
-				"eighteenToTwentyNine": 10,
-				"thirtyToThirtyNine": 10,
-				"fourtyToFourtyNine": 10,
-				"fiftyToSixtyFour": 10,
-				"sixtyFiveToSeventyFour": 10,
-				"seventyFiveToEightyFour": 10,
-				"overEightyFive": 10
+				"underFive": 9.279,
+				"fiveToSeventeen": 9.279,
+				"eighteenToTwentyNine": 9.279,
+				"thirtyToThirtyNine": 9.279,
+				"fourtyToFourtyNine": 9.279,
+				"fiftyToSixtyFour": 9.279,
+				"sixtyFiveToSeventyFour": 9.279,
+				"seventyFiveToEightyFour": 9.279,
+				"overEightyFive": 9.279
 			},
 			"name": "North West England",
 			"position": {
@@ -125,15 +125,15 @@
 		{
 			"population": 5502967,
 			"interactivity": {
-				"underFive": 10,
-				"fiveToSeventeen": 10,
-				"eighteenToTwentyNine": 10,
-				"thirtyToThirtyNine": 10,
-				"fourtyToFourtyNine": 10,
-				"fiftyToSixtyFour": 10,
-				"sixtyFiveToSeventyFour": 10,
-				"seventyFiveToEightyFour": 10,
-				"overEightyFive": 10
+				"underFive": 8.731,
+				"fiveToSeventeen": 8.731,
+				"eighteenToTwentyNine": 8.731,
+				"thirtyToThirtyNine": 8.731,
+				"fourtyToFourtyNine": 8.731,
+				"fiftyToSixtyFour": 8.731,
+				"sixtyFiveToSeventyFour": 8.731,
+				"seventyFiveToEightyFour": 8.731,
+				"overEightyFive": 8.731
 			},
 			"name": "Yorkshire and The Humber",
 			"position": {
@@ -157,15 +157,15 @@
 		{
 			"population": 4835928,
 			"interactivity": {
-				"underFive": 10,
-				"fiveToSeventeen": 10,
-				"eighteenToTwentyNine": 10,
-				"thirtyToThirtyNine": 10,
-				"fourtyToFourtyNine": 10,
-				"fiftyToSixtyFour": 10,
-				"sixtyFiveToSeventyFour": 10,
-				"seventyFiveToEightyFour": 10,
-				"overEightyFive": 10
+				"underFive": 8.532,
+				"fiveToSeventeen": 8.532,
+				"eighteenToTwentyNine": 8.532,
+				"thirtyToThirtyNine": 8.532,
+				"fourtyToFourtyNine": 8.532,
+				"fiftyToSixtyFour": 8.532,
+				"sixtyFiveToSeventyFour": 8.532,
+				"seventyFiveToEightyFour": 8.532,
+				"overEightyFive": 8.532
 			},
 			"name": "East Midlands",
 			"position": {
@@ -189,15 +189,15 @@
 		{
 			"population": 5934037,
 			"interactivity": {
-				"underFive": 10,
-				"fiveToSeventeen": 10,
-				"eighteenToTwentyNine": 10,
-				"thirtyToThirtyNine": 10,
-				"fourtyToFourtyNine": 10,
-				"fiftyToSixtyFour": 10,
-				"sixtyFiveToSeventyFour": 10,
-				"seventyFiveToEightyFour": 10,
-				"overEightyFive": 10
+				"underFive": 9.080,
+				"fiveToSeventeen": 9.080,
+				"eighteenToTwentyNine": 9.080,
+				"thirtyToThirtyNine": 9.080,
+				"fourtyToFourtyNine": 9.080,
+				"fiftyToSixtyFour": 9.080,
+				"sixtyFiveToSeventyFour": 9.080,
+				"seventyFiveToEightyFour": 9.080,
+				"overEightyFive": 9.080
 			},
 			"name": "West Midlands",
 			"position": {
@@ -221,15 +221,15 @@
 		{
 			"population": 6236072,
 			"interactivity": {
-				"underFive": 10,
-				"fiveToSeventeen": 10,
-				"eighteenToTwentyNine": 10,
-				"thirtyToThirtyNine": 10,
-				"fourtyToFourtyNine": 10,
-				"fiftyToSixtyFour": 10,
-				"sixtyFiveToSeventyFour": 10,
-				"seventyFiveToEightyFour": 10,
-				"overEightyFive": 10
+				"underFive": 8.603,
+				"fiveToSeventeen": 8.603,
+				"eighteenToTwentyNine": 8.603,
+				"thirtyToThirtyNine": 8.603,
+				"fourtyToFourtyNine": 8.603,
+				"fiftyToSixtyFour": 8.603,
+				"sixtyFiveToSeventyFour": 8.603,
+				"seventyFiveToEightyFour": 8.603,
+				"overEightyFive": 8.603
 			},
 			"name": "East of England",
 			"position": {
@@ -253,15 +253,15 @@
 		{
 			"population": 8961989,
 			"interactivity": {
-				"underFive": 10,
-				"fiveToSeventeen": 10,
-				"eighteenToTwentyNine": 10,
-				"thirtyToThirtyNine": 10,
-				"fourtyToFourtyNine": 10,
-				"fiftyToSixtyFour": 10,
-				"sixtyFiveToSeventyFour": 10,
-				"seventyFiveToEightyFour": 10,
-				"overEightyFive": 10
+				"underFive": 15,
+				"fiveToSeventeen": 15,
+				"eighteenToTwentyNine": 15,
+				"thirtyToThirtyNine": 15,
+				"fourtyToFourtyNine": 15,
+				"fiftyToSixtyFour": 15,
+				"sixtyFiveToSeventyFour": 15,
+				"seventyFiveToEightyFour": 15,
+				"overEightyFive": 15
 			},
 			"name": "London",
 			"position": {
@@ -285,15 +285,15 @@
 		{
 			"population": 9180135,
 			"interactivity": {
-				"underFive": 10,
-				"fiveToSeventeen": 10,
-				"eighteenToTwentyNine": 10,
-				"thirtyToThirtyNine": 10,
-				"fourtyToFourtyNine": 10,
-				"fiftyToSixtyFour": 10,
-				"sixtyFiveToSeventyFour": 10,
-				"seventyFiveToEightyFour": 10,
-				"overEightyFive": 10
+				"underFive": 9.161,
+				"fiveToSeventeen": 9.161,
+				"eighteenToTwentyNine": 9.161,
+				"thirtyToThirtyNine": 9.161,
+				"fourtyToFourtyNine": 9.161,
+				"fiftyToSixtyFour": 9.161,
+				"sixtyFiveToSeventyFour": 9.161,
+				"seventyFiveToEightyFour": 9.161,
+				"overEightyFive": 9.161
 			},
 			"name": "South East England",
 			"position": {
@@ -317,15 +317,15 @@
 		{
 			"population": 5624696,
 			"interactivity": {
-				"underFive": 10,
-				"fiveToSeventeen": 10,
-				"eighteenToTwentyNine": 10,
-				"thirtyToThirtyNine": 10,
-				"fourtyToFourtyNine": 10,
-				"fiftyToSixtyFour": 10,
-				"sixtyFiveToSeventyFour": 10,
-				"seventyFiveToEightyFour": 10,
-				"overEightyFive": 10
+				"underFive": 8.196,
+				"fiveToSeventeen": 8.196,
+				"eighteenToTwentyNine": 8.196,
+				"thirtyToThirtyNine": 8.196,
+				"fourtyToFourtyNine": 8.196,
+				"fiftyToSixtyFour": 8.196,
+				"sixtyFiveToSeventyFour": 8.196,
+				"seventyFiveToEightyFour": 8.196,
+				"overEightyFive": 8.196
 			},
 			"name": "South West England",
 			"position": {
@@ -349,15 +349,15 @@
 		{
 			"population": 3152879,
 			"interactivity": {
-				"underFive": 10,
-				"fiveToSeventeen": 10,
-				"eighteenToTwentyNine": 10,
-				"thirtyToThirtyNine": 10,
-				"fourtyToFourtyNine": 10,
-				"fiftyToSixtyFour": 10,
-				"sixtyFiveToSeventyFour": 10,
-				"seventyFiveToEightyFour": 10,
-				"overEightyFive": 10
+				"underFive": 7.703,
+				"fiveToSeventeen": 7.703,
+				"eighteenToTwentyNine": 7.703,
+				"thirtyToThirtyNine": 7.703,
+				"fourtyToFourtyNine": 7.703,
+				"fiftyToSixtyFour": 7.703,
+				"sixtyFiveToSeventyFour": 7.703,
+				"seventyFiveToEightyFour": 7.703,
+				"overEightyFive": 7.703
 			},
 			"name": "Wales",
 			"position": {
@@ -381,15 +381,15 @@
 		{
 			"population": 5463300,
 			"interactivity": {
-				"underFive": 10,
-				"fiveToSeventeen": 10,
-				"eighteenToTwentyNine": 10,
-				"thirtyToThirtyNine": 10,
-				"fourtyToFourtyNine": 10,
-				"fiftyToSixtyFour": 10,
-				"sixtyFiveToSeventyFour": 10,
-				"seventyFiveToEightyFour": 10,
-				"overEightyFive": 10
+				"underFive": 7.000,
+				"fiveToSeventeen": 7.000,
+				"eighteenToTwentyNine": 7.000,
+				"thirtyToThirtyNine": 7.000,
+				"fourtyToFourtyNine": 7.000,
+				"fiftyToSixtyFour": 7.000,
+				"sixtyFiveToSeventyFour": 7.000,
+				"seventyFiveToEightyFour": 7.000,
+				"overEightyFive": 7.000
 			},
 			"name": "Scotland",
 			"position": {
@@ -413,15 +413,15 @@
 		{
 			"population": 1893667,
 			"interactivity": {
-				"underFive": 10,
-				"fiveToSeventeen": 10,
-				"eighteenToTwentyNine": 10,
-				"thirtyToThirtyNine": 10,
-				"fourtyToFourtyNine": 10,
-				"fiftyToSixtyFour": 10,
-				"sixtyFiveToSeventyFour": 10,
-				"seventyFiveToEightyFour": 10,
-				"overEightyFive": 10
+				"underFive": 7.596,
+				"fiveToSeventeen": 7.596,
+				"eighteenToTwentyNine": 7.596,
+				"thirtyToThirtyNine": 7.596,
+				"fourtyToFourtyNine": 7.596,
+				"fiftyToSixtyFour": 7.596,
+				"sixtyFiveToSeventyFour": 7.596,
+				"seventyFiveToEightyFour": 7.596,
+				"overEightyFive": 7.596
 			},
 			"name": "Northern Ireland",
 			"position": {

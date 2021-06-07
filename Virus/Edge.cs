@@ -52,8 +52,6 @@ namespace Virus
             long n2Pop = this._totalPopulation - n1Pop;
 
             // determining how many infectious people come from each node - the population from the node * the proportion of people in the node who are infectious
-            // TODO: Replace with a proper statistical measure on how many infectious people there would be from a subset of the population
-            // TODO: Maybe not indclude serious?
             double n1Infec = (n1Pop
                 * ((double)(this.Left.Totals.AsymptomaticInfectedInfectious
                     + this.Left.Totals.Symptomatic
