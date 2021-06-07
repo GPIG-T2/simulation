@@ -130,12 +130,9 @@ namespace Virus
         /// <summary>
         /// Applies test and isolate to a specific area
         /// </summary>
-        public double TestAndIsolation(Models.Parameters.TestAndIsolation p)
+        public void TestAndIsolation(Models.Parameters.TestAndIsolation p)
         {
             this._nodes.Get(p.Location).TestAndIsolate(p.TestQuality == 1, p.QuarantinePeriod, p.Quantity, p.SymptomaticOnly);
-
-            // TODO: rework cost calculations elsewhere
-            return (p.TestQuality == 1 ? GoodTestCost : BadTestCost) * p.Quantity;
         }
 
         /// <summary>
@@ -149,13 +146,9 @@ namespace Virus
         /// <summary>
         /// Implements stay at home order on a specific node, cost at PressReleaseCost per person (press release)
         /// </summary>
-        public double StayAtHomeOrder(Models.Parameters.StayAtHome p)
+        public void StayAtHomeOrder(Models.Parameters.StayAtHome p)
         {
-            int i = p.Location.ToNodeIndex();
-            this._nodes[i].StayAtHomeOrder();
-
-            // TODO: rework cost calculations elsewhere
-            return PressReleaseCost * this._nodes[i].TotalPopulation;
+            this._nodes.Get(p.Location).StayAtHomeOrder();
         }
 
         /// <summary>
@@ -170,15 +163,16 @@ namespace Virus
         /// Closes schools in a specific node - cost at 0.01 per person (press release)
         /// + learning from home recurrent costs removed from Budget increase
         /// </summary>
-        public double CloseSchools(Models.Parameters.CloseSchools p)
+        public void CloseSchools(Models.Parameters.CloseSchools p)
         {
             int i = p.Location.ToNodeIndex();
             this._nodes[i].CloseSchools();
 
             // TODO: rework cost calculations elsewhere
             //(weekly cost/7) * number of schoolaged children
-            this.Budget -= (CloseSchoolsStudentCost / 7) * this._nodes[i].TotalPopulation * this._nodes[i].NodeDemographics.FiveToSeventeen;
-            return PressReleaseCost * this._nodes[i].TotalPopulation;
+            this.Budget -= (CloseSchoolsStudentCost / 7)
+                * this._nodes[i].TotalPopulation
+                * this._nodes[i].NodeDemographics.FiveToSeventeen;
         }
 
         /// <summary>
@@ -194,13 +188,9 @@ namespace Virus
         /// <summary>
         /// Closes recreational areas in a specific node - press release cost
         /// </summary>
-        public double CloseRecreationalLocations(Models.Parameters.CloseRecreationalLocations p)
+        public void CloseRecreationalLocations(Models.Parameters.CloseRecreationalLocations p)
         {
-            int i = p.Location.ToNodeIndex();
-            this._nodes[i].CancelCloseRecreationalAreas();
-
-            // TODO: rework cost calculations elsewhere
-            return PressReleaseCost * this._nodes[i].TotalPopulation;
+            this._nodes.Get(p.Location).CancelCloseRecreationalAreas();
         }
 
         /// <summary>
@@ -214,13 +204,9 @@ namespace Virus
         /// <summary>
         /// Implements shielding in a specific node - press release cost    
         /// </summary>
-        public double ShieldingProgram(Models.Parameters.ShieldingProgram p)
+        public void ShieldingProgram(Models.Parameters.ShieldingProgram p)
         {
-            int i = p.Location.ToNodeIndex();
-            this._nodes[i].ShieldingProgram();
-
-            // TODO: rework cost calculations elsewhere
-            return PressReleaseCost * this._nodes[i].TotalPopulation;
+            this._nodes.Get(p.Location).ShieldingProgram();
         }
 
         /// <summary>
@@ -234,7 +220,7 @@ namespace Virus
         /// <summary>
         /// Closes edges over a distance connected to a specific node - press release cost
         /// </summary>
-        public double MovementRestrictions(Models.Parameters.MovementRestrictions p)
+        public void MovementRestrictions(Models.Parameters.MovementRestrictions p)
         {
             int i = p.Location.ToNodeIndex();
             this._nodes[i].MovementRestrictions();
@@ -246,9 +232,6 @@ namespace Virus
                     this._edges[j].CloseEdge();
                 }
             }
-
-            // TODO: rework cost calculations elsewhere
-            return PressReleaseCost * this._nodes[i].TotalPopulation;
         }
 
         /// <summary>
@@ -268,7 +251,7 @@ namespace Virus
         /// <summary>
         /// Closes all edges connected to a specific node - press release cost
         /// </summary>
-        public double CloseBorders(Models.Parameters.CloseBorders p)
+        public void CloseBorders(Models.Parameters.CloseBorders p)
         {
             int i = p.Location.ToNodeIndex();
             this._nodes[i].CloseBorders();
@@ -277,9 +260,6 @@ namespace Virus
             {
                 this._edges[j].CloseEdge();
             }
-
-            // TODO: rework cost calculations elsewhere
-            return PressReleaseCost * this._nodes[i].TotalPopulation;
         }
 
         /// <summary>
@@ -307,15 +287,13 @@ namespace Virus
         /// <summary>
         /// Implement furlough schemes in a specific node - recurrent cost on the Budget increase + initial cost
         /// </summary>
-        public double FurloughScheme(Models.Parameters.Furlough p)
+        public void FurloughScheme(Models.Parameters.Furlough p)
         {
             int i = p.Location.ToNodeIndex();
             this._nodes[i].FurloughScheme(p.AmountInvested);
 
-            // TODO: rework cost calculations elsewhere
-            long cost = (long)p.AmountInvested * this._nodes[i].TotalPopulation; //currently overestimates
+            long cost = p.AmountInvested * this._nodes[i].TotalPopulation; //currently overestimates
             this.Budget -= cost;
-            return cost;
         }
 
         /// <summary>
@@ -332,13 +310,9 @@ namespace Virus
         /// Implements a single press release in a node - press release cost
         /// Amount currently does nothing
         /// </summary>
-        public double InformationPressRelease(Models.Parameters.InformationPressRelease p)
+        public void InformationPressRelease(Models.Parameters.InformationPressRelease p)
         {
-            int i = p.Location.ToNodeIndex();
-            this._nodes[i].InformationPressRelease();
-
-            // TODO: rework cost calculations elsewhere
-            return PressReleaseCost * this._nodes[i].TotalPopulation;
+            this._nodes.Get(p.Location).InformationPressRelease();
         }
 
         /// <summary>
@@ -354,13 +328,12 @@ namespace Virus
         /// <summary>
         /// Implements mask mandate in a specific node - press release cost + cost per mask
         /// </summary>
-        public double MaskMandate(Models.Parameters.MaskMandate p)
+        public void MaskMandate(Models.Parameters.MaskMandate p)
         {
             int i = p.Location.ToNodeIndex();
 
             // TODO: rework cost calculations elsewhere
             //values using competition rules
-            double cost = PressReleaseCost * this._nodes[i].TotalPopulation;
             switch (p.MaskProvisionLevel)
             {
                 case 0:
@@ -368,17 +341,14 @@ namespace Virus
                     break;
                 case 1:
                     this._nodes[i].MaskMandate(true, LowLevelMask);
-                    cost += LowLevelMaskCost * this._nodes[i].TotalPopulation;
                     break;
                 case 2:
                     this._nodes[i].MaskMandate(true, HighLevelMask);
-                    cost += HighLevelMaskCost * this._nodes[i].TotalPopulation;
                     break;
                 default:
                     Log.Error("Invalid Mask Mandate option");
                     break;
             }
-            return cost;
         }
 
         /// <summary>
@@ -409,13 +379,9 @@ namespace Virus
         /// <summary>
         /// Implements health drive - cost of press release - needs a recurrent cost but unsure of what it is from competition rules
         /// </summary>
-        public double HealthDrive(Models.Parameters.HealthDrive p)
+        public void HealthDrive(Models.Parameters.HealthDrive p)
         {
-            int i = p.Location.ToNodeIndex();
-            this._nodes[i].HealthDrive();
-
-            // TODO: rework cost calculations elsewhere
-            return PressReleaseCost * this._nodes[i].TotalPopulation;
+            this._nodes.Get(p.Location).HealthDrive();
         }
 
         /// <summary>
@@ -456,13 +422,9 @@ namespace Virus
         /// <summary>
         /// Implements social distancing of n meters in a specific node - cost of press release
         /// </summary>
-        public double SocialDistancing(Models.Parameters.SocialDistancingMandate p)
+        public void SocialDistancing(Models.Parameters.SocialDistancingMandate p)
         {
-            int i = p.Location.ToNodeIndex();
-            this._nodes[i].SocialDistancing(p.Distance);
-
-            // TODO: rework cost calculations elsewhere
-            return PressReleaseCost * this._nodes[i].TotalPopulation;
+            this._nodes.Get(p.Location).SocialDistancing(p.Distance);
         }
 
         /// <summary>
@@ -476,13 +438,9 @@ namespace Virus
         /// <summary>
         /// Implements curfew in a specific node at the cost of a press release
         /// </summary>
-        public double Curfew(Models.Parameters.Curfew p)
+        public void Curfew(Models.Parameters.Curfew p)
         {
-            int i = p.Location.ToNodeIndex();
-            this._nodes[i].Curfew();
-
-            // TODO: rework cost calculations elsewhere
-            return PressReleaseCost * this._nodes[i].TotalPopulation;
+            this._nodes.Get(p.Location).Curfew();
         }
 
         /// <summary>
