@@ -113,7 +113,7 @@ with open(inCSV,'r') as read_obj:
 				"overEightyFive": float(row[17])
                                 }
         node["name"] = row[1]
-        node["position"] = {"x": 0, "y": 0}
+        node["position"] = {"x": latToFloat(row[16]), "y": latToFloat(row[15])}
         node["demographics"] ={
                                 "underFive": float(row[3]),
 				"fiveToSeventeen": float(row[4]),
