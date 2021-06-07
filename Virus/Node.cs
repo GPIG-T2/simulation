@@ -14,13 +14,13 @@ namespace Virus
         public const double TestAndIsolateGdp = 0.95;
         public const double CancelTestAndIsolateGdp = 1 / 0.97;
 
-        public const double StayAtHomeEfficacy = 0.9;
+        public const double StayAtHomeEfficacy = 0.4;
         public const double StayAtHomeCompliance = -0.1;
         public const double StayAtHomeGdp = 0.95;
         public const double CancelStayAtHomeCompliance = 1 / 0.05;
         public const double CancelStayAtHomeGdp = 1 / 0.97;
 
-        public const double CloseSchoolsEfficacy = 0.1;
+        public const double CloseSchoolsEfficacy = 0.3;
         public const double CloseSchoolsGdp = 0.95;
         public const double CloseSchoolsCompliance = -0.1;
         public const double CloseSchoolsPublicOpinion = 0.9;
@@ -36,7 +36,7 @@ namespace Virus
         public const double CancelCloseRecreationalAreasCompliance = 1 / 0.05;
         public const double CancelCloseRecreationalAreasPublicOpinion = 1 / 0.93;
 
-        public const double ShieldingProgramEfficacy = 0.5;
+        public const double ShieldingProgramEfficacy = 0.2;
         public const double ShieldingProgramCompliance = -0.1;
         public const double CancelShieldingProgramCompliance = 1 / 0.05;
 
@@ -69,7 +69,7 @@ namespace Virus
         public const double HealthDriveLethalityModifier = 0.9;
         public const double CancelHealthDriveLethalityModifier = 1 / 0.95;
 
-        public const double SocialDistancingEfficacy = 0.5;
+        public const double SocialDistancingEfficacy = 0.7;
         public const double SocialDistancingPublicOpinion = 0.9;
         public const double SocialDistancingComplianceChange = -0.1;
         public const double CancelSocialDistancingPublicOpinion = 1 / 0.95;
@@ -79,7 +79,7 @@ namespace Virus
         public const double InvestInHealthServicesLethality = 0.9;
         public const double InvestInHealthServicesPublicOpinion = 0.7;
 
-        public const double CurfewEfficacy = 0.5;
+        public const double CurfewEfficacy = 0.1;
         public const double CurfewPublicOpinion = 0.5;
         public const double CurfewGDP = 0.9;
         public const double CancelCurfewPublicOpinion = 1 / 0.9;
@@ -424,7 +424,7 @@ namespace Virus
         /// </summary>
         public void StayAtHomeOrder()
         {
-            this._interactivityModifier *= this._compliance * StayAtHomeEfficacy; // preset to 0.9, make it changeable?
+            this._interactivityModifier *= StayAtHomeEfficacy / this._compliance; 
             this.ChangeComplianceModifier(StayAtHomeCompliance);
             this.ModifyGdp(StayAtHomeGdp); // arbitrary GDP cost chosen
             this._stayAtHomeCompliance = this._compliance;
@@ -436,7 +436,7 @@ namespace Virus
         /// </summary>
         public void CancelStayAtHomeOrder()
         {
-            this._interactivityModifier /= this._stayAtHomeCompliance * StayAtHomeEfficacy;
+            this._interactivityModifier /= StayAtHomeEfficacy / this._stayAtHomeCompliance;
             this.ChangeComplianceModifier(CancelStayAtHomeCompliance);
             this.ModifyGdp(CancelStayAtHomeGdp);
             this._stayAtHomeBool = false;
@@ -469,7 +469,7 @@ namespace Virus
         /// </summary>
         public void CloseRecreationalAreas()
         {
-            this._interactivityModifier *= this._compliance * CloseRecreationalAreasCompliance;
+            this._interactivityModifier *= CloseRecreationalAreasEfficacy / this._compliance;
             this.ModifyGdp(CloseRecreationalAreasGdp);
             this.ChangeComplianceModifier(CloseRecreationalAreasCompliance);
             this.PublicOpinion *= CloseRecreationalAreasPublicOpinion;
@@ -482,7 +482,7 @@ namespace Virus
         /// </summary>
         public void CancelCloseRecreationalAreas()
         {
-            this._interactivityModifier /= this._closeRecreationalAreasCompliance * CloseRecreationalAreasEfficacy;
+            this._interactivityModifier /= CloseRecreationalAreasEfficacy / this._closeRecreationalAreasCompliance;
             this.ModifyGdp(CancelCloseRecreationalAreasGdp);
             this.ChangeComplianceModifier(CancelCloseRecreationalAreasCompliance);
             this.PublicOpinion /= CancelCloseRecreationalAreasPublicOpinion;
@@ -491,13 +491,13 @@ namespace Virus
         }
 
         /// <summary>
-        /// Shields at risk groups - interactivty lowered on 65+ demographics
+        /// Shields at risk groups - lowers the demographic value of 65+ so they have less effect overall
         /// </summary>
         public void ShieldingProgram()
         {
-            this._interactivity.SixtyFiveToSeventyFour *= ShieldingProgramEfficacy;
-            this._interactivity.SeventyFiveToEightyFour *= ShieldingProgramEfficacy;
-            this._interactivity.OverEightyFive *= ShieldingProgramEfficacy;
+            this.NodeDemographics.SixtyFiveToSeventyFour *= ShieldingProgramEfficacy / this._compliance;
+            this.NodeDemographics.SeventyFiveToEightyFour *= ShieldingProgramEfficacy / this._compliance;
+            this.NodeDemographics.OverEightyFive *= ShieldingProgramEfficacy / this._compliance;
             this.ChangeComplianceModifier(ShieldingProgramCompliance);
             this._shieldingProgramCompliance = this._compliance;
         }
@@ -507,9 +507,9 @@ namespace Virus
         /// </summary>
         public void CancelShieldingProgram()
         {
-            this._interactivity.SixtyFiveToSeventyFour /= ShieldingProgramEfficacy;
-            this._interactivity.SeventyFiveToEightyFour /= ShieldingProgramEfficacy;
-            this._interactivity.OverEightyFive /= ShieldingProgramEfficacy;
+            this._interactivity.SixtyFiveToSeventyFour /= ShieldingProgramEfficacy / this._shieldingProgramCompliance;
+            this._interactivity.SeventyFiveToEightyFour /= ShieldingProgramEfficacy / this._shieldingProgramCompliance;
+            this._interactivity.OverEightyFive /= ShieldingProgramEfficacy / this._shieldingProgramCompliance;
             this.ChangeComplianceModifier(CancelShieldingProgramCompliance);
         }
 
@@ -591,7 +591,7 @@ namespace Virus
         /// </summary>
         public void MaskMandate(bool maskProvided, double maskEffectiveness)
         {
-            this._interactivityModifier *= this._compliance * (1 - maskEffectiveness);
+            this._interactivityModifier *= (1 - maskEffectiveness) / this._compliance;
             if (maskProvided)
             {
                 this.PublicOpinion *= MaskMandateProvidedPublicOpinion;
@@ -608,7 +608,7 @@ namespace Virus
         /// </summary>
         public void CancelMaskMandate(bool maskProvided, double maskEffectiveness)
         {
-            this._interactivityModifier /= this._maskMandateCompliance * (1 - maskEffectiveness);
+            this._interactivityModifier /= (1 - maskEffectiveness) / this._maskMandateCompliance;
             if (maskProvided)
             {
                 this.PublicOpinion /= CancelMaskMandateProvidedPublicOpinion;
@@ -641,7 +641,7 @@ namespace Virus
         public void SocialDistancing(double distance)
         {
             //TODO: add distance measure to virus - effectiveness based on distance measure in virus spreadability
-            this._interactivityModifier *= this._compliance * SocialDistancingEfficacy;
+            this._interactivityModifier *= SocialDistancingEfficacy / this._compliance;
             this.PublicOpinion *= SocialDistancingPublicOpinion;
             this.ChangeComplianceModifier(SocialDistancingComplianceChange);
             this._socialDistancingCompliance = this._compliance;
@@ -652,7 +652,7 @@ namespace Virus
         /// </summary>
         public void CancelSocialDistancing(double distance)
         {
-            this._interactivityModifier /= this._socialDistancingCompliance * SocialDistancingEfficacy;
+            this._interactivityModifier /= SocialDistancingEfficacy / this._socialDistancingCompliance;
             this.PublicOpinion /= CancelSocialDistancingPublicOpinion;
             this.ChangeComplianceModifier(CancelSocialDistancingComplianceChange);
         }
@@ -680,7 +680,7 @@ namespace Virus
         /// </summary>
         public void Curfew()
         {
-            this._interactivityModifier *= this._compliance * CurfewEfficacy;
+            this._interactivityModifier *= CurfewEfficacy / this._compliance;
             this.PublicOpinion *= CurfewPublicOpinion;
             if (!this._closeRecArea)
             {
@@ -694,7 +694,7 @@ namespace Virus
         /// </summary>
         public void CancelCurfew()
         {
-            this._interactivityModifier /= this._curfewCompliance * CurfewEfficacy;
+            this._interactivityModifier /= CurfewEfficacy / this._curfewCompliance;
             this.PublicOpinion /= CancelCurfewPublicOpinion;
         }
 
