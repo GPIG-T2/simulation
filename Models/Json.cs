@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace Models
 {
@@ -14,5 +16,7 @@ namespace Models
         public static string Serialize<T>(T model) => JsonSerializer.Serialize(model, _jsonSerializerOptions);
 
         public static T? Deserialize<T>(string json) => JsonSerializer.Deserialize<T>(json, _jsonSerializerOptions);
+
+        public static ValueTask<T?> DeserializeAsync<T>(Stream stream) => JsonSerializer.DeserializeAsync<T>(stream, _jsonSerializerOptions);
     }
 }

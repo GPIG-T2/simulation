@@ -16,6 +16,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Interface.Client", "Interfa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Virus.Test", "Virus.Test\Virus.Test.csproj", "{CAAAACC1-2377-4369-86D0-C9955403BC58}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Virus.Rest", "Virus.Rest\Virus.Rest.csproj", "{6008258A-B52E-4EDB-9230-BCDD120F1D20}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,6 +44,10 @@ Global
 		{CAAAACC1-2377-4369-86D0-C9955403BC58}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CAAAACC1-2377-4369-86D0-C9955403BC58}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CAAAACC1-2377-4369-86D0-C9955403BC58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6008258A-B52E-4EDB-9230-BCDD120F1D20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6008258A-B52E-4EDB-9230-BCDD120F1D20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6008258A-B52E-4EDB-9230-BCDD120F1D20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6008258A-B52E-4EDB-9230-BCDD120F1D20}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

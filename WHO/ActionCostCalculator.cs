@@ -12,10 +12,10 @@ namespace WHO
             Delete
         }
 
-        public const double PressReleaseCost = 0.01f;
+        public const double PressReleaseCost = 0.01d;
 
-        public const double BadTestCost = 5.5f;
-        public const double GoodTestCost = 140f;
+        public const double BadTestCost = 5.5d;
+        public const double GoodTestCost = 140d;
 
         public const int LowLevelMaskCost = 1;
         public const int HighLevelMaskCost = 15;

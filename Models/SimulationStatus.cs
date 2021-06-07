@@ -27,7 +27,7 @@ namespace Models
         /// <value>The total budget the WHO has for the current turn. This can only be considered valid when `isWhoTurn` is `true`.</value>
         public long Budget { get; set; }
 
-        public SimulationStatus(bool isWhoTurn, int turnCount, int budget)
+        public SimulationStatus(bool isWhoTurn, int turnCount, long budget)
         {
             this.IsWhoTurn = isWhoTurn;
             this.TurnCount = turnCount;

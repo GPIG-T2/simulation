@@ -25,6 +25,7 @@ namespace WHO
                     .CreateLogger();
 
                 await using HealthOrganisation org = new(_uri);
+                //await using HealthOrganisation org = new(new Interface.Client.Rest("http://localhost:24293"));
                 await org.Run();
             }
             finally
