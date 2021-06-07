@@ -83,6 +83,9 @@ namespace Virus
             return data;
         }
 
+        public bool Running => this._world.Day < _totalDays;
+        public event Action<Models.WebSocket.Response>? OnBroadcast;
+
         private readonly Interface.IServer _server = new Interface.WebSocket();
         private readonly World _world;
         private readonly Dictionary<int, WhoAction> _storedActions = new();
@@ -94,8 +97,6 @@ namespace Virus
 
         private readonly SimulationSettings _settings;
         private readonly SimulationStatus _status = new(false, 0, 0);
-
-        public bool Running => this._world.Day < _totalDays;
 
         public Program(World world, SimulationSettings.SelectedMap map)
         {
@@ -112,6 +113,7 @@ namespace Virus
         public void Start()
         {
             this._server.Start(this);
+            this._world.Tracking.OnSnapshot += this.Tracking_OnSnapshot;
         }
 
         public void Stop()
@@ -270,7 +272,11 @@ namespace Virus
             return this._status;
         }
 
-        public void Dispose() => this._server.Dispose();
+        public void Dispose()
+        {
+            this._world.Tracking.OnSnapshot -= this.Tracking_OnSnapshot;
+            this._server.Dispose();
+        }
 
         private void HandleAction(WhoAction action, bool create)
         {
@@ -346,6 +352,11 @@ namespace Virus
                     else { this._world.CancelCurfew(action.Parameters); }
                     break;
             }
+        }
+
+        private void Tracking_OnSnapshot(IEnumerable<InfectionTotals> snapshot)
+        {
+            this.OnBroadcast?.Invoke(new(null, -1, Json.Serialize(snapshot)));
         }
     }
 }

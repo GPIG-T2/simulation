@@ -36,11 +36,13 @@ namespace Virus
         public Node[] Nodes => this._nodes;
         public Edge[] Edges => this._edges;
         public int Day => this._day;
+        public Tracking Tracking => this._tracking;
 
         private readonly Node[] _nodes;
         private readonly Edge[] _edges;
         private readonly Virus _virus;
         private readonly List<int>[] _nodeMap; //array of lists containing index of each node connected to a node
+        private readonly Tracking _tracking;
 
         private int _day = 0;
         private double _budgetIncrease;
@@ -79,12 +81,15 @@ namespace Virus
                 this._nodeMap[e.Left.Index].Add(i);
                 this._nodeMap[e.Right.Index].Add(i);
             }
+
+            this._tracking = new(this);
         }
 
         public void StartInfection()
         {
             var i = new Random().Next(this._nodes.Length);
-            this._nodes[i].Infect(1);
+            this._nodes[i].Infect(2);
+            this._tracking.Snapshot();
         }
 
         /// <summary>
@@ -121,11 +126,11 @@ namespace Virus
             {
                 this._loanMoney = 0;
             }
+
+            this._tracking.Snapshot();
         }
 
-        /* Actions from WHO
-         * ALL ACTIONS RETURN THEIR COST IN THE Budget
-         */
+        ////////// WHO Actions //////////
 
         /// <summary>
         /// Applies test and isolate to a specific area

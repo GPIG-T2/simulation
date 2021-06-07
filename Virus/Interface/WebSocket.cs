@@ -48,12 +48,22 @@ namespace Virus.Interface
                 this._handler = handler;
             }
 
+            protected override void OnOpen()
+            {
+                this._handler.OnBroadcast += this.IHandler_OnBroadcast;
+            }
+
+            protected override void OnClose(CloseEventArgs e)
+            {
+                this._handler.OnBroadcast -= this.IHandler_OnBroadcast;
+            }
+
             protected override async void OnMessage(MessageEventArgs e)
             {
                 // Check invariants.
                 if (!e.IsText)
                 {
-                    Serilog.Log.Error("ERROR: WebSocket message is not text");
+                    Serilog.Log.Error("WebSocket message is not text");
                     return;
                 }
 
@@ -61,7 +71,7 @@ namespace Virus.Interface
                 var request = Json.Deserialize<Request>(e.Data);
                 if (request == null)
                 {
-                    Serilog.Log.Error("ERROR: Failed to parse message");
+                    Serilog.Log.Error("Failed to parse message");
                     return;
                 }
 
@@ -137,6 +147,11 @@ namespace Virus.Interface
                 }
 
                 return response;
+            }
+
+            private void IHandler_OnBroadcast(Response response)
+            {
+                this.Send(Json.Serialize(response));
             }
 
             private static T Deserialize<T>(string? data)

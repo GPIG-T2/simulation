@@ -43,43 +43,20 @@ namespace Virus.Test
             var data = Program.LoadWorld(new[] { paths.World });
             var world = (World)data!;
 
-            List<List<InfectionTotals>> totals = new(DaysCount);
-            List<int> nodesInfected = new(DaysCount);
-
-            totals.Add(world.Snapshot());
-            nodesInfected.Add(0);
-
             world.StartInfection();
-
             foreach (var _ in Enumerable.Range(0, DaysCount))
             {
                 world.Update();
-
-                var snapshot = world.Snapshot();
-                totals.Add(snapshot);
-                nodesInfected.Add(snapshot.Where(t => t.IsInfected).Count());
             }
 
             Directory.CreateDirectory(paths.Dir);
-            await File.WriteAllTextAsync(paths.Dump, Json.Serialize(totals));
 
-            var lines = nodesInfected
-                .Zip(totals.Select(ts =>
-                    ts.Aggregate(InfectionTotals.Empty(), (p, c) => p.Add(c))))
-                .Select((z) => $"{z.First},{z.Second.ToCsvLine()}");
-            await File.WriteAllLinesAsync(paths.Csv, lines);
-
-            List<List<InfectionTotals>> nodes = totals[0].Select(_ => new List<InfectionTotals>()).ToList();
-            foreach (var ts in totals)
-            {
-                foreach (var (t, i) in ts.Select((t, i) => (t, i)))
-                {
-                    nodes[i].Add(t);
-                }
-            }
-
-            await Task.WhenAll(nodes.Select((ts, i) => File.WriteAllLinesAsync(paths.CsvNode(i), ts.Select(t => t.ToCsvLine()))));
-            await File.WriteAllTextAsync(paths.DumpNode, Json.Serialize(nodes));
+            await Task.WhenAll(
+                File.WriteAllTextAsync(paths.Dump, Json.Serialize(world.Tracking.Snapshots)),
+                File.WriteAllLinesAsync(paths.Csv, world.Tracking.AggregateCsv),
+                Task.WhenAll(world.Tracking.NodeCsvs.Select((csv, i) => File.WriteAllLinesAsync(paths.CsvNode(i), csv))),
+                File.WriteAllTextAsync(paths.DumpNode, Json.Serialize(world.Tracking.Nodes))
+            );
 
             Console.WriteLine($"Generated all data for {paths.World}");
         }

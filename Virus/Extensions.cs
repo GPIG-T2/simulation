@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Models;
 
 namespace Virus
 {
@@ -36,5 +37,16 @@ namespace Virus
         /// <param name="x">Input x between 0 and 1</param>
         /// <returns></returns>
         public static double Sigmoid(double a, double b, double x) => 1.0 / (1 + Math.Pow(a, (5 - (b * x))));
+
+        /// <summary>
+        /// Converts a set of infection totals to a CSV line.
+        /// </summary>
+        /// <param name="t">The infection totals to convert.</param>
+        /// <returns>The string CSV line.</returns>
+        public static string ToCsvLine(this InfectionTotals t)
+            => string.Format("{0},{1},{2},{3},{4},{5},{6}", t.Uninfected,
+                    t.AsymptomaticInfectedNotInfectious, t.AsymptomaticInfectedInfectious,
+                    t.Symptomatic, t.SeriousInfection, t.Dead, t.RecoveredImmune
+                );
     }
 }

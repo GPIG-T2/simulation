@@ -129,18 +129,24 @@ namespace Interface.Client
                 return;
             }
 
+            if (response.Id == null)
+            {
+                Log.Verbose("Skipped broadcast response");
+                return;
+            }
+
             TaskCompletionSource<Models.WebSocket.Response> source;
             // the message dict is not thread-safe, so just lock around it.
             lock (this._sync)
             {
-                if (!this._messages.ContainsKey(response.Id))
+                if (!this._messages.ContainsKey(response.Id.Value))
                 {
                     Log.Error("Got message with unknown ID {0}", response.Id);
                     return;
                 }
 
-                source = this._messages[response.Id];
-                this._messages.Remove(response.Id);
+                source = this._messages[response.Id.Value];
+                this._messages.Remove(response.Id.Value);
             }
 
             source.SetResult(response);

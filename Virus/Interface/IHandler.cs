@@ -7,6 +7,8 @@ namespace Virus.Interface
 {
     public interface IHandler
     {
+        event Action<Models.WebSocket.Response>? OnBroadcast;
+
         Task<List<InfectionTotals>> GetInfoTotals(SearchRequest request);
         Task<List<ActorSearchResult>> GetInfoActors(SearchRequest request);
         Task<List<ActorSearchResult>> GetInfoHomes(SearchRequest request);
