@@ -24,9 +24,14 @@ namespace WHO
                     .WriteTo.Console()
                     .CreateLogger();
 
+                bool useSimple = args.Length > 0 && args[0] == "--simple";
+
                 //await using IHealthOrganisation org = new HealthOrganisation(_uri);
                 //await using IHealthOrganisation org = new HealthOrganisation(new Interface.Client.Rest("http://localhost:24293"));
-                await using IHealthOrganisation org = new HealthOrganisationSimple(_uri);
+                //await using IHealthOrganisation org = new HealthOrganisationSimple(_uri);
+                await using IHealthOrganisation org = useSimple ?
+                    new HealthOrganisationSimple(_uri) :
+                    new HealthOrganisation(_uri);
 
                 await org.Run();
             }
