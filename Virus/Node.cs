@@ -256,7 +256,7 @@ namespace Virus
             // infectiousness (infectious interactions) decided by the number of infectious people, the portion of the population which can be infected, and the interactivity of the node
             // TODO: Unsure if uninfected/totalPopulation is appropriate for this utiliziation - may need specific statstical method
             double infectiousness = totalInfectious
-                * Extensions.Sigmoid(2.6, 10, ((double)this.Totals.Uninfected - this._falseIsolated) / (double)this.TotalPopulation)
+                * Extensions.Sigmoid(2.6, 10, (((double)this.Totals.Uninfected - this._falseIsolated) / (double)this.TotalPopulation)
                 * aggregateInteractivity * this._interactivityModifier;
             infectiousness *= this.AggregateDemographics(virus.Infectivity); //multiplies interactions * infectivity to get total number of people infected
             // the infectiousness is the number of people infected + the chance of 1 more
