@@ -190,6 +190,7 @@ namespace Virus
 
         // variables for WHO effects and effectiveness
         public long Gdp { get; set; }
+        private Demographics _startDemographics;
         public Demographics NodeDemographics { get; set; } // list of proportions following {<5, 5-17, 18-29, 30-9, 40-9, 50-64, 65-74, 75-84, 85+}
         public double PublicOpinion { get; set; } = 1;
         public int NumPressReleases { get; set; } = 0;
@@ -225,6 +226,7 @@ namespace Virus
             this._interactivity = interactivity;
             this.Name = name;
             this.Position = position;
+            this._startDemographics = demographics;
             this.NodeDemographics = demographics;
             this.Gdp = gdp;
             this._testingCapacity = testingCapacity;
@@ -789,6 +791,49 @@ namespace Virus
         /// </summary>
         public void AdministerVaccine(int ageRange)
         {
+            double modifier = 0;
+            switch (ageRange)
+            {
+                case 0: modifier = NodeDemographics.UnderFive;
+                    NodeDemographics.UnderFive = 0;
+                    break;
+                case 1:
+                    modifier = NodeDemographics.FiveToSeventeen;
+                    NodeDemographics.FiveToSeventeen = 0;
+                    break;
+                case 2:
+                    modifier = NodeDemographics.EighteenToTwentyNine;
+                    NodeDemographics.EighteenToTwentyNine = 0;
+                    break;
+                case 3:
+                    modifier = NodeDemographics.ThirtyToThirtyNine;
+                    NodeDemographics.ThirtyToThirtyNine = 0;
+                    break;
+                case 4:
+                    modifier = NodeDemographics.FourtyToFourtyNine;
+                    NodeDemographics.FourtyToFourtyNine = 0;
+                    break;
+                case 5:
+                    modifier = NodeDemographics.FiftyToSixtyFour;
+                    NodeDemographics.FiftyToSixtyFour = 0;
+                    break;
+                case 6:
+                    modifier = NodeDemographics.SixtyFiveToSeventyFour;
+                    NodeDemographics.SixtyFiveToSeventyFour = 0;
+                    break;
+                case 7:
+                    modifier = NodeDemographics.SeventyFiveToEightyFour;
+                    NodeDemographics.SeventyFiveToEightyFour = 0;
+                    break;
+                case 8:
+                    modifier = NodeDemographics.OverEightyFive;
+                    NodeDemographics.OverEightyFive = 0;
+                    break;
+                default:
+                    break;
+            }
+
+            VaccinatePeople((long)(this.Totals.Uninfected * modifier));
         }
 
         private void ModifyGdp(double ratio) => this.Gdp = (long)Math.Round(this.Gdp * ratio);
