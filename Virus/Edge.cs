@@ -9,7 +9,7 @@ namespace Virus
     public class Edge
     {
         // Effect constants - dictate how big effect certain actions should have - should probably be in config file
-        public const double PopulationFloor = 0.1;
+        public const double PopulationFloor = 0.0;
 
         public string Name { get; }
         public Node Left { get; }
