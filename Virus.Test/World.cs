@@ -57,10 +57,7 @@ namespace Virus.Test
         public async Task GenerateWorldData(string worldKind)
         {
             var paths = new DataPaths(string.Format(DataDir, worldKind));
-            var worldJson = string.Format(WorldJson, worldKind);
-
-            var data = Program.LoadWorld(new[] { worldJson });
-            var world = (World)data!;
+            var world = LoadWorld(worldKind);
 
             world.StartInfection();
             foreach (var _ in Enumerable.Range(0, DaysCount))
@@ -70,7 +67,7 @@ namespace Virus.Test
 
             await world.Tracking.Dump(paths);
 
-            Console.WriteLine($"Generated all data for {worldJson}");
+            Console.WriteLine($"Generated all data for {worldKind}");
         }
 
         [Theory]
@@ -85,7 +82,7 @@ namespace Virus.Test
             Assert.Equal(0, this._world.Nodes[1].Totals.AsymptomaticInfectedNotInfectious);
 
             // Skip forward a fortnight
-            for (int i = 0; i < 14; i++)
+            foreach (var _ in Enumerable.Range(0, 14))
             {
                 this._world.Update();
             }
@@ -96,6 +93,70 @@ namespace Virus.Test
             Assert.Equal(0, this._world.Nodes[1].Totals.SeriousInfection);
             Assert.Equal(0, this._world.Nodes[1].Totals.Dead);
             Assert.Equal(0, this._world.Nodes[1].Totals.RecoveredImmune);
+        }
+
+        [Fact]
+        public async Task TestMovementRestrictions()
+        {
+            var paths = new DataPaths(string.Format(DataDir, Uk + "-movement-restrictions"));
+            var world = LoadWorld(Uk);
+
+            var startPop = world.Nodes.Select(n => n.TotalPopulation).Sum();
+            var appliedAction = false;
+
+            world.StartInfection();
+            foreach (var _ in Enumerable.Range(0, 400))
+            {
+                world.Update();
+
+                if (!appliedAction && startPop - world.Nodes.Select(n => n.Totals.Uninfected).Sum() > 10_000)
+                {
+                    foreach (var n in world.Nodes)
+                    {
+                        world.MovementRestrictions(new(n.Location, 10));
+                    }
+
+                    appliedAction = true;
+                }
+            }
+
+            await world.Tracking.Dump(paths);
+        }
+
+        [Fact]
+        public async Task TestStayAtHome()
+        {
+            var paths = new DataPaths(string.Format(DataDir, Uk + "-stay-at-home"));
+            var world = LoadWorld(Uk);
+
+            var startPop = world.Nodes.Select(n => n.TotalPopulation).Sum();
+            var appliedAction = false;
+
+            world.StartInfection();
+            foreach (var _ in Enumerable.Range(0, 400))
+            {
+                world.Update();
+
+                if (!appliedAction && startPop - world.Nodes.Select(n => n.Totals.Uninfected).Sum() > 10_000)
+                {
+                    foreach (var n in world.Nodes)
+                    {
+                        world.StayAtHomeOrder(new(n.Location));
+                    }
+
+                    appliedAction = true;
+                }
+            }
+
+            await world.Tracking.Dump(paths);
+        }
+
+        private static World LoadWorld(string kind)
+        {
+            var worldJson = string.Format(WorldJson, kind);
+
+            var data = Program.LoadWorld(new[] { worldJson });
+            return (World)data!;
         }
     }
 }

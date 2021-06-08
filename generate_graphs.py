@@ -94,7 +94,15 @@ def main():
     plt.rc('ytick', labelsize=10)
     plt.rc('legend', fontsize=10)
 
-    for plotter in [Plotter("UK"), Plotter("Europe"), Plotter("Earth")]:
+    plotters = [
+        Plotter("UK"),
+        Plotter("Europe"),
+        Plotter("Earth"),
+        Plotter("UK", "UK-movement-restrictions"),
+        Plotter("UK", "UK-stay-at-home")
+    ]
+
+    for plotter in plotters:
         plotter.plot()
         print("Graphs for {0} generated".format(plotter.base))
 
