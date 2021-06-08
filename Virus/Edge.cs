@@ -95,8 +95,8 @@ namespace Virus
             long n2Rec = (long)Math.Floor(n2Pop * ((double)this.Right.Totals.RecoveredImmune / this.Right.TotalPopulation));
 
             // the rest of the population is uninfected
-            long n1UnInf = n1Pop - n1Inf - n1Rec;
-            long n2UnInf = n2Pop - n2Inf - n2Rec;
+            long n1UnInf = Math.Max(n1Pop - n1Inf - n1Rec,0);
+            long n2UnInf = Math.Max(n2Pop - n2Inf - n2Rec,0);
 
 
             // finds the totals along the edge, then infects a new amount of people following same method as node
