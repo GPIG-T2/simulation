@@ -24,8 +24,10 @@ namespace WHO
                     .WriteTo.Console()
                     .CreateLogger();
 
-                await using HealthOrganisation org = new(_uri);
-                //await using HealthOrganisation org = new(new Interface.Client.Rest("http://localhost:24293"));
+                //await using IHealthOrganisation org = new HealthOrganisation(_uri);
+                //await using IHealthOrganisation org = new HealthOrganisation(new Interface.Client.Rest("http://localhost:24293"));
+                await using IHealthOrganisation org = new HealthOrganisationSimple(_uri);
+
                 await org.Run();
             }
             finally

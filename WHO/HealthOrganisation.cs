@@ -12,7 +12,7 @@ using WHO.Tracking;
 
 namespace WHO
 {
-    public class HealthOrganisation : IAsyncDisposable
+    public class HealthOrganisation : IHealthOrganisation
     {
 
         public static HealthOrganisation? Instance { get; private set; }

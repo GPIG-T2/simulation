@@ -111,6 +111,19 @@ namespace Models
             return this;
         }
 
+        public InfectionTotals Minus(InfectionTotals other)
+        {
+            this.Uninfected -= other.Uninfected;
+            this.AsymptomaticInfectedInfectious -= other.AsymptomaticInfectedInfectious;
+            this.AsymptomaticInfectedNotInfectious -= other.AsymptomaticInfectedNotInfectious;
+            this.Symptomatic -= other.Symptomatic;
+            this.SeriousInfection -= other.SeriousInfection;
+            this.Dead -= other.Dead;
+            this.RecoveredImmune -= other.RecoveredImmune;
+
+            return this;
+        }
+
         public bool Equals(InfectionTotals? other)
         {
             if (other == null)
@@ -135,6 +148,9 @@ namespace Models
 
         public static InfectionTotals operator +(InfectionTotals left, InfectionTotals right)
             => left.Clone().Add(right);
+
+        public static InfectionTotals operator -(InfectionTotals left, InfectionTotals right)
+            => left.Clone().Minus(right);
 
         /// <summary>
         /// Get the string presentation of the object
