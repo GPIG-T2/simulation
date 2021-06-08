@@ -12,6 +12,7 @@ namespace WHO
     {
         private const int _statusPingDelayInMs = 100;
         private const long _minActionLevel = 10;
+        private const long _minBorderLevel = 100_000;
 
         private readonly IClient _client;
         private SimulationSettings? _settings;
@@ -87,6 +88,7 @@ namespace WHO
             int deleted = 0;
 
             bool eliminated = !_nodeTracking.Values.Any(nt => nt.Totals.IsInfected);
+            long totalInfections = _nodeTracking.Values.Select(nt => nt.TotalInfections).Sum();
 
             foreach (var tracking in this._nodeTracking.Values)
             {
@@ -94,9 +96,8 @@ namespace WHO
                 {
                     // We need to take action.
                     tracking.LockdownAction = new(this._actionId++, new Models.Parameters.StayAtHome(tracking.Location));
-                    tracking.CloseBordersAction = new(this._actionId++, new Models.Parameters.CloseBorders(tracking.Location));
-                    actions = actions.Concat(new[] { tracking.LockdownAction, tracking.CloseBordersAction });
-                    created += 2;
+                    actions = actions.Append(tracking.LockdownAction);
+                    created++;
                 }
                 else if (tracking.LockdownAction != null && !tracking.Totals.IsInfected)
                 {
@@ -106,7 +107,13 @@ namespace WHO
                     deleted++;
                 }
 
-                if (eliminated && tracking.CloseBordersAction != null)
+                if (totalInfections > _minBorderLevel && tracking.CloseBordersAction == null)
+                {
+                    tracking.CloseBordersAction = new(this._actionId++, new Models.Parameters.CloseBorders(tracking.Location));
+                    actions = actions.Append(tracking.CloseBordersAction);
+                    created++;
+                }
+                else if (eliminated && tracking.CloseBordersAction != null)
                 {
                     // Infection has been wiped out
                     actions = actions.Append(new(tracking.CloseBordersAction.Id));
