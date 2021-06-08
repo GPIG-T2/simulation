@@ -178,6 +178,7 @@ namespace Virus
                         turnIsolated += (long)((this.Totals.Symptomatic / (double)this.TotalPopulation) * GoodTestEfficacy * this._testingCapacity);
                         this.PositiveTests += turnIsolated;
                         this.TestsAdministered += this._testingCapacity;
+                        this._goodTests -= this._testingCapacity;
                     }
                     else if ((this._badTests + this._goodTests) > this._testingCapacity)
                     {
@@ -185,6 +186,8 @@ namespace Virus
                         turnIsolated += (long)((this.Totals.Symptomatic / (double)this.TotalPopulation) * BadTestEfficacy * (this._testingCapacity - this._goodTests));
                         this.PositiveTests += turnIsolated;
                         this.TestsAdministered += this._testingCapacity;
+                        this._badTests -= this._testingCapacity - this._goodTests;
+                        this._goodTests = 0;
                     }
                     else
                     {
@@ -192,6 +195,8 @@ namespace Virus
                         turnIsolated += (long)((this.Totals.Symptomatic / (double)this.TotalPopulation) * BadTestEfficacy * this._badTests);
                         this.PositiveTests += turnIsolated;
                         this.TestsAdministered += this._goodTests + this._badTests;
+                        this._badTests = 0;
+                        this._goodTests = 0;
                     }
                 }
                 else
@@ -202,6 +207,7 @@ namespace Virus
                         falsePositives += (long)(((this.Totals.Uninfected + this.Totals.RecoveredImmune) / (double)this.TotalPopulation) * (1 - GoodTestEfficacy) * this._testingCapacity);
                         this.TestsAdministered += this._testingCapacity;
                         this.PositiveTests += turnIsolated + falsePositives;
+                        this._goodTests -= this._testingCapacity;
                     }
                     else if ((this._badTests + this._goodTests) > this._testingCapacity)
                     {
@@ -211,6 +217,8 @@ namespace Virus
                         falsePositives += (long)(((this.Totals.Uninfected + this.Totals.RecoveredImmune) / (double)this.TotalPopulation) * (1 - BadTestEfficacy) * (this._testingCapacity - this._goodTests));
                         this.TestsAdministered += this._testingCapacity;
                         this.PositiveTests += turnIsolated + falsePositives;
+                        this._badTests -= this._testingCapacity - this._goodTests;
+                        this._goodTests = 0;
                     }
                     else
                     {
@@ -220,6 +228,8 @@ namespace Virus
                         falsePositives += (long)(((this.Totals.Uninfected + this.Totals.RecoveredImmune) / (double)this.TotalPopulation) * (1 - BadTestEfficacy) * this._badTests);
                         this.TestsAdministered += this._goodTests + this._badTests;
                         this.PositiveTests += turnIsolated + falsePositives;
+                        this._badTests = 0;
+                        this._goodTests = 0;
                     }
                 }
             }
@@ -700,6 +710,7 @@ namespace Virus
 
         /// <summary>
         /// Vaccinates people of a specific age range, taking them directly from uninfected to recovered immmune
+        /// Sets the demographic value to 0 to adjust aggregate virus rates
         /// </summary>
         public void AdministerVaccine(int ageRange)
         {
