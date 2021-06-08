@@ -123,6 +123,9 @@ namespace Virus
             //ensures that there are infections going both ways when there are more than 2 infections
             if ((n2Out > 1) & (n1Out == 0)) { n1Out = 1; n2Out -= 1; }
             if ((n1Out > 1) & (n2Out == 0)) { n2Out = 1; n1Out -= 1; }
+            
+            if ((Left.Totals.Uninfected > (Left.TotalPopulation - 100)) & (infected > 2)) { n2Out = 1; }
+            if ((Left.Totals.Uninfected > (Left.TotalPopulation - 100)) & (infected > 2)) { n2Out = 1; }
 
 
             return (n1Out, n2Out);
