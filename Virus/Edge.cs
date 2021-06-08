@@ -66,7 +66,7 @@ namespace Virus
                 / this.Left.TotalPopulation));
 
             long n1Inf = (long)Math.Floor(n1Infec);
-            
+
             double n2Infec = (n2Pop
                 * ((double)(this.Right.Totals.AsymptomaticInfectedInfectious
                     + this.Right.Totals.Symptomatic
@@ -95,8 +95,8 @@ namespace Virus
             long n2Rec = (long)Math.Floor(n2Pop * ((double)this.Right.Totals.RecoveredImmune / this.Right.TotalPopulation));
 
             // the rest of the population is uninfected
-            long n1UnInf = Math.Max(n1Pop - n1Inf - n1Rec,0);
-            long n2UnInf = Math.Max(n2Pop - n2Inf - n2Rec,0);
+            long n1UnInf = Math.Max(n1Pop - n1Inf - n1Rec, 0);
+            long n2UnInf = Math.Max(n2Pop - n2Inf - n2Rec, 0);
 
 
             // finds the totals along the edge, then infects a new amount of people following same method as node
@@ -123,10 +123,6 @@ namespace Virus
             //ensures that there are infections going both ways when there are more than 2 infections
             if ((n2Out > 1) & (n1Out == 0)) { n1Out = 1; n2Out -= 1; }
             if ((n1Out > 1) & (n2Out == 0)) { n2Out = 1; n1Out -= 1; }
-            
-            if ((Left.Totals.Uninfected > (Left.TotalPopulation - 100)) & (infected > 2)) { n2Out = 1; }
-            if ((Left.Totals.Uninfected > (Left.TotalPopulation - 100)) & (infected > 2)) { n2Out = 1; }
-
 
             return (n1Out, n2Out);
         }
