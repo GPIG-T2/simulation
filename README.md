@@ -28,7 +28,7 @@ The command line argument must be one of exactly `UK`, `Europe` or `Earth`. This
 
 ## WHO
 
-The counter-contagion models is provided under [`WHO/`](WHO/). 2 models are provided, one based on trigger-events and the other on a simple threshold-lockdown system. This model is also capable of connecting to the server instance via either WebSockets or REST, depending on what is available.
+The counter-contagion models are provided under [`WHO/`](WHO/). 2 models are provided, one based on trigger-events and the other on a simple threshold-lockdown system. These models are also capable of connecting to the server instance via either WebSockets or REST, depending on what is available.
 
 To run, you can use the following command:
 
@@ -36,7 +36,7 @@ To run, you can use the following command:
 dotnet run --project WHO
 ```
 
-To run with the simple behavour:
+To run with the simple model:
 
 ```
 dotnet run --project WHO -- --simple
