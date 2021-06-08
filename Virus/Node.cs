@@ -9,85 +9,157 @@ namespace Virus
     public class Node
     {
         // Effect constants - dictate how big effect certain actions should have - should probably be in config file
+        #region Constants
+
+        #region Test and Isolate
+
         public const double GoodTestEfficacy = 0.7;
         public const double BadTestEfficacy = 0.5;
+
         public const double TestAndIsolateGdp = 0.95;
+
         public const double CancelTestAndIsolateGdp = 1 / 0.97;
 
-        public const double StayAtHomeEfficacy = 0.4;
+        #endregion
+
+        #region Stay at Home
+
+        public const double StayAtHomeEfficacy = 0.05;
         public const double StayAtHomeCompliance = -0.1;
         public const double StayAtHomeGdp = 0.95;
-        public const double CancelStayAtHomeCompliance = 1 / 0.05;
+
+        public const double CancelStayAtHomeCompliance = 0.07;
         public const double CancelStayAtHomeGdp = 1 / 0.97;
 
+        #endregion
+
+        #region Close Schools
+
         public const double CloseSchoolsEfficacy = 0.3;
-        public const double CloseSchoolsGdp = 0.95;
         public const double CloseSchoolsCompliance = -0.1;
         public const double CloseSchoolsPublicOpinion = 0.9;
+        public const double CloseSchoolsGdp = 0.95;
+
+        public const double CancelCloseSchoolsCompliance = 0.07;
+        public const double CancelCloseSchoolsPublicOpinion = 0.93;
         public const double CancelCloseSchoolsGdp = 1 / 0.97;
-        public const double CancelCloseSchoolsCompliance = 1 / 0.05;
-        public const double CancelCloseSchoolsPublicOpinion = 1 / 0.93;
+
+        #endregion
+
+        #region Close Recreational Areas
 
         public const double CloseRecreationalAreasEfficacy = 0.6;
-        public const double CloseRecreationalAreasGdp = 0.95;
         public const double CloseRecreationalAreasCompliance = -0.1;
         public const double CloseRecreationalAreasPublicOpinion = 0.9;
+        public const double CloseRecreationalAreasGdp = 0.95;
+
+        public const double CancelCloseRecreationalAreasCompliance = 0.07;
+        public const double CancelCloseRecreationalAreasPublicOpinion = 0.93;
         public const double CancelCloseRecreationalAreasGdp = 1 / 0.97;
-        public const double CancelCloseRecreationalAreasCompliance = 1 / 0.05;
-        public const double CancelCloseRecreationalAreasPublicOpinion = 1 / 0.93;
+
+        #endregion
+
+        #region Shielding Program
 
         public const double ShieldingProgramEfficacy = 0.2;
         public const double ShieldingProgramCompliance = -0.1;
-        public const double CancelShieldingProgramCompliance = 1 / 0.05;
 
-        public const double MovementRestrictionGdp = 0.95;
+        public const double CancelShieldingProgramCompliance = 0.07;
+
+        #endregion
+
+        #region Movement Restrictions
+
+        public const double MovementRestrictionEfficacy = 0.4;
         public const double MovementRestrictionPublicOpinion = 0.9;
-        public const double CancelMovementRestrictionGdp = 1 / 0.97;
-        public const double CancelMovementRestrictionPublicOpinion = 1 / 0.93;
+        public const double MovementRestrictionGdp = 0.95;
 
-        public const double CloseBorderGdp = 0.95;
+        public const double CancelMovementRestrictionPublicOpinion = 0.93;
+        public const double CancelMovementRestrictionGdp = 1 / 0.97;
+
+        #endregion
+
+        #region Close Borders
+
         public const double CloseBorderPublicOpinion = 0.9;
         public const double CloseBorderCompliance = -0.1;
+        public const double CloseBorderGdp = 0.95;
+
+        public const double CancelCloseBorderPublicOpinion = 0.93;
+        public const double CancelCloseBorderCompliance = 0.07;
         public const double CancelCloseBorderGdp = 1 / 0.97;
-        public const double CancelCloseBorderPublicOpinion = 1 / 0.93;
-        public const double CancelCloseBorderCompliance = 1 / 0.05;
+
+        #endregion
+
+        #region Furlough
 
         public const double FurloughMaxEffectiveMoney = 3000;
         public const double FurloughBestEfficacy = 0.4;
         public const double FurloughBetterGDP = 0.95;
         public const double FurloughWorseGDP = 0.90;
 
+        #endregion
+
+        #region Information Press Release
+
         public const double InformationPressReleaseBestEfficacy = 0.6;
         public const double InformationPressReleaseDiminishmentRate = 0.05;
         public const double InformationPressReleaseBestPublicOpinionBoost = 0.5;
 
+        #endregion
+
+        #region Mask Mandate
+
         public const double MaskMandateProvidedPublicOpinion = 0.7;
         public const double MaskMandateUnprovidedPublicOpinion = 0.4;
-        public const double CancelMaskMandateProvidedPublicOpinion = 1 / 0.75;
-        public const double CancelMaskMandateUnprovidedPublicOpinion = 1 / 0.5;
+
+        public const double CancelMaskMandateProvidedPublicOpinion = 0.75;
+        public const double CancelMaskMandateUnprovidedPublicOpinion = 0.5;
+
+        #endregion
+
+        #region Health Drive
 
         public const double HealthDriveLethalityModifier = 0.9;
-        public const double CancelHealthDriveLethalityModifier = 1 / 0.95;
+
+        public const double CancelHealthDriveLethalityModifier = 0.95;
+
+        #endregion
+
+        #region Social Distancing
 
         public const double SocialDistancingEfficacy = 0.7;
         public const double SocialDistancingPublicOpinion = 0.9;
         public const double SocialDistancingComplianceChange = -0.1;
-        public const double CancelSocialDistancingPublicOpinion = 1 / 0.95;
-        public const double CancelSocialDistancingComplianceChange = 1 / 0.05;
+
+        public const double CancelSocialDistancingPublicOpinion = 0.95;
+        public const double CancelSocialDistancingComplianceChange = 0.07;
+
+        #endregion
+
+        #region Invest In Health Services
 
         public const double InvestInHealthServicesMaximumEffectiveInvestment = 10_000_000;
         public const double InvestInHealthServicesLethality = 0.9;
         public const double InvestInHealthServicesPublicOpinion = 0.7;
 
-        public const double CurfewEfficacy = 0.1;
+        #endregion
+
+        #region Curfew
+
+        public const double CurfewEfficacy = 0.3;
         public const double CurfewPublicOpinion = 0.5;
         public const double CurfewGDP = 0.9;
-        public const double CancelCurfewPublicOpinion = 1 / 0.9;
+        public const double CancelCurfewPublicOpinion = 0.9;
+
+        #endregion
 
         public const int InfectiousWait = 2;
         public const int SympomaticWait = 4;
         public const int SeriousWait = 6;
         public const int DeadWait = 8;
+
+        #endregion
 
         public int Index { get; }
         public List<string> Location { get; }
@@ -132,6 +204,7 @@ namespace Virus
         private double _stayAtHomeCompliance = 0.8;
         private double _closeRecreationalAreasCompliance = 0.8;
         private double _shieldingProgramCompliance = 0.8;
+        private double _movementRestrictionsCompliance = 0.99;
         private double _maskMandateCompliance = 0.8;
         private double _healthDriveCompliance = 0.8;
         private double _socialDistancingCompliance = 0.8;
@@ -434,7 +507,7 @@ namespace Virus
         /// </summary>
         public void StayAtHomeOrder()
         {
-            this._interactivityModifier *= StayAtHomeEfficacy / this._compliance; 
+            this._interactivityModifier *= StayAtHomeEfficacy / this._compliance;
             this.ChangeComplianceModifier(StayAtHomeCompliance);
             this.ModifyGdp(StayAtHomeGdp); // arbitrary GDP cost chosen
             this._stayAtHomeCompliance = this._compliance;
@@ -528,6 +601,7 @@ namespace Virus
         /// </summary>
         public void MovementRestrictions()
         {
+            this._interactivityModifier *= MovementRestrictionEfficacy / this._movementRestrictionsCompliance;
             this.PublicOpinion *= MovementRestrictionPublicOpinion;
             this.ModifyGdp(MovementRestrictionGdp);
         }
@@ -537,6 +611,7 @@ namespace Virus
         /// </summary>
         public void CancelMovementRestrictions()
         {
+            this._interactivityModifier /= MovementRestrictionEfficacy / this._movementRestrictionsCompliance;
             this.PublicOpinion /= CancelMovementRestrictionGdp;
             this.ModifyGdp(CancelMovementRestrictionPublicOpinion);
         }
