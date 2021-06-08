@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Models;
 using Serilog;
 using Virus.Serialization;
-using Virus.Test.Utils;
 using Xunit;
 
 namespace Virus.Test
