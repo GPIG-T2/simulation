@@ -13,6 +13,10 @@ namespace Virus.Test
 {
     public class TestWorld : IDisposable
     {
+        public const string BaseDir = "../../../..";
+        public const string DataDir = BaseDir + "/tmp/{0}";
+        public const string WorldJson = BaseDir + "/WorldFiles/{0}.json";
+
         public const string Uk = "UK";
         public const string Europe = "Europe";
         public const string Earth = "Earth";
@@ -47,18 +51,16 @@ namespace Virus.Test
             Log.CloseAndFlush();
         }
 
-        public static IEnumerable<object[]> Worlds()
-        {
-            yield return new[] { new OutputPaths(Uk) };
-            yield return new[] { new OutputPaths(Europe) };
-            yield return new[] { new OutputPaths(Earth) };
-        }
-
         [Theory]
-        [MemberData(nameof(Worlds))]
-        public async Task GenerateWorldData(OutputPaths paths)
+        [InlineData(Uk)]
+        [InlineData(Europe)]
+        [InlineData(Earth)]
+        public async Task GenerateWorldData(string worldKind)
         {
-            var data = Program.LoadWorld(new[] { paths.World });
+            var paths = new DataPaths(string.Format(DataDir, worldKind));
+            var worldJson = string.Format(WorldJson, worldKind);
+
+            var data = Program.LoadWorld(new[] { worldJson });
             var world = (World)data!;
 
             world.StartInfection();
@@ -67,16 +69,9 @@ namespace Virus.Test
                 world.Update();
             }
 
-            Directory.CreateDirectory(paths.Dir);
+            await world.Tracking.Dump(paths);
 
-            await Task.WhenAll(
-                File.WriteAllTextAsync(paths.Dump, Json.Serialize(world.Tracking.Snapshots)),
-                File.WriteAllLinesAsync(paths.Csv, world.Tracking.AggregateCsv),
-                Task.WhenAll(world.Tracking.NodeCsvs.Select((csv, i) => File.WriteAllLinesAsync(paths.CsvNode(i), csv))),
-                File.WriteAllTextAsync(paths.DumpNode, Json.Serialize(world.Tracking.Nodes))
-            );
-
-            Console.WriteLine($"Generated all data for {paths.World}");
+            Console.WriteLine($"Generated all data for {worldJson}");
         }
 
         [Theory]

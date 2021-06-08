@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Models;
 
 namespace Virus
@@ -59,6 +61,18 @@ namespace Virus
             }
 
             this.OnSnapshot?.Invoke(snapshot);
+        }
+
+        public async Task Dump(DataPaths paths)
+        {
+            Directory.CreateDirectory(paths.Dir);
+
+            await Task.WhenAll(
+                File.WriteAllTextAsync(paths.Dump, Json.Serialize(this.Snapshots)),
+                File.WriteAllLinesAsync(paths.Csv, this.AggregateCsv),
+                Task.WhenAll(this.NodeCsvs.Select((csv, i) => File.WriteAllLinesAsync(paths.CsvNode(i), csv))),
+                File.WriteAllTextAsync(paths.DumpNode, Json.Serialize(this.Nodes))
+            );
         }
     }
 }

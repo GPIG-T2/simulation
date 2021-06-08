@@ -36,6 +36,9 @@ namespace Virus
                 program.Start();
                 await program.Loop();
 
+                var dataPaths = new DataPaths("tmp/run");
+                await world.Tracking.Dump(dataPaths);
+
                 return 0;
             }
             finally

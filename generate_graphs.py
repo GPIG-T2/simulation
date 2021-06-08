@@ -17,10 +17,10 @@ def load_node_names(path: Path):
 
 
 class Plotter:
-    def __init__(self, world: str):
+    def __init__(self, world: str, src_dir: Union[str, None] = None):
         self.world = Path("WorldFiles/{0}.json".format(world))
 
-        self.base = TMP_DIR.joinpath(world)
+        self.base = TMP_DIR.joinpath(world if src_dir is None else src_dir)
         self.csv = self.base.joinpath("agg.csv")
         self.png = self.base.joinpath("agg.png")
 
