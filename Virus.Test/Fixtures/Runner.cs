@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
+using Virus.Test.Utils;
 
-namespace Virus.Test
+namespace Virus.Test.Fixtures
 {
     public class Runner : IDisposable
     {

@@ -1,5 +1,6 @@
 ﻿using System;
-namespace Virus.Test
+
+namespace Virus.Test.Utils
 {
     public class OutputPaths
     {

@@ -20,4 +20,12 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Virus\Virus.csproj" />
 	</ItemGroup>
+	<ItemGroup>
+	  <None Remove="Fixtures\" />
+	  <None Remove="Utils\" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Fixtures\" />
+	  <Folder Include="Utils\" />
+	</ItemGroup>
 </Project>
