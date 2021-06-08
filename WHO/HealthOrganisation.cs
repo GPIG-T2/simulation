@@ -27,6 +27,9 @@ namespace WHO
         /// </summary>
         internal const string ALL_LOCATION_ID = "_all";
 
+        private const int VaccineCost = 80000000;
+        private int _vaccineInvestment = 0;
+
         private readonly IClient _client;
 
         private const int _statusPingDelayInMs = 100;
@@ -541,8 +544,15 @@ namespace WHO
                     InvestInHealthServices investInHealthServices = new((int)Math.Round((investmentBudget * 0.3), 0));
                     actions.Add(investInHealthServices);
 
-                    InvestInVaccine investInVaccine = new((int)Math.Round((investmentBudget * 0.3), 0));
-                    actions.Add(investInVaccine);
+                    if (this._vaccineInvestment < VaccineCost)
+                    {
+                        int amountToInvest = (int)Math.Round(investmentBudget * 0.3);
+                        int amountNeeded = VaccineCost - this._vaccineInvestment;
+                        int actualAmountToInvest = Math.Min(amountToInvest, amountNeeded);
+                        InvestInVaccine investInVaccine = new(actualAmountToInvest);
+                        this._vaccineInvestment += actualAmountToInvest;
+                        actions.Add(investInVaccine);
+                    }
 
                     Loan loan = new((int)Math.Round((investmentBudget * 0.1), 0));
                     actions.Add(loan);
