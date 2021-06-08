@@ -46,10 +46,17 @@ namespace Virus
         /// </returns>
         public (long leftInfections, long rightInfections) Update(Virus virus)
         {
+            //if the population along a node is 0, returns 0
+            if (this._totalPopulation == 0) { return (0, 0); }
+
             // determining how many people from each node in the population
             long n1Pop = (long)(this._totalPopulation * ((double)this.Left.TotalPopulation / (this.Left.TotalPopulation + this.Right.TotalPopulation)));
 
             long n2Pop = this._totalPopulation - n1Pop;
+
+            //ensures that the edge is two way
+            n1Pop = Math.Max(1, n1Pop);
+            n2Pop = Math.Max(1, n2Pop);
 
             // determining how many infectious people come from each node - the population from the node * the proportion of people in the node who are infectious
             double n1Infec = (n1Pop
@@ -112,6 +119,11 @@ namespace Virus
             // splits the infected people into infected going into node 1 and node 2
             long n1Out = (long)(infected * ((double)n1Pop / this._totalPopulation));
             long n2Out = infected - n1Out;
+
+            //ensures that there are infections going both ways when there are more than 2 infections
+            if ((n2Out > 1) & (n1Out == 0)) { n1Out = 1; n2Out -= 1; }
+            if ((n1Out > 1) & (n2Out == 0)) { n2Out = 1; n1Out -= 1; }
+
 
             return (n1Out, n2Out);
         }
