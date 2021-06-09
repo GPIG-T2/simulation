@@ -81,7 +81,10 @@ namespace Models
             get => this._parameters;
             set
             {
-                this.Action = value?.ActionName;
+                if (value?.ActionName != null)
+                {
+                    this.Action = value?.ActionName;
+                }
                 this._parameters = value;
             }
         }

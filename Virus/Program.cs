@@ -354,6 +354,8 @@ namespace Virus
                     if (create) { this._world.Curfew(action.Parameters); }
                     else { this._world.CancelCurfew(action.Parameters); }
                     break;
+                default:
+                    throw new Exceptions.BadRequestException($"Action {action.Action} is not valid");
             }
         }
 
