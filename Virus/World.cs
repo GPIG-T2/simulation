@@ -119,7 +119,7 @@ namespace Virus
             {
                 n.Update(this._virus);
                 n.Infect(edgeInfections[n.Index]);
-                this._budgetIncrease = 10 * n.Totals.SeriousInfection + n.Totals.Dead;
+                this._budgetIncrease = 10 * (n.Totals.SeriousInfection + n.Totals.Dead);
             }
 
             this._day++;
