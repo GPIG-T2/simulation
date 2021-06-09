@@ -88,6 +88,10 @@ namespace Virus
         public void StartInfection()
         {
             var i = new Random().Next(this._nodes.Length);
+            if (i == 60)
+            {
+                i = new Random().Next(this._nodes.Length);
+            }
             this._nodes[i].Infect(2);
             this._tracking.Snapshot();
         }
