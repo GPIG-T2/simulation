@@ -125,26 +125,56 @@ namespace WHO
             // Example triggers
 
             // This trigger tries to calculate what the best actions are
-            ITrigger bestAction = new CustomTrigger(
-                TrackingValue.SeriousInfection,
-                p => p.CurrentParameterCount > 100,
-                (loc) =>
-                {
-                    // If location is null, then most of the actions this handles
-                    // will not work, as they need a location.
-                    if (loc != null)
-                    {
-                        this.CalculateBestAction(this._budget, loc);
-                    }
-                },
-                7
-            );
-            this._triggersForLocalLocations.Add(bestAction);
+            //ITrigger bestAction = new CustomTrigger(
+            //    TrackingValue.SeriousInfection,
+            //    p => p.CurrentParameterCount > 100,
+            //    (loc) =>
+            //    {
+            //        // If location is null, then most of the actions this handles
+            //        // will not work, as they need a location.
+            //        if (loc != null)
+            //        {
+            //            this.CalculateBestAction(this._budget, loc);
+            //        }
+            //    },
+            //    7
+            //);
+            //this._triggersForLocalLocations.Add(bestAction);
 
-            ITrigger basicIncreaseOfInfections = new BasicTrigger(TrackingValue.SeriousInfection, TrackingFunction.GREATER_THAN, 1.2f, (_) => Log.Information("Increase"), 7);
-            ITrigger complexIncreaseOfInfections = new CustomTrigger(TrackingValue.SeriousInfection, p => p.CurrentParameterCount > 1000 && p.Change > 1.2f, (_) => Log.Information("Custom Increase"), 7);
-            this._triggersForLocalLocations.Add(basicIncreaseOfInfections);
-            this._triggersForLocalLocations.Add(complexIncreaseOfInfections);
+            // Testing
+            this._triggersForLocalLocations.Add(new CustomTrigger(TrackingValue.SeriousInfection, (p) => p.Change > 1.05f,
+                (loc) => this.CreateAction(loc, new TestAndIsolation(1, 14, 1000, loc, true), true), 0));
+
+            // Close Borders
+            this._triggersForLocalLocations.Add(new CustomTrigger(TrackingValue.Symptomatic, (p) => ((float)p.CurrentParameterCount / p.CurrentTotalPopulation) > 0.25f,
+                (loc) => this.CreateAction(loc, new CloseBorders(loc)), 0));
+            this._triggersForLocalLocations.Add(new CustomTrigger(TrackingValue.Symptomatic, (p) => ((float)p.CurrentParameterCount / p.CurrentTotalPopulation) < 0.05f,
+                (loc) => this.DeleteAction(loc, new CloseBorders(loc)), 0));
+
+            // Social Distancing Mandate
+            this._triggersForLocalLocations.Add(new CustomTrigger(TrackingValue.Symptomatic, (p) => ((float)p.CurrentParameterCount / p.CurrentTotalPopulation) > 0.10f,
+                (loc) => this.CreateAction(loc, new SocialDistancingMandate(loc, 2)), 0));
+            this._triggersForLocalLocations.Add(new CustomTrigger(TrackingValue.Symptomatic, (p) => ((float)p.CurrentParameterCount / p.CurrentTotalPopulation) < 0.01f,
+                (loc) => this.DeleteAction(loc, new SocialDistancingMandate(loc, 2)), 0));
+
+            // Health Drive
+            this._triggersForLocalLocations.Add(new CustomTrigger(TrackingValue.Symptomatic, (p) => p.CurrentParameterCount > 0,
+                (loc) => this.CreateAction(loc, new HealthDrive(loc)), 0));
+
+            // Stay At Home 
+            this._triggersForLocalLocations.Add(new CustomTrigger(TrackingValue.Symptomatic, (p) => ((float)p.CurrentParameterCount / p.CurrentTotalPopulation) > 0.10f,
+                (loc) => this.CreateAction(loc, new SocialDistancingMandate(loc, 2)), 0));
+            this._triggersForLocalLocations.Add(new CustomTrigger(TrackingValue.Symptomatic, (p) => ((float)p.CurrentParameterCount / p.CurrentTotalPopulation) < 0.01f,
+                (loc) => this.DeleteAction(loc, new SocialDistancingMandate(loc, 2)), 0));
+
+            // Vaccine investment
+            this._triggersForGlobal.Add(new CustomTrigger(TrackingValue.Symptomatic, (p) => ((float)p.CurrentParameterCount / p.CurrentTotalPopulation) > 0.5f, (_) => this._tasksToExecute.Add(new WhoAction(this._currentActionId++, new InvestInVaccine((int)Math.Min(this._budget, Math.Min(VaccineCost / 100, VaccineCost - this._vaccineInvestment))))), 0));
+            
+
+            //ITrigger basicIncreaseOfInfections = new BasicTrigger(TrackingValue.SeriousInfection, TrackingFunction.GREATER_THAN, 1.2f, (_) => Log.Information("Increase"), 7);
+            //ITrigger complexIncreaseOfInfections = new CustomTrigger(TrackingValue.SeriousInfection, p => p.CurrentParameterCount > 1000 && p.Change > 1.2f, (_) => Log.Information("Custom Increase"), 7);
+            //this._triggersForLocalLocations.Add(basicIncreaseOfInfections);
+            //this._triggersForLocalLocations.Add(complexIncreaseOfInfections);
         }
 
         public async Task PopulateInitialInformation()
@@ -208,6 +238,44 @@ namespace WHO
                 }
             }
             catch (TaskCanceledException) { }
+        }
+
+        private void CreateAction(List<string> location, ParamsContainer parameters, bool overwrite=false)
+        {
+            LocationStatus status = this._locationStatuses[location.ToKey()];
+            var statusActions = new List<int>(status.GetActionsOfType(parameters.ActionName));
+            if (statusActions.Count > 0)
+            {
+                if (overwrite)
+                {
+                    this.DeleteAction(location, parameters);
+                }
+                else
+                {
+                    return;
+                }
+            }
+            if (this._budget < ActionCostCalculator.CalculateCost(parameters, ActionCostCalculator.ActionMode.Create))
+            {
+                return;
+            }
+            this._tasksToExecute.Add(new(this._currentActionId++, parameters));
+        }
+
+        private void DeleteAction(List<string> location, ParamsContainer parameters)
+        {
+            LocationStatus status = this._locationStatuses[location.ToKey()];
+            var statusActions = new List<int>(status.GetActionsOfType(parameters.ActionName));
+            if (this._budget < ActionCostCalculator.CalculateCost(parameters, ActionCostCalculator.ActionMode.Delete) * statusActions.Count)
+            {
+                return;
+            }
+            while (statusActions.Count > 0)
+            {
+                this._tasksToExecute.Add(new(statusActions[0]));
+                status.RemoveAction(statusActions[0]);
+                statusActions.RemoveAt(0);
+            }
         }
 
         private void RunTriggerChecks()
