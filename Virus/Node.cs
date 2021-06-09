@@ -320,7 +320,7 @@ namespace Virus
             this._falseIsolationHistory.Push(falsePositives);
 
             // finds the total number of infectious - could be separated for different interactivities
-            long totalInfectious = Math.Max(0,this.Totals.AsymptomaticInfectedInfectious
+            long totalInfectious = Math.Max(0, this.Totals.AsymptomaticInfectedInfectious
                 + this.Totals.Symptomatic
                 + this.Totals.SeriousInfection
                 - this._isolated);
@@ -331,7 +331,7 @@ namespace Virus
             // infectiousness (infectious interactions) decided by the number of infectious people, the portion of the population which can be infected, and the interactivity of the node
             // TODO: Unsure if uninfected/totalPopulation is appropriate for this utiliziation - may need specific statstical method
             double infectiousness = totalInfectious
-                * Extensions.Sigmoid(2.6, 10, (Math.Max(0,(double)this.Totals.Uninfected - this._falseIsolated) / (double)this.TotalPopulation)
+                * Extensions.Sigmoid(2.6, 10, Math.Max(0, (double)this.Totals.Uninfected - this._falseIsolated) / (double)this.TotalPopulation)
                 * aggregateInteractivity * this._interactivityModifier;
             infectiousness *= this.AggregateDemographics(virus.Infectivity); //multiplies interactions * infectivity to get total number of people infected
             // the infectiousness is the number of people infected + the chance of 1 more
@@ -339,7 +339,7 @@ namespace Virus
 
             infectiousness -= infected;
             var chance = this._random.NextDouble();
-            if (infectiousness > chance)
+            if (this.Totals.IsInfected && infectiousness > chance)
             {
                 infected += 1;
             }
@@ -794,7 +794,8 @@ namespace Virus
             double modifier = 0;
             switch (ageRange)
             {
-                case 0: modifier = NodeDemographics.UnderFive;
+                case 0:
+                    modifier = NodeDemographics.UnderFive;
                     NodeDemographics.UnderFive = 0;
                     break;
                 case 1:
