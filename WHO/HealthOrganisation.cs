@@ -423,11 +423,18 @@ namespace WHO
                 foreach (var action in actions)
                 {
                     double actionCost = ActionCostCalculator.CalculateCost(action, ActionCostCalculator.ActionMode.Delete);
-
-                    if (actionCost < budgetForLocation)
+                    var actionList = this._locationStatuses[location].GetActionsOfType((action as ParamsContainer).ActionName);
+                    if (actionList.Count > 0)
                     {
-                        actionsAvailable.Add(action);
-                        budgetForLocation -= actionCost;
+                        foreach (var appliedAction in actionList)
+                        {
+                            if (actionCost < budgetForLocation)
+                            {
+                                this._tasksToExecute.Add(new WhoAction(appliedAction));
+                                this._locationStatuses[location].RemoveAction(appliedAction);
+                                budgetForLocation -= actionCost;
+                            }
+                        }
                     }
                 }
             }
