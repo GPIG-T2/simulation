@@ -45,7 +45,7 @@ namespace Models.Parameters
         }
 
         public static implicit operator ParamsContainer(SocialDistancingMandate value) =>
-            new(ActionName) { Location = value.Location };
+            new(ActionName) { Location = value.Location, Distance = value.Distance };
 
         /// <summary>
         /// Get the string presentation of the object

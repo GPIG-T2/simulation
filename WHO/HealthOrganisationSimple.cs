@@ -11,14 +11,17 @@ namespace WHO
     public class HealthOrganisationSimple : IHealthOrganisation
     {
         private const int _statusPingDelayInMs = 100;
-        private const long _minActionLevel = 10;
-        private const long _minBorderLevel = 100_000;
+        private const long _lockdownLevel = 10_000;
+        private const long _openupLevel = 0;
+        private const long _closeBordersLevel = 150_000;
+        private const long _openBordersLevel = 50_000;
 
         private readonly IClient _client;
         private SimulationSettings? _settings;
         private bool _running = true;
         private Dictionary<string, NodeTracking> _nodeTracking = new();
         private int _actionId = 0;
+        private int _day = 0;
 
         public HealthOrganisationSimple(string uri) : this(new WebSocket(uri))
         {
@@ -64,6 +67,7 @@ namespace WHO
                     await this.ApplyNecessaryActions();
 
                     await this._client.EndTurn();
+                    this._day++;
                 }
             }
             catch (TaskCanceledException) { }
@@ -78,7 +82,7 @@ namespace WHO
                 this._nodeTracking[total.Location[0]].Update(total);
             }
 
-            Log.Information("Node {Name} now at {Infections} infections", "N0", this._nodeTracking["N0"].TotalInfections);
+            Log.Information("Node {Name} now at {Infections} infections", "N0", this._nodeTracking["N0"].CumulativeInfections);
         }
 
         private async Task ApplyNecessaryActions()
@@ -87,19 +91,19 @@ namespace WHO
             int created = 0;
             int deleted = 0;
 
-            bool eliminated = !_nodeTracking.Values.Any(nt => nt.Totals.IsInfected);
-            long totalInfections = _nodeTracking.Values.Select(nt => nt.TotalInfections).Sum();
+            bool eliminated = !_nodeTracking.Values.Any(nt => nt.PreviousTotals.IsInfected);
+            long totalInfections = _nodeTracking.Values.Select(nt => nt.CumulativeInfections).Sum();
 
             foreach (var tracking in this._nodeTracking.Values)
             {
-                if (tracking.Totals.IsInfected && tracking.TotalInfections > _minActionLevel && tracking.LockdownAction == null)
+                if (tracking.CumulativeInfections > _lockdownLevel && tracking.LockdownAction == null)
                 {
                     // We need to take action.
                     tracking.LockdownAction = new(this._actionId++, new Models.Parameters.StayAtHome(tracking.Location));
                     actions = actions.Append(tracking.LockdownAction);
                     created++;
                 }
-                else if (tracking.LockdownAction != null && !tracking.Totals.IsInfected)
+                else if (tracking.LockdownAction != null && tracking.CumulativeInfections < _openupLevel)
                 {
                     // Infection has gone.
                     actions = actions.Append(new(tracking.LockdownAction.Id));
@@ -107,13 +111,13 @@ namespace WHO
                     deleted++;
                 }
 
-                if (totalInfections > _minBorderLevel && tracking.CloseBordersAction == null)
+                if (totalInfections > _closeBordersLevel && tracking.CloseBordersAction == null)
                 {
                     tracking.CloseBordersAction = new(this._actionId++, new Models.Parameters.CloseBorders(tracking.Location));
                     actions = actions.Append(tracking.CloseBordersAction);
                     created++;
                 }
-                else if (eliminated && tracking.CloseBordersAction != null)
+                else if (totalInfections < _openBordersLevel && tracking.CloseBordersAction != null)
                 {
                     // Infection has been wiped out
                     actions = actions.Append(new(tracking.CloseBordersAction.Id));
@@ -123,7 +127,7 @@ namespace WHO
             }
 
             await this._client.ApplyActions(actions.ToList());
-            Log.Information("Created {Created} and deleted {Deleted} actions", created, deleted);
+            Log.Information("Created {Created} and deleted {Deleted} actions on day {Day}", created, deleted, this._day);
         }
 
         private async Task WaitForOurTurn()
@@ -181,28 +185,28 @@ namespace WHO
             public List<string> Location { get; }
             public WhoAction? LockdownAction { get; set; }
             public WhoAction? CloseBordersAction { get; set; }
-            public long TotalInfections { get; set; } = 0;
-            public InfectionTotals Totals { get; set; }
+            public long CumulativeInfections { get; set; } = 0;
+            public InfectionTotals PreviousTotals { get; set; }
 
-            public bool NeedsAction => this.Totals.IsInfected && this.TotalInfections > _minActionLevel;
-            public bool HasCleared => !this.Totals.IsInfected && this.Location != null;
+            public bool NeedsAction => this.PreviousTotals.IsInfected && this.CumulativeInfections > _lockdownLevel;
+            public bool HasCleared => !this.PreviousTotals.IsInfected && this.Location != null;
 
             public NodeTracking(LocationDefinition node, InfectionTotals totals)
             {
                 this.Location = new() { node.Coord };
-                this.Totals = totals;
+                this.PreviousTotals = totals;
             }
 
             public void Update(InfectionTotals totals)
             {
-                var change = this.Totals - totals;
+                var change = totals.AsymptomaticInfectedNotInfectious - this.PreviousTotals.AsymptomaticInfectedNotInfectious;
 
-                if (change.AsymptomaticInfectedNotInfectious > 0)
+                if (change > 0)
                 {
-                    this.TotalInfections += change.AsymptomaticInfectedNotInfectious;
+                    this.CumulativeInfections += change;
                 }
 
-                this.Totals = totals;
+                this.PreviousTotals = totals;
             }
         }
     }

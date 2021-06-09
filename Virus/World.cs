@@ -31,7 +31,7 @@ namespace Virus
 
         // TODO: nodes and edges should be dictionaries to improve compatability
         // with the interface
-        public double Budget { get; set; }
+        public long Budget { get; set; }
 
         public Node[] Nodes => this._nodes;
         public Edge[] Edges => this._edges;
@@ -73,7 +73,7 @@ namespace Virus
                 this._nodeMap[n.Index] = new List<int>();
 
                 //budget proportional to the population size
-                this.Budget += 0.5 * n.TotalPopulation; //in a population of 7 billion, should be close to WHO's 2018-19 budget of 4.4 billion
+                this.Budget += (long)(0.5 * n.TotalPopulation / 365); //in a population of 7 billion, should be close to WHO's 2018-19 budget of 4.4 billion
             }
 
             foreach ((Edge e, int i) in edges.Select((e, i) => (e, i)))
@@ -123,7 +123,7 @@ namespace Virus
             }
 
             this._day++;
-            this.Budget += this._budgetIncrease - this._loanMoney; //increases Budget + undoes affect of loaned money on daily Budget
+            this.Budget += (long)(this._budgetIncrease - this._loanMoney); //increases Budget + undoes affect of loaned money on daily Budget
 
             //if loaned money, set _loanMoney to 0
             if (this._loanMoney > 0)
@@ -179,9 +179,9 @@ namespace Virus
 
             // TODO: rework cost calculations elsewhere
             //(weekly cost/7) * number of schoolaged children
-            this.Budget -= (CloseSchoolsStudentCost / 7)
-                * this._nodes[i].TotalPopulation
-                * this._nodes[i].NodeDemographics.FiveToSeventeen;
+            //this.Budget -= (long)((CloseSchoolsStudentCost / 7)
+            //    * this._nodes[i].TotalPopulation
+            //    * this._nodes[i].NodeDemographics.FiveToSeventeen);
         }
 
         /// <summary>
@@ -191,7 +191,7 @@ namespace Virus
         {
             int i = p.Location.ToNodeIndex();
             this._nodes.Get(p.Location).CancelCloseSchools();
-            this.Budget += (CloseSchoolsStudentCost / 7) * this._nodes[i].TotalPopulation * this._nodes[i].NodeDemographics.FiveToSeventeen;
+            //this.Budget += (long)((CloseSchoolsStudentCost / 7) * this._nodes[i].TotalPopulation * this._nodes[i].NodeDemographics.FiveToSeventeen);
         }
 
         /// <summary>
@@ -302,7 +302,7 @@ namespace Virus
             this._nodes[i].FurloughScheme(p.AmountInvested);
 
             long cost = p.AmountInvested * this._nodes[i].TotalPopulation; //currently overestimates
-            this.Budget -= cost;
+            //this.Budget -= cost;
         }
 
         /// <summary>
@@ -312,7 +312,7 @@ namespace Virus
         {
             int i = p.Location.ToNodeIndex();
             this._nodes.Get(p.Location).CancelFurloughScheme(p.AmountInvested);
-            this.Budget += (long)p.AmountInvested * this._nodes[i].TotalPopulation;
+            //this.Budget += p.AmountInvested * this._nodes[i].TotalPopulation;
         }
 
         /// <summary>

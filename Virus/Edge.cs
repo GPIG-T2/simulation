@@ -132,7 +132,8 @@ namespace Virus
         /// </summary>
         public void CloseEdge()
         {
-            this._totalPopulation = (long)Math.Round(this._basePopulation * PopulationFloor);
+            //this._totalPopulation = (long)Math.Round(this._basePopulation * PopulationFloor);
+            this._totalPopulation = 0;
         }
 
         ///<summary>

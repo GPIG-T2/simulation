@@ -24,7 +24,7 @@ namespace Virus
 
         #region Stay at Home
 
-        public const double StayAtHomeEfficacy = 0.05;
+        public const double StayAtHomeEfficacy = 0.4;
         public const double StayAtHomeCompliance = -0.1;
         public const double StayAtHomeGdp = 0.95;
 

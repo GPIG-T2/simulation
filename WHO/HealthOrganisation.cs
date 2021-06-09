@@ -345,6 +345,10 @@ namespace WHO
 
                 if (status.IsWhoTurn)
                 {
+                    if (status.Budget < 0)
+                    {
+                        Log.Error("Budget below 0: {Budget}", status.Budget);
+                    }
                     return this._budget + status.Budget;
                 }
             }

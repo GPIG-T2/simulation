@@ -199,11 +199,13 @@ namespace Virus
                 }
                 catch (Exceptions.BaseException ex)
                 {
+                    Log.Warning(ex, "Base exception from action");
                     result.Code = ex.Code;
                     result.Message = ex.Message;
                 }
                 catch (Exception ex)
                 {
+                    Log.Warning(ex, "Generic exception from action");
                     result.Code = 500;
                     result.Message = ex.Message;
                 }
@@ -265,7 +267,7 @@ namespace Virus
 
             if (this.Running)
             {
-                this._status.Budget = (long)Math.Floor(this._world.Budget);
+                this._status.Budget = this._world.Budget;
             }
             else
             {
