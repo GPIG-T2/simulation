@@ -31,7 +31,7 @@ namespace WHO
             return latestInformation == null ? -1 : latestInformation.GetTotalPeople() * PressReleaseCost;
         }
 
-        public static double CalculateCost(object action, ActionMode mode)
+        public static double CalculateCost(ParamsContainer action, ActionMode mode)
         {
             double cost = 0;
 

@@ -303,7 +303,14 @@ namespace WHO
                     var action = dict[result.Id];
                     if (action.Parameters?.Location != null)
                     {
-                        this._locationStatuses[action.Parameters.Location.ToKey()].AddAction(dict[result.Id]);
+                        if (action.Mode == "create")
+                        {
+                            this._locationStatuses[action.Parameters.Location.ToKey()].AddAction(dict[result.Id]);
+                        }
+                        else
+                        {
+                            this._locationStatuses[action.Parameters.Location.ToKey()].RemoveAction(result.Id);
+                        }
                     }
                 }
             }
@@ -366,7 +373,7 @@ namespace WHO
             return totals;
         }
 
-        public void CalculateBestAction(long budgetAvailable, List<string> loc, double threshold = 1.2f)
+        public void CalculateBestAction(long budgetAvailable, List<string> loc, double threshold = 0.1)
         {
             string location = loc.ToKey();
 
@@ -377,23 +384,23 @@ namespace WHO
             long locationPopulation = this._locationTrackers[location].Latest?.GetTotalPeople() ?? 0;
 
             // Calcualte infection rate
-            decimal infectionRate = (asymptomaticInfectedInfectious + symptomaticInfected) / (decimal)locationPopulation;
+            double infectionRate = (asymptomaticInfectedInfectious + symptomaticInfected) / (double)locationPopulation;
 
             // Using the proportion of people who are infected calculate an appropriate budget for that location
             long totalInfections = this._locationTrackers[ALL_LOCATION_ID].Latest?.GetTotalPeople() ?? 0 - this._locationTrackers[ALL_LOCATION_ID].Latest?.GetParameterTotals(TrackingValue.Uninfected) ?? 0;
             long infectionsInArea = this._locationTrackers[location].Latest?.GetTotalPeople() ?? 0 - this._locationTrackers[location].Latest?.GetParameterTotals(TrackingValue.Uninfected) ?? 0;
 
-            decimal percentageOfInfections = (infectionsInArea / (decimal)totalInfections);
+            double percentageOfInfections = (double)infectionsInArea / totalInfections;
 
             // Limit the amount of money spent each term to a third of the budget
-            budgetAvailable = (long)Math.Round((budgetAvailable / (decimal)3), 0);
+            budgetAvailable = (long)Math.Round(budgetAvailable / 3.0, 0);
 
-            double budgetForLocation = (long)Math.Round((budgetAvailable * percentageOfInfections), 0);
+            double budgetForLocation = (long)Math.Round(budgetAvailable * percentageOfInfections, 0);
 
             // Get all WhoActions
-            List<object> actions;
+            List<ParamsContainer> actions;
 
-            if (infectionRate > (decimal)threshold)
+            if (infectionRate > threshold)
             {
                 actions = this.GetWhoActions(loc, ActionCostCalculator.ActionMode.Create, budgetForLocation);
             }
@@ -403,36 +410,43 @@ namespace WHO
             }
 
             // Actions which are collectively all available given the budget
-            List<object> actionsAvailable = new();
+            List<ParamsContainer> actionsAvailable = new();
+            var existingActions = this._locationStatuses[location].AppliedActions;
 
-            if (infectionRate > (decimal)threshold)
+            //Log.Information("Infection rate {InfectionRate}", infectionRate);
+            if (infectionRate > threshold)
             {
                 foreach (var action in actions)
                 {
-                    double actionCost = ActionCostCalculator.CalculateCost(action, ActionCostCalculator.ActionMode.Create);
-
-                    if (actionCost < budgetForLocation)
+                    if (!existingActions.Contains(action.ActionName))
                     {
-                        actionsAvailable.Add(action);
-                        budgetForLocation -= actionCost;
+                        double actionCost = ActionCostCalculator.CalculateCost(action, ActionCostCalculator.ActionMode.Create);
+
+                        if (actionCost < budgetForLocation)
+                        {
+                            actionsAvailable.Add(action);
+                            budgetForLocation -= actionCost;
+                        }
                     }
                 }
             }
-            else if (infectionRate <= (decimal)(threshold * 0.75))
+            else if (infectionRate <= (threshold * 0.75))
             {
                 foreach (var action in actions)
                 {
-                    double actionCost = ActionCostCalculator.CalculateCost(action, ActionCostCalculator.ActionMode.Delete);
-                    var actionList = this._locationStatuses[location].GetActionsOfType((action as ParamsContainer).ActionName);
-                    if (actionList.Count > 0)
+                    if (existingActions.Contains(action.ActionName))
                     {
-                        foreach (var appliedAction in actionList)
+                        double actionCost = ActionCostCalculator.CalculateCost(action, ActionCostCalculator.ActionMode.Delete);
+                        var actionList = this._locationStatuses[location].GetActionsOfType(action.ActionName);
+                        if (actionList.Count > 0)
                         {
-                            if (actionCost < budgetForLocation)
+                            foreach (var appliedAction in actionList)
                             {
-                                this._tasksToExecute.Add(new WhoAction(appliedAction));
-                                this._locationStatuses[location].RemoveAction(appliedAction);
-                                budgetForLocation -= actionCost;
+                                if (actionCost < budgetForLocation)
+                                {
+                                    this._tasksToExecute.Add(new WhoAction(appliedAction));
+                                    budgetForLocation -= actionCost;
+                                }
                             }
                         }
                     }
@@ -440,65 +454,15 @@ namespace WHO
             }
 
             // Convert actions to WhoActions and add to tasks which need to be executed
-            foreach (object action in actionsAvailable)
+            foreach (var action in actionsAvailable)
             {
-                switch (action.GetType().Name)
-                {
-                    case nameof(InformationPressRelease):
-                        this._tasksToExecute.Add(new(this._currentActionId++, (InformationPressRelease)action));
-                        break;
-                    case nameof(TestAndIsolation):
-                        this._tasksToExecute.Add(new(this._currentActionId++, (TestAndIsolation)action));
-                        break;
-                    case nameof(StayAtHome):
-                        this._tasksToExecute.Add(new(this._currentActionId++, (StayAtHome)action));
-                        break;
-                    case nameof(CloseSchools):
-                        this._tasksToExecute.Add(new(this._currentActionId++, (CloseSchools)action));
-                        break;
-                    case nameof(CloseRecreationalLocations):
-                        this._tasksToExecute.Add(new(this._currentActionId++, (CloseRecreationalLocations)action));
-                        break;
-                    case nameof(ShieldingProgram):
-                        this._tasksToExecute.Add(new(this._currentActionId++, (ShieldingProgram)action));
-                        break;
-                    case nameof(MovementRestrictions):
-                        this._tasksToExecute.Add(new(this._currentActionId++, (MovementRestrictions)action));
-                        break;
-                    case nameof(CloseBorders):
-                        this._tasksToExecute.Add(new(this._currentActionId++, (CloseBorders)action));
-                        break;
-                    case nameof(InvestInVaccine):
-                        this._tasksToExecute.Add(new(this._currentActionId++, (InvestInVaccine)action));
-                        break;
-                    case nameof(Furlough):
-                        this._tasksToExecute.Add(new(this._currentActionId++, (Furlough)action));
-                        break;
-                    case nameof(Loan):
-                        this._tasksToExecute.Add(new(this._currentActionId++, (Loan)action));
-                        break;
-                    case nameof(MaskMandate):
-                        this._tasksToExecute.Add(new(this._currentActionId++, (MaskMandate)action));
-                        break;
-                    case nameof(HealthDrive):
-                        this._tasksToExecute.Add(new(this._currentActionId++, (HealthDrive)action));
-                        break;
-                    case nameof(InvestInHealthServices):
-                        this._tasksToExecute.Add(new(this._currentActionId++, (InvestInHealthServices)action));
-                        break;
-                    case nameof(SocialDistancingMandate):
-                        this._tasksToExecute.Add(new(this._currentActionId++, (SocialDistancingMandate)action));
-                        break;
-                    case nameof(Curfew):
-                        this._tasksToExecute.Add(new(this._currentActionId++, (Curfew)action));
-                        break;
-                }
+                this._tasksToExecute.Add(new(this._currentActionId++, action));
             }
         }
 
-        public List<object> GetWhoActions(List<string> loc, ActionCostCalculator.ActionMode mode, double budgetForLocation)
+        public List<ParamsContainer> GetWhoActions(List<string> loc, ActionCostCalculator.ActionMode mode, double budgetForLocation)
         {
-            List<object> actions = new();
+            List<ParamsContainer> actions = new();
 
             string location = loc.ToKey();
             long locationPopulation = this._locationTrackers[location].Latest?.GetTotalPeople() ?? 0;

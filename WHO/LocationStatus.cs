@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Models;
 using WHO.Extensions;
 
@@ -15,6 +16,8 @@ namespace WHO
         public List<string> Location => this._location;
 
         public int ActionCount => this._currentActions.Count;
+
+        public HashSet<string> AppliedActions => new(_currentActions.Values.Select(v => v.Action!));
 
         public LocationStatus(List<string> location)
         {

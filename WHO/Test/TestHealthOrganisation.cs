@@ -138,7 +138,7 @@ namespace WHO.Test
 
             locationTracker.Track(new(loc, 100, 10, 10, 10, 10, 10, 20));
 
-            List<object> actions = org.GetWhoActions(loc, ActionCostCalculator.ActionMode.Create, 100000000);
+            List<ParamsContainer> actions = org.GetWhoActions(loc, ActionCostCalculator.ActionMode.Create, 100000000);
             Assert.Equal(16, actions.Count);
         }
 
@@ -154,7 +154,7 @@ namespace WHO.Test
 
             locationTracker.Track(new(loc, 100, 10, 10, 10, 10, 10, 20));
 
-            List<object> actions = org.GetWhoActions(loc, ActionCostCalculator.ActionMode.Delete, 100000000);
+            List<ParamsContainer> actions = org.GetWhoActions(loc, ActionCostCalculator.ActionMode.Delete, 100000000);
             Assert.Equal(16, actions.Count);
         }
 
