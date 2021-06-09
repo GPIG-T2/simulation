@@ -18,19 +18,11 @@ export class ClientInterface {
 
   /** @type {((snapshot: Totals[]) => void) | undefined} */
   onsnapshot;
+  /** @type {(() => void) | undefined} */
+  onclose;
 
   constructor() {
-    this.#ws = new WebSocket("ws://127.0.0.1");
-    this.#ws.addEventListener("message", (ev) => this.#handleMessage(ev));
-
-    this.#ready = new Promise((resolve) => {
-      const handler = () => {
-        resolve();
-        this.#ws.removeEventListener("open", handler);
-      };
-
-      this.#ws.addEventListener("open", handler);
-    });
+    this.#ws = this.#connect();
   }
 
   get ready() {
@@ -49,6 +41,30 @@ export class ClientInterface {
       this.#ws.send(JSON.stringify(request));
       this.#msgs.set(id, [resolve, reject]);
     });
+  }
+
+  reconnect() {
+    this.#ws.close();
+    this.#ws = this.#connect();
+
+    return this.#ready;
+  }
+
+  #connect() {
+    const ws = new WebSocket("ws://127.0.0.1");
+    ws.addEventListener("message", (ev) => this.#handleMessage(ev));
+    ws.addEventListener("close", () => this.onclose?.());
+
+    this.#ready = new Promise((resolve) => {
+      const handler = () => {
+        resolve();
+        ws.removeEventListener("open", handler);
+      };
+
+      ws.addEventListener("open", handler);
+    });
+
+    return ws;
   }
 
   /**

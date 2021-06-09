@@ -1,4 +1,7 @@
 import * as d3 from "https://cdn.skypack.dev/d3?dts";
+import { Chart, registerables } from "https://cdn.skypack.dev/chart.js?dts";
+
+Chart.register(...registerables);
 
 const geoDataSource =
   "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson";
@@ -111,5 +114,21 @@ export class HeatMap {
       .text((d) => d)
       .style("font-size", 10)
       .attr("alignment-baseline", "middle");
+  }
+}
+
+export class LineChart {
+  #chart;
+
+  constructor(id, config) {
+    const el = document.getElementById(id);
+    this.#chart = new Chart(el, config);
+  }
+
+  addData(data) {
+    for (let i = 0; i < data.length; i++) {
+      this.#chart.data.datasets[i].data.push(data[i]);
+    }
+    this.#chart.update();
   }
 }

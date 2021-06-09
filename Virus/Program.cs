@@ -248,7 +248,7 @@ namespace Virus
         {
             using var _ = await this._lock.Aquire();
 
-            return request.Locations.Select(l => this._world.Nodes.Get(l).Totals).ToList();
+            return request.Locations.Select(l => this._world.Nodes.Get(l).Totals.Clone()).ToList();
         }
 
         public Task<SimulationSettings> GetSettings() => Task.FromResult(this._settings);

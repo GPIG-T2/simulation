@@ -9,10 +9,21 @@
   </head>
   <body>
     <div class="container">
-      <svg id="world" width="630" height="350"></svg>
-      <div class="container container-col row">
-        <div class="row"></div>
-        <div class="row"></div>
+      <div class="container container-col">
+        <div class="row">
+          <svg id="world" width="630" height="350"></svg>
+        </div>
+        <div class="row">
+          <p id="status"></p>
+        </div>
+      </div>
+      <div class="container container-col">
+        <div class="row">
+          <canvas id="states" width="640" height="350"></canvas>
+        </div>
+        <div class="row">
+          <canvas id="infected" width="630" height="350"></canvas>
+        </div>
       </div>
     </div>
     <script src="index.js" type="module"></script>
