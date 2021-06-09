@@ -24,20 +24,32 @@ namespace WHO
                     .WriteTo.Console()
                     .CreateLogger();
 
-                bool useSimple = args.Length > 0 && args[0] == "--simple";
-
-                //await using IHealthOrganisation org = new HealthOrganisation(_uri);
                 //await using IHealthOrganisation org = new HealthOrganisation(new Interface.Client.Rest("http://localhost:24293"));
-                //await using IHealthOrganisation org = new HealthOrganisationSimple(_uri);
-                await using IHealthOrganisation org = useSimple ?
-                    new HealthOrganisationSimple(_uri) :
-                    new HealthOrganisation(_uri);
+                await using IHealthOrganisation org = GetOrg(args);
 
                 await org.Run();
             }
             finally
             {
                 Log.CloseAndFlush();
+            }
+        }
+
+        private static IHealthOrganisation GetOrg(string[] args)
+        {
+            var arg = args.Length > 0 ? args[0] : null;
+
+            switch (arg)
+            {
+                case "--simple":
+                    Log.Information("Starting with simple WHO");
+                    return new HealthOrganisationSimple(_uri);
+                case "--empty":
+                    Log.Information("Starting with empty WHO");
+                    return new EmptyHealthOrganisation(_uri);
+                default:
+                    Log.Information("Starting with default WHO");
+                    return new HealthOrganisation(_uri);
             }
         }
     }
