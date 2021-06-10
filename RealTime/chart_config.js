@@ -66,6 +66,12 @@ export const statesConfig = {
         max: 7_000_000_000,
       },
     },
+    plugins: {
+      title: {
+        display: true,
+        text: "World Infection States",
+      },
+    },
   },
 };
 
