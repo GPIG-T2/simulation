@@ -20,8 +20,8 @@ export class HeatMap {
 
     this.projection = d3
       .geoMercator()
-      .center([0, 20])
-      .scale(99)
+      .center([20, 20])
+      .scale(150)
       .translate([this.width / 2, this.height / 2]);
 
     // Add a scale for bubble size
@@ -29,7 +29,7 @@ export class HeatMap {
       .scaleLog()
       .domain([1, 10_000_000]) // What's in the data
       .clamp(true)
-      .range([1, 25]); // Size in pixel
+      .range([1, 20]); // Size in pixel
 
     this.colorScale = d3
       .scaleThreshold()
@@ -78,7 +78,7 @@ export class HeatMap {
     // Add legend: circles
     const valuesToShow = [100, 10_000, 1_000_000];
     const xCircle = 40;
-    const xLabel = 90;
+    const xLabel = 80;
     this.svg
       .selectAll("legend")
       .data(valuesToShow)
@@ -97,7 +97,7 @@ export class HeatMap {
       .enter()
       .append("line")
       .attr("x1", (d) => xCircle + this.circleSize(d))
-      .attr("x2", xLabel)
+      .attr("x2", (_, i) => xLabel + i * 30)
       .attr("y1", (d) => this.height - this.circleSize(d))
       .attr("y2", (d) => this.height - this.circleSize(d))
       .attr("stroke", "black")
@@ -109,9 +109,9 @@ export class HeatMap {
       .data(valuesToShow)
       .enter()
       .append("text")
-      .attr("x", xLabel)
+      .attr("x", (_, i) => xLabel + i * 30)
       .attr("y", (d) => this.height - this.circleSize(d))
-      .text((d) => d)
+      .text((d) => d.toLocaleString())
       .style("font-size", 10)
       .attr("alignment-baseline", "middle");
   }

@@ -4,13 +4,13 @@ import { statesConfig, infectedConfig } from "./chart_config.js";
 
 const maxReconnections = 5;
 const totalsKeys = [
-  "uninfected",
-  "asymptomaticInfectedNotInfectious",
-  "asymptomaticInfectedInfectious",
-  "symptomatic",
-  "seriousInfection",
-  "dead",
-  "recoveredImmune",
+  "uninfected", // 0
+  "asymptomaticInfectedNotInfectious", // 1
+  "asymptomaticInfectedInfectious", // 2
+  "symptomatic", // 3
+  "seriousInfection", // 4
+  "dead", // 5
+  "recoveredImmune", // 6
 ];
 
 async function main() {
@@ -24,6 +24,12 @@ async function main() {
 
   const statusText = document.getElementById("status");
   statusText.innerText = "Connected";
+
+  const deathText = document.getElementById("death");
+  const setDeathText = (t) =>
+    (deathText.innerText = `Total Deaths: ${t.toLocaleString()}`);
+  setDeathText(0);
+
   client.onclose = () => {
     statusText.innerText = "Disconnected";
 
@@ -64,6 +70,7 @@ async function main() {
     }, emptyTotals());
 
     stateChart.addData(totalsKeys.map((k) => totals[k]));
+    setDeathText(totals.dead);
 
     const infected = snapshot.reduce(
       (p, c) =>
